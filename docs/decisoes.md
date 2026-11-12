@@ -68,9 +68,12 @@ O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e 
 
 - **Visualização (bônus "visualização animada"):** `interface/visualizacao.py` executa os algoritmos reais, grava cada passo (fronteira da BFS/DFS, AVL antes/depois, estruturas da Fase 2, escritas no vetor) e embute os dados num único `visualizacao.html`, sem bibliotecas nem internet. Seis abas: mapa e busca, árvore de busca, AVL, triagem, ordenação, métricas. [EP 18] [Equipe]
 
+- **Audiência Pública (visualização):** narradora Miss Pearl e mascote APURA-42, personagens originais; estética retrofuturista própria (sem elementos da TVA/Marvel; pedido de usar a Senhorita Minutos como referência foi recusado por ser personagem protegido). A Profa. Dra. Lucy aparece só como crachá de orientadora, sem retrato. A analogia da vida real descreve o caminho genérico de um voto, sem locais nem números reais, porque o enunciado proíbe dados de eleições reais. [Equipe]
+
 ## Pendências com a professora
 
 1. Quick Sort: `p..q` do slide × `p..q-1`.
 2. Fase 2: ação "arquivar" (adotada; confirmar se a professora aceita).
 3. Fase 3: "Unidade Oeste" × "Arquivo Oeste" (adotados como dois locais distintos).
 4. Bônus "editor de fases": fases em arquivo JSON contam?
+5. A professora concorda em aparecer, pelo nome, como orientadora na Audiência Pública?

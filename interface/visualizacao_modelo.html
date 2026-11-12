@@ -160,15 +160,29 @@ function apura(humor = "normal", tam = 92) {
     <rect x="22" y="78" width="8" height="12" fill="#2b1d12"/><rect x="50" y="78" width="8" height="12" fill="#2b1d12"/>
     <rect x="17" y="88" width="16" height="6" rx="3" fill="#d9682b"/><rect x="47" y="88" width="16" height="6" rx="3" fill="#d9682b"/></svg>`;
 }
-function auditora(tam = 78) {   // ícone de crachá da Auditora-chefe (sem rosto de pessoa real)
-  return `<svg width="${tam}" height="${tam * 1.2}" viewBox="0 0 70 84" role="img" aria-label="Auditora-chefe">
+function missPearl(tam = 80) {   // Miss Pearl: personagem original (analista retrô da CIV)
+  return `<svg width="${tam}" height="${tam * 1.2}" viewBox="0 0 70 84" role="img" aria-label="Miss Pearl">
+    <path d="M14 30 q0 -22 21 -22 q21 0 21 22 q0 10 6 14 q-10 3 -14 -6 l-26 0 q-4 9 -14 6 q6 -4 6 -14z" fill="#3b2414"/>
+    <circle cx="35" cy="31" r="14" fill="#e8b98f" stroke="#2b1d12" stroke-width="2"/>
+    <path d="M21 26 q14 -14 28 0 q-6 -10 -14 -10 q-8 0 -14 10z" fill="#3b2414"/>
+    <path d="M24 30 q4 -4 9 0 M37 30 q5 -4 9 0" stroke="#2b1d12" stroke-width="2.5" fill="none"/>
+    <path d="M22 29 l-3 -3 M48 29 l3 -3" stroke="#2b1d12" stroke-width="2"/>
+    <path d="M30 38 q5 4 10 0" stroke="#b5321e" stroke-width="2.5" fill="none"/>
+    <path d="M10 82 q2 -26 25 -27 q23 1 25 27z" fill="#1f5f5b" stroke="#2b1d12" stroke-width="2"/>
+    <path d="M27 56 l8 9 l8 -9" fill="#d9682b" stroke="#2b1d12" stroke-width="1.5"/>
+    <rect x="42" y="64" width="12" height="9" rx="2" fill="#f4e7c9" stroke="#2b1d12"/><text x="48" y="71" font-size="5" text-anchor="middle" fill="#2b1d12" font-family="sans-serif">CIV</text>
+    <rect x="12" y="60" width="13" height="18" rx="1" fill="#f4e7c9" stroke="#2b1d12" stroke-width="1.5"/>
+    <path d="M14 65 h9 M14 69 h9 M14 73 h6" stroke="#6b5236" stroke-width="1.2"/></svg>`;
+}
+function cracha(nome, funcao, icone, tam = 74) {  // crachá genérico, sem retrato
+  return `<svg width="${tam}" height="${tam * 1.2}" viewBox="0 0 70 84" role="img" aria-label="${nome}">
     <rect x="6" y="10" width="58" height="70" rx="8" fill="#f4e7c9" stroke="#2b1d12" stroke-width="3"/>
     <rect x="26" y="3" width="18" height="12" rx="3" fill="#6b5236"/>
-    <circle cx="35" cy="34" r="12" fill="#d9682b" stroke="#2b1d12" stroke-width="2"/>
-    <path d="M17 64 q18 -20 36 0" fill="#1f5f5b" stroke="#2b1d12" stroke-width="2"/>
-    <rect x="14" y="68" width="42" height="6" fill="#2b1d12"/></svg>`;
+    <text x="35" y="44" font-size="26" text-anchor="middle">${icone}</text>
+    <rect x="6" y="56" width="58" height="10" fill="#d9682b"/>
+    <text x="35" y="64" font-size="7" text-anchor="middle" fill="#fff6e4" font-family="sans-serif" font-weight="700">${funcao}</text></svg>`;
 }
-const falaAud = txt => `<div class="fala"><div class="quem">${auditora()}</div><div class="balao"><b class="nome">Auditora-chefe da CIV</b>${txt}</div></div>`;
+const falaAud = txt => `<div class="fala"><div class="quem">${missPearl()}</div><div class="balao"><b class="nome">Miss Pearl · Analista de Integridade de Dados da CIV</b>${txt}</div></div>`;
 const falaApura = (txt, humor = "normal", id = "") => `<div class="fala"><div class="quem" ${id ? `id="${id}-rosto"` : ""}>${apura(humor)}</div><div class="balao"><b class="nome">APURA-42 · computador da CIV</b><span ${id ? `id="${id}"` : ""}>${txt}</span></div></div>`;
 function apuraReage(id, txt, humor) { $("#" + id).innerHTML = txt; $("#" + id + "-rosto").innerHTML = apura(humor); }
 const tecnica = html => `<details class="tecnica"><summary>Ficha técnica (para a banca)</summary><div>${html}</div></details>`;
@@ -205,8 +219,8 @@ S.push({ html: `
   <h1>Urna Lógica: o enigma da eleição de Verídia</h1>
   <div class="dois">
     <div>
-      ${falaAud("Boa noite, cidadãs e cidadãos de Verídia. Sou a Auditora-chefe da Comissão Independente de Verificação, a CIV. Hoje vou contar <b>o que encontramos</b> na auditoria da nossa eleição municipal — e, principalmente, <b>como</b> encontramos.")}
-      ${falaApura("E eu sou o APURA-42, o computador da CIV. Eu faço as contas; a Auditora explica. Em vários momentos vou pedir o <b>seu palpite</b> antes de mostrar a resposta!")}
+      ${falaAud("Boa noite, cidadãs e cidadãos de Verídia. Sou a <b>Miss Pearl</b>, Analista de Integridade de Dados da Comissão Independente de Verificação, a CIV. Com meus colegas da <b>turma 2026</b>, sob orientação da <b>Profa. Dra. Lucy</b>, investigamos a auditoria da nossa eleição municipal. Hoje vou contar <b>o que encontramos</b> — e, principalmente, <b>como</b> encontramos.")}
+      ${falaApura("E eu sou o APURA-42, o computador da CIV. Eu faço as contas; a Miss Pearl explica. Em vários momentos vou pedir o <b>seu palpite</b> antes de mostrar a resposta!")}
       <p class="legenda">Use as setas ◀ ▶ do teclado (ou os botões embaixo) para avançar. "Modo leitura" mostra tudo numa página só.</p>
     </div>
     <div class="crt"><div class="tit">Aviso oficial</div>
@@ -228,6 +242,45 @@ S.push({ html: `
       <div class="caixa"><h3>A pergunta da CIV</h3>${D.narrativa.prologo[3]}</div>
     </div>
   </div>` });
+
+/* --- QUEM INVESTIGOU --- */
+S.push({ html: `
+  <div class="rotulo">Parte 1 · Quem investigou</div><h2>A equipe de verificação da CIV</h2>
+  <div class="tres">
+    <div class="caixa" style="text-align:center">${missPearl(110)}<h3>Miss Pearl</h3>Analista de Integridade de Dados.<br><span class="legenda">Narra esta audiência e conduziu a investigação.</span></div>
+    <div class="caixa" style="text-align:center">${cracha("Profa. Dra. Lucy", "ORIENTADORA", "🎓", 100)}<h3>Profa. Dra. Lucy</h3>Orientou a equipe.<br><span class="legenda">Definiu as regras do desafio e o método de verificação.</span></div>
+    <div class="caixa" style="text-align:center">
+      <div>${cracha("Turma 2026", "TURMA 2026", "🧑‍💻", 64)}${cracha("Turma 2026", "TURMA 2026", "👩‍💻", 64)}${cracha("Turma 2026", "TURMA 2026", "🧑‍🔬", 64)}</div>
+      <h3>Colegas da turma 2026</h3>Mestrandos em Computação Aplicada.<br><span class="legenda">Cada um cuidou de uma parte da trilha.</span></div>
+  </div>
+  ${falaApura("E eu, APURA-42, sou o computador da equipe. Eu só sigo regras: quem decide o que verificar são as pessoas.", "feliz")}` });
+
+/* --- A TRILHA DE UM VOTO --- */
+S.push({ html: `
+  <div class="rotulo">Parte 1 · O que é uma trilha de auditoria</div><h2>De onde veio este número?</h2>
+  ${falaAud("Auditar é conseguir <b>voltar</b>: partir do resultado final e chegar, passo a passo, até a origem de cada registro. Se algum passo não puder ser refeito, a trilha está quebrada.")}
+  <div class="dois">
+    <div class="caixa"><h3>Na vida real (descrição simplificada)</h3>
+      <svg viewBox="0 0 420 300" width="100%" id="trilha-real"></svg>
+      <span class="legenda">Em linhas gerais: cada seção eleitoral pertence a uma zona; a urna da seção, ao fim da votação, emite um boletim com essa identificação. Assim, cada parcial pode ser conferida de volta até a seção de onde veio. (Exemplo genérico, sem dados reais.)</span></div>
+    <div class="caixa"><h3>Em Verídia (dados fictícios)</h3>
+      <svg viewBox="0 0 420 300" width="100%" id="trilha-veridia"></svg>
+      <span class="legenda">Cada registro do jogo carrega <b>zona</b>, <b>seção</b> e <b>identificador</b>. São as "etiquetas" que permitem refazer o caminho de volta.</span></div>
+  </div>
+  <div class="analogia"><b>Parece com…</b> a história de <b>João e Maria</b>: eles deixaram migalhas de pão pelo caminho para conseguir voltar para casa. Na nossa investigação, cada passo também deixa uma migalha: <b>"de onde eu vim"</b>. Vamos ver isso funcionando no Anexo 3.</div>`,
+  montar() {
+    const caixas = (svg, itens, cor) => { itens.forEach((t, i) => { const y = 14 + i * 70;
+      svgEl("rect", {x: 90, y, width: 240, height: 46, rx: 8, fill: "#fff8e8", stroke: cor, "stroke-width": 3}, svg);
+      svgEl("text", {x: 210, y: y + 20, "text-anchor": "middle", "font-size": 15, "font-weight": 700, style: "fill:#2b1d12"}, svg, t[0]);
+      svgEl("text", {x: 210, y: y + 37, "text-anchor": "middle", "font-size": 12, style: "fill:#6b5236"}, svg, t[1]);
+      if (i) { svgEl("path", {d: `M 345 ${y + 23} C 395 ${y + 10}, 395 ${y - 37}, 345 ${y - 47}`, stroke: "#d9682b", "stroke-width": 3, fill: "none", "marker-end": "url(#seta)"}, svg); } });
+      const defs = svgEl("defs", {}, svg); const m = svgEl("marker", {id: "seta", viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto"}, defs);
+      svgEl("path", {d: "M0 0 L10 5 L0 10z", fill: "#d9682b"}, m);
+      svgEl("text", {x: 400, y: 150, "text-anchor": "middle", "font-size": 12, transform: "rotate(-90 400 150)", style: "fill:#b8521c;font-weight:700"}, svg, "auditoria: de baixo para cima"); };
+    caixas($("#trilha-real"), [["Voto", "registrado na urna"], ["Urna da seção", "identificada pela seção"], ["Boletim da seção", "zona + seção + urna"], ["Resultado final", "soma dos boletins"]], "#6b5236");
+    const r = REG[L.embaralhado[0]];
+    caixas($("#trilha-veridia"), [[r.id, "registro (opção " + r.opcao + ")"], ["Seção " + r.secao, "local de votação"], ["Zona " + r.zona, "conjunto de seções"], ["Relatório final", "Centro de Validação"]], "#1f5f5b");
+  } });
 
 /* --- COMO TRABALHAMOS --- */
 S.push({ html: `
@@ -312,8 +365,18 @@ S.push({ html: `
       ${[12, 100, 500].map(n => { const v = a => (L.comparacao.find(c => c.n === n && c.alg.startsWith(a)) || {}).comp;
         return `<tr><td>${n}</td><td>${v("Bubble")}</td><td>${v("Merge")}</td><td>${v("Quick")}</td></tr>`; }).join("")}</table></div>
   </div>
+  <div class="caixa"><h3>Trabalho para ordenar 500 fichas (cada barra = número de comparações)</h3><svg id="o-barras" viewBox="0 0 700 150" width="100%"></svg></div>
   ${falaApura("Com 500 fichas, o Bubble faz 124.750 comparações; o Merge, menos de 5 mil. Quando o lote dobra, o trabalho do Bubble <b>quadruplica</b>!", "feliz")}
   ${tecnica(`Implementação literal das aulas 02 e 04 em <code>algoritmos/ordenacao.py</code>. Chave composta: <code>(zona, secao, timestamp, id_registro)</code>. Bubble: n(n−1)/2 comparações, Θ(n²). Merge: Θ(n log n). Quick: Θ(n log n) médio, Θ(n²) no pior caso (entrada ordenada: 499.500 comparações com n=1.000). O id desempata porque o Merge da aula e o Quick não são estáveis (<code>test_estabilidade</code>). O slide 31 (<code>quickSort(p,q)</code>) entra em laço infinito com pivô máximo; usamos <code>p..q−1</code> (<code>test_quick_versao_literal_do_slide_nao_termina</code>). Seed fixa 2042 + Fisher–Yates próprio.`)}` });
+
+S[S.length - 1].montar = () => {
+  const svg = $("#o-barras"), dados = ["Bubble", "Merge", "Quick"].map(a => [a, L.comparacao.find(c => c.n === 500 && c.alg.startsWith(a)).comp]);
+  const max = Math.max(...dados.map(d => d[1]));
+  dados.forEach(([a, v], i) => { const y = 12 + i * 44, w = Math.max(4, v / max * 520);
+    svgEl("text", {x: 0, y: y + 22, "font-size": 16, "font-weight": 700, style: "fill:#2b1d12"}, svg, a);
+    svgEl("rect", {x: 80, y, width: w, height: 30, rx: 4, fill: i ? "#1f5f5b" : "#d9682b"}, svg);
+    svgEl("text", {x: 88 + w, y: y + 21, "font-size": 15, style: "fill:#2b1d12"}, svg, v.toLocaleString("pt-BR")); });
+};
 
 /* ===================== CAPÍTULO 2 ===================== */
 const T = D.triagem_jogavel;
@@ -339,12 +402,12 @@ S.push({ html: `
   <div class="rotulo">Anexo 2 · sua vez</div><h2>Monte a custódia você mesmo</h2>
   <div class="dois">
     <div>
-      <div class="caixa"><h3>Fila de entrada (o 1º está à esquerda)</h3><div class="linha" id="t-fila"></div></div>
-      <div class="caixa"><h3>Pilha de espera (topo em cima)</h3><div class="pilha" id="t-pilha"></div></div>
-      <div class="caixa"><h3>Arquivo</h3><div class="linha" id="t-arq"></div></div>
+      <div class="caixa"><h3>🚶🚶🚶 Fila de entrada (o 1º está à esquerda)</h3><div class="linha" id="t-fila"></div></div>
+      <div class="caixa"><h3>🍽️ Pilha de espera (topo em cima)</h3><div class="pilha" id="t-pilha"></div></div>
+      <div class="caixa"><h3>🗄️ Arquivo</h3><div class="linha" id="t-arq"></div></div>
     </div>
     <div>
-      <div class="caixa"><h3>Custódia — objetivo: ${T.alvo.join(" → ")}</h3><div class="linha" id="t-cus"></div></div>
+      <div class="caixa"><h3>🔗 Custódia — objetivo: ${T.alvo.join(" → ")}</h3><div class="linha" id="t-cus"></div></div>
       <div><button class="btn" data-a="aceitar">Aceitar</button><button class="btn" data-a="guardar">Guardar</button>
         <button class="btn" data-a="arquivar">Arquivar</button><button class="btn" data-a="liberar">Liberar</button></div>
       <div><button class="btn sec" id="t-desf">↶ Desfazer</button><button class="btn neutro" id="t-rein">Recomeçar</button></div>
@@ -492,6 +555,54 @@ S.push({ html: `
       $("#b-front").innerHTML = fichas(f.fronteira, true);
       $("#b-res").innerHTML = fim ? `Caminho encontrado com <b>${e.resumo.acoes} movimentos</b>: ${e.caminho.join(" → ")}. Situações examinadas: ${e.resumo.expandidos}.` : "Procurando…"; }, 900);
     sel.onchange = () => p.reiniciar(); p.reiniciar();
+  } });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 3 · o que a máquina fez</div><h2>A onda: camada por camada</h2>
+  <div class="analogia"><b>Parece com…</b> uma pedra jogada no lago, a partir da Central de Auditoria (A). A onda alcança primeiro os vizinhos (camada 1), depois os vizinhos dos vizinhos (camada 2), e assim por diante. A <b>fila</b> garante essa ordem.</div>
+  <div class="controles"><span id="w-ctl" class="controles"></span></div>
+  <div class="dois">
+    <div class="crt"><div class="tit">Busca em largura no mapa (só os corredores, sem as portas)</div><svg id="w-mapa"></svg></div>
+    <div><div class="caixa"><h3>Camadas alcançadas</h3><div id="w-lista" style="font-family:var(--maquina)"></div></div>
+      ${falaApura("O Centro de Validação (F) está na camada 3: são 3 corredores. Mas lembra das portas? Com elas, a rota válida precisou de 7 passos.", "pensando")}</div>
+  </div>
+  ${tecnica(`<code>algoritmos/busca_grafo.py → bfs(G, "A")</code>, igual à aula 09: d[v] = d[u] + 1 é a camada. Ordem de visita: ${B.mapa.ordem_bfs.join(", ")}. Distância = menor número de arestas (grafo sem pesos).`)}`,
+  montar() {
+    const cam = B.mapa.camadas, maxc = Math.max(...Object.values(cam)), cores = ["#ffb347", "#d9682b", "#2d7a74", "#1f5f5b"];
+    Passos($("#w-ctl"), () => maxc + 1, k => {
+      const svg = $("#w-mapa"); desenhaMapa(svg, {});
+      [...svg.querySelectorAll("g")].forEach((g, i) => { const v = B.mapa.vertices[i], c = cam[v.id];
+        if (c <= k) { g.querySelector("circle").setAttribute("fill", cores[c]); svgEl("circle", {cx: v.x, cy: v.y, r: 38 + 4 * (k - c), fill: "none", stroke: cores[c], "stroke-width": 2, "stroke-dasharray": "5 5", opacity: .7}, svg);
+          svgEl("text", {x: v.x + 30, y: v.y - 22, "font-size": 18, "font-weight": 700, style: "fill:#fff6e4"}, svg, c); } });
+      $("#w-lista").innerHTML = [...Array(k + 1).keys()].map(c => `camada ${c}: <b>${B.mapa.vertices.filter(v => cam[v.id] === c).map(v => v.id).join(", ")}</b>`).join("<br>");
+    }, 1400).reiniciar();
+  } });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 3 · como voltamos</div><h2>As migalhas de João e Maria</h2>
+  ${falaAud("Quando o APURA-42 chega a uma situação nova, ele anota <b>quem o trouxe até ali</b> — é a migalha. Ao encontrar o Centro de Validação, ele <b>volta seguindo as migalhas</b>, do fim para o começo. Depois, é só ler a lista ao contrário.")}
+  <div class="controles"><span id="j-ctl" class="controles"></span></div>
+  <div class="dois">
+    <div class="crt"><div class="tit">Voltando pelas migalhas 🍞</div><svg id="j-mapa"></svg></div>
+    <div><div class="caixa"><h3>Migalhas recolhidas (de trás para frente)</h3><div id="j-lista" style="font-family:var(--maquina);font-size:15px"></div></div>
+      <div class="msg" id="j-msg"></div></div>
+  </div>
+  ${tecnica(`Cada estado guarda o pai π (aula 09: "π[v] ← u"). <code>algoritmos/busca_grafo.py → caminho(pi, s, v)</code> e <code>algoritmos/solver.py → _reconstruir</code> seguem os pais do destino até a origem e invertem a lista. Custo O(comprimento do caminho).`)}`,
+  montar() {
+    const est = B.estrategias["BFS"], cam = est.caminho, rot = est.caminho_estados, n = cam.length;
+    Passos($("#j-ctl"), () => n + 1, k => {
+      const svg = $("#j-mapa");
+      if (k < n) {
+        const voltou = cam.slice(n - 1 - k);           // do ponto atual até o fim
+        desenhaMapa(svg, {atual: cam[n - 1 - k], caminho: voltou});
+        voltou.forEach((v, i) => { const p = POS[v]; svgEl("text", {x: p.x - 34, y: p.y - 26, "font-size": 20}, svg, "🍞"); });
+        $("#j-lista").innerHTML = [...Array(k + 1).keys()].map(i => { const j = n - 1 - i; return `${rot[j]}${j ? `  ← veio de <b>${cam[j - 1]}</b>` : "  ← <b>início</b>"}`; }).join("<br>");
+        $("#j-msg").className = "msg"; $("#j-msg").innerHTML = k === 0 ? "Chegamos ao destino. Qual migalha está aqui?" : `Seguindo a migalha: voltamos para <b>${cam[n - 1 - k]}</b>.` + (cam[n - 1 - k] === "C" && k > 3 ? " Repare: já passamos por C — mas era outra situação (sem a pista)." : "");
+      } else {
+        desenhaMapa(svg, {caminho: cam});
+        $("#j-msg").className = "msg ok"; $("#j-msg").innerHTML = `Lendo ao contrário, a rota fica: <b>${cam.join(" → ")}</b>`;
+      }
+    }, 1300).reiniciar();
   } });
 
 S.push({ html: `

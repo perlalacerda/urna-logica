@@ -185,15 +185,15 @@ Para **10 minutos**: blocos 1, 2 (só passo 4), 4 (só passos 2–3), 5 (só a v
 
 ## Versão "Audiência Pública" (turma do 9.º ano, ~25 min)
 
-Abrir `visualizar.bat`, deixar em **tela cheia** (F11) e avançar com as setas. A apresentadora fala como **Auditora-chefe da CIV**; o APURA-42 é o computador que "pede o palpite".
+Abrir `visualizar.bat`, deixar em **tela cheia** (F11) e avançar com as setas. A apresentadora fala como **Miss Pearl**, Analista de Integridade de Dados da CIV; o APURA-42 é o computador que "pede o palpite".
 
 | Slides | Momento | O que fazer |
 |---|---|---|
-| 1–3 | Capa, o que aconteceu, os 5 selos | Ler o aviso: tudo é fictício e apartidário. Perguntar: "por que uma auditoria precisa de *trilha*?" |
-| 4–8 | Anexo 1 — fichas embaralhadas | No slide 5, a turma vota quem vem primeiro; no 6, se aceitaria ordenar só pelo horário. No 7, tocar Bubble e depois Merge e comparar o número de passos. |
-| 9–11 | Anexo 2 — triagem | Slide 10: chamar um voluntário para montar a custódia (fila da cantina, pilha de pratos, caça ao tesouro). Mostrar o "Desfazer". |
-| 12–16 | Anexo 3 — mapa | Slide 13: votação da rota (a mais curta é inválida!). Slide 14: voluntário anda pelo mapa. Slide 15: BFS "onda" × DFS "corredor". |
-| 17–19 | Anexo 4 — cofre | Slide 18: a turma dá palpite em cada lacre (vai girar?). Slide 19: os pares "mesma situação?". |
-| 20–22 | Anexo 5 e encerramento | Relatório "consistente"; frase final: "não precisamos confiar em ninguém: as regras estão escritas e qualquer um pode refazer cada passo". |
+| 1–5 | Capa, o que aconteceu, a equipe, a trilha de um voto, os 5 selos | Ler o aviso: tudo é fictício e apartidário. No slide 4, perguntar: "se eu der só o resultado final, como vocês conferem?" — e apresentar as migalhas de João e Maria. |
+| 6–10 | Anexo 1 — fichas embaralhadas | No slide 5, a turma vota quem vem primeiro; no 6, se aceitaria ordenar só pelo horário. No 7, tocar Bubble e depois Merge e comparar o número de passos. |
+| 11–13 | Anexo 2 — triagem | Slide 12: chamar um voluntário para montar a custódia (fila da cantina, pilha de pratos, caça ao tesouro). Mostrar o "Desfazer". |
+| 14–20 | Anexo 3 — mapa | Slide 15: votação da rota (a mais curta é inválida!). Slide 16: voluntário anda pelo mapa. Slide 17: BFS × DFS. Slide 18: a onda por camadas. Slide 19: as migalhas — voltar do fim ao começo. |
+| 21–23 | Anexo 4 — cofre | Slide 22: a turma dá palpite em cada lacre (vai girar?). Slide 23: os pares "mesma situação?". |
+| 24–26 | Anexo 5 e encerramento | Relatório "consistente"; frase final: "não precisamos confiar em ninguém: as regras estão escritas e qualquer um pode refazer cada passo". |
 
 As fichas técnicas (verde) ficam fechadas para a turma e abertas para a banca.

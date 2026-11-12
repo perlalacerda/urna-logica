@@ -46,6 +46,11 @@ def dados_busca():
         "arestas": [list(a) for a in ARESTAS],
         "adjacencia": {v: G.vizinhos(v) for v in G.vertices()},
     }
+    from algoritmos.busca_grafo import bfs as bfs_grafo
+    d, pi, ordem, _ = bfs_grafo(G, "A")
+    mapa["camadas"] = {v: d[v] for v in G.vertices()}        # distância (em corredores) a partir de A
+    mapa["ordem_bfs"] = ordem
+    mapa["pi"] = pi
     estrategias = {}
     for nome, alg, tipo in (("BFS", bfs, "FILA"), ("DFS recursiva", dfs_recursiva, "PILHA DE CHAMADAS"),
                             ("DFS com pilha", dfs_pilha, "PILHA")):

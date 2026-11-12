@@ -248,10 +248,12 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 ### B1. Visualização animada — "Audiência Pública da CIV"
 
 - **O que é:** uma página HTML única (`visualizacao.html`), que abre no navegador **sem internet** e sem bibliotecas externas. Funciona em **modo slides** (setas do teclado, para projetar) e em **modo leitura** (rolagem).
-- **A história:** a Auditora-chefe da CIV presta contas à população de Verídia — o que aconteceu e *como* a trilha foi reconstruída. O desafio é exatamente o do enunciado (mesmas fases, enigmas, regras e selos); muda só quem conta e a linguagem.
+- **A história:** Miss Pearl, Analista de Integridade de Dados da CIV, presta contas à população de Verídia em nome da equipe (mestrandos da turma 2026, orientados pela Profa. Dra. Lucy) — o que aconteceu e *como* a trilha foi reconstruída. O desafio é exatamente o do enunciado (mesmas fases, enigmas, regras e selos); muda só quem conta e a linguagem.
 - **Para quem:** camada principal para jovens (9.º ano), com analogias do cotidiano, e uma **ficha técnica dobrável** em cada anexo para a banca (termo da disciplina, complexidade, código e teste).
 - **Estrutura de cada anexo (fase):** o problema → como pensamos (analogia) → **sua vez** (palpite ou jogo) → o que a máquina fez (animação real) → a prova (carimbo "Conferido").
-- **Mascote:** APURA-42, o computador da CIV (personagem original), reage aos palpites.
+- **Personagens (originais):** Miss Pearl, narradora; APURA-42, o computador da CIV, que reage aos palpites. A Profa. Dra. Lucy aparece apenas como crachá de orientadora, sem retrato.
+- **Analogias da trilha reversa:** slide "De onde veio este número?" (o caminho genérico de um voto — seção, zona, boletim, resultado — e o espelho em Verídia) e slide "As migalhas de João e Maria": cada estado guarda o pai π; para reconstruir a rota, segue-se π do destino até a origem e inverte-se a lista (`busca_grafo.caminho`, `solver._reconstruir`).
+- **Mais recursos visuais:** onda da BFS por camadas no mapa (d[v] da aula 09), gráfico de barras das comparações (500 fichas), ícones de fila, pilha, lista e arquivo.
 - **Jogável na página:** a Fase 2 inteira e a Fase 3 inteira. O Python calcula **todas** as situações possíveis (14 na triagem, 160 no mapa) e o resultado de cada jogada, com as mesmas funções de regra do jogo; a página só consulta essas tabelas (`dados_triagem_jogavel`, `dados_mapa_jogavel`).
 - **Animações reais:** ordenação das 12 fichas do lote (Bubble, Merge, Quick), mapa de todas as situações da triagem, BFS × DFS no mapa, árvore de busca, AVL antes/depois com palpite de rotação, pares do enigma 8.2, relatório da Fase 5.
 - **Prova:** `testes/test_visualizacao.py` (página sem referências externas; dados batem com a execução; jogos da página seguem as regras do Python; animação sem fichas duplicadas).
