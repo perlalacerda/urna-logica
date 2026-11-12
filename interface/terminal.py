@@ -3,6 +3,9 @@ Interface em terminal (texto). Só exibe e lê opções: NENHUMA regra do jogo
 fica aqui. As regras moram em jogo/ (separação exigida na seção 12).
 """
 
+import textwrap
+
+from jogo import narrativa
 from jogo.fase1 import Fase1
 from jogo.fase2 import Fase2, EVIDENCIAS, proximo_esperado, ProblemaTriagem, rotulo_triagem
 from jogo.fase3 import Fase3, ProblemaMapa, LOCAIS, PISTAS, PORTAS, NOMES_PISTAS, rotulo as rotulo_mapa
@@ -59,11 +62,10 @@ class JogoTerminal:
 
     # ======================================================== menu inicial
     def executar(self):
-        titulo("URNA LÓGICA — O Enigma da Eleição de Verídia")
-        print("  Ano 2042. Uma falha de sincronização embaralhou a auditoria de Verídia.")
-        print("  Você é Analista de Integridade de Dados da Comissão Independente de")
-        print("  Verificação (CIV). Recupere os 5 selos e chegue ao Cofre de Verificação.")
-        print("  (Cidade, registros e códigos são inteiramente fictícios.)")
+        titulo(narrativa.TITULO.upper())
+        for paragrafo in narrativa.PROLOGO:
+            print(textwrap.fill(paragrafo, 68, initial_indent="  ", subsequent_indent="  ") + "\n")
+        print(textwrap.fill("(" + narrativa.AVISO + ")", 68, initial_indent="  ", subsequent_indent="  "))
         while True:
             titulo("MENU INICIAL")
             print("  " + self.barra_de_selos())
@@ -437,9 +439,9 @@ class JogoTerminal:
             print("\n  Selo 5 conquistado!")
         if all(self.selos()):
             titulo("COFRE DE VERIFICAÇÃO ABERTO")
-            print("  Os cinco selos foram reunidos e a trilha de auditoria é consistente.")
-            print("  A apuração simulada de Verídia pôde ser reconstruída a partir de regras")
-            print("  explícitas e dados claros. Missão cumprida, Analista!")
+            for paragrafo in narrativa.EPILOGO:
+                print(textwrap.fill(paragrafo, 68, initial_indent="  ", subsequent_indent="  "))
+            print("\n  Missão cumprida, Analista!")
         elif f.venceu():
             faltam = [str(i) for i, s in enumerate(self.selos(), 1) if not s]
             print(f"  Para abrir o Cofre de Verificação, conquiste também o(s) selo(s): {', '.join(faltam)}.")

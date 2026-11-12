@@ -47,17 +47,46 @@
   .legenda { color: var(--suave); font-size: 13px; margin-top: 6px; }
   .tag { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 12px; margin-right: 6px; }
   code { font-family: Consolas, monospace; background: var(--painel2); padding: 1px 5px; border-radius: 4px; }
+  .capitulo { background: linear-gradient(135deg, #1b2a3a, #172029); border: 1px solid var(--borda);
+              border-radius: 10px; padding: 14px 18px; margin-bottom: 14px; }
+  .capitulo .selo { color: var(--alerta); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+  .capitulo h2 { margin: 2px 0 8px; font-size: 19px; }
+  .capitulo blockquote { margin: 0 0 8px; padding: 6px 12px; border-left: 3px solid var(--alerta);
+              color: var(--texto); font-style: italic; white-space: pre-line; }
+  .capitulo .missao { color: var(--suave); }
+  .prologo p { max-width: 820px; font-size: 16px; }
+  .jornada { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+  .etapa { background: var(--painel); border: 1px solid var(--borda); border-radius: 10px; padding: 12px; }
+  .etapa .num { font-size: 26px; color: var(--alerta); font-weight: 700; }
+  .etapa h4 { margin: 2px 0 6px; font-size: 15px; }
+  .etapa p { margin: 0 0 6px; color: var(--suave); font-size: 13px; }
+  .etapa button { background: var(--destaque); color: #06121c; border: 0; border-radius: 6px; padding: 5px 10px;
+                  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .aviso { color: var(--suave); font-size: 13px; border: 1px dashed var(--borda); padding: 8px 12px; border-radius: 6px; margin-top: 14px; }
+  .cofre { border: 2px solid var(--alerta); background: #2a2414; border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
+  .cofre h3 { margin: 0 0 8px; color: var(--alerta); }
+  .check { margin: 2px 0; }
+  .check .ok { color: var(--ok); font-weight: 700; }
+  .check .falha { color: var(--erro); font-weight: 700; }
 </style>
 </head>
 <body>
 <header>
   <h1>Urna Lógica — o Enigma da Eleição de Verídia</h1>
-  <p>Visualização gerada pela execução real dos algoritmos do jogo. Funciona sem internet. Dados inteiramente fictícios.</p>
+  <p>A investigação contada capítulo a capítulo. Cada animação vem da execução real dos algoritmos do jogo. Funciona sem internet. Dados inteiramente fictícios.</p>
 </header>
 <nav id="abas"></nav>
 <main>
 
+<section id="aba-missao">
+  <div class="prologo" id="prologo"></div>
+  <h3 style="margin-top:18px">A jornada: cinco selos até o Cofre de Verificação</h3>
+  <div class="jornada" id="jornada"></div>
+  <div class="aviso" id="aviso"></div>
+</section>
+
 <section id="aba-busca">
+  <div class="capitulo" data-cap="3"></div>
   <div class="conceito"><b>Grafo + BFS/DFS (aula 09).</b> Cada local é um vértice; cada corredor, uma aresta.
     A BFS usa uma <b>FILA</b> e explora por camadas; a DFS usa uma <b>PILHA</b> (ou a pilha de chamadas da recursão)
     e mergulha num caminho antes de voltar. O "estado" inclui posição, pistas e energia: por isso o mesmo local
@@ -84,6 +113,7 @@
 </section>
 
 <section id="aba-arvore">
+  <div class="capitulo" data-cap="3"></div>
   <div class="conceito"><b>Árvore de busca (item 9.2 do EP).</b> Cada nó é um <b>estado</b>; cada aresta, a ação que levou
     a ele. Em roxo, o caminho até a solução. Compare a forma da árvore: a BFS fica larga e rasa; a DFS, estreita e funda.</div>
   <div class="controles"><select id="arvore-estrategia"></select></div>
@@ -92,6 +122,7 @@
 </section>
 
 <section id="aba-avl">
+  <div class="capitulo" data-cap="4"></div>
   <div class="conceito"><b>Árvore AVL (aula 08).</b> FB = altura da esquerda − altura da direita; precisa ficar entre −1 e +1.
     Quando um nó chega a ±2, uma rotação (RD, RE, RED ou RDE) reequilibra a árvore. Sequência do exemplo da aula.</div>
   <div class="controles">
@@ -107,6 +138,7 @@
 </section>
 
 <section id="aba-triagem">
+  <div class="capitulo" data-cap="2"></div>
   <div class="conceito"><b>Fila, pilha e lista ligada (aula 06).</b> A fila só libera a primeira evidência (FIFO);
     a pilha só libera o topo (LIFO); a lista de custódia cresce pelo fim. Solução encontrada pela BFS do solver.</div>
   <div class="controles">
@@ -125,6 +157,7 @@
 </section>
 
 <section id="aba-ordenacao">
+  <div class="capitulo" data-cap="1"></div>
   <div class="conceito"><b>Ordenação (aulas 02 e 04).</b> Cada barra é um valor; em destaque, a posição que acabou de ser
     escrita. Bubble faz n(n−1)/2 comparações sempre; Merge e Quick, da ordem de n log n no caso médio.</div>
   <div class="controles">
@@ -137,10 +170,16 @@
   <div class="msg" id="ord-msg"></div>
 </section>
 
-<section id="aba-metricas">
-  <div class="conceito"><b>BFS × DFS em dois cenários (item 9.1).</b> A BFS garante o menor número de ações porque toda
-    ação custa 1. A DFS não tem essa garantia. "Repetidos" são estados barrados pela AVL de visitados.</div>
-  <div class="caixa"><table id="tab-metricas"></table></div>
+<section id="aba-auditoria">
+  <div class="capitulo" data-cap="5"></div>
+  <div class="conceito"><b>Integração (seção 9 do EP).</b> Cada etapa é encontrada ou validada pelo solver, usando as
+    mesmas regras do jogador. Depois, BFS e DFS são comparadas em dois cenários (item 9.1); a tabela é ordenada com
+    Merge Sort (item 9.3).</div>
+  <div class="caixa"><h3>Relatório de consistência</h3><div id="aud-etapas"></div></div>
+  <div class="caixa" style="margin-top:12px"><h3>BFS × DFS em dois cenários</h3><table id="tab-metricas"></table>
+    <div class="legenda">A BFS garante o menor número de ações porque toda ação custa 1; a DFS não tem essa garantia.
+      "Repetidos" são estados barrados pela AVL de visitados.</div></div>
+  <div class="cofre" id="cofre"></div>
 </section>
 
 </main>
@@ -183,9 +222,12 @@ function Passos(secao, total, desenha, intervalo = 900) {
 }
 
 /* ---------- abas ---------- */
-const ABAS = [["busca", "Mapa e busca"], ["arvore", "Árvore de busca"], ["avl", "AVL"],
-              ["triagem", "Triagem (Fase 2)"], ["ordenacao", "Ordenação"], ["metricas", "Métricas"]];
+const ABAS = [["missao", "A missão"], ["ordenacao", "1 · Arquivo Embaralhado"], ["triagem", "2 · Central de Triagem"],
+              ["busca", "3 · Mapa das Seções"], ["arvore", "3 · Árvore de busca"], ["avl", "4 · Cofre dos Estados"],
+              ["auditoria", "5 · Auditoria Final"]];
 const nav = document.getElementById("abas");
+const botoesAba = {};
+function abrirAba(id) { botoesAba[id].click(); window.scrollTo(0, 0); }
 ABAS.forEach(([id, nome], k) => {
   const b = document.createElement("button");
   b.textContent = nome;
@@ -196,8 +238,26 @@ ABAS.forEach(([id, nome], k) => {
     document.getElementById("aba-" + id).classList.add("ativo");
   };
   nav.appendChild(b);
+  botoesAba[id] = b;
   if (k === 0) b.click();
 });
+
+/* ---------- NARRATIVA: prólogo, jornada e cabeçalho de cada capítulo ---------- */
+(function () {
+  const N = DADOS.narrativa;
+  document.getElementById("prologo").innerHTML = N.prologo.map(p => `<p>${p}</p>`).join("");
+  document.getElementById("aviso").textContent = N.aviso;
+  const destino = {1: "ordenacao", 2: "triagem", 3: "busca", 4: "avl", 5: "auditoria"};
+  document.getElementById("jornada").innerHTML = N.capitulos.map(c => `
+    <div class="etapa"><div class="num">Selo ${c.selo}</div><h4>${c.fase}</h4>
+      <p>${c.missao}</p><p><b>Ferramentas:</b> ${c.ferramentas}</p>
+      <button onclick="abrirAba('${destino[c.selo]}')">Abrir capítulo ${c.selo} →</button></div>`).join("");
+  document.querySelectorAll(".capitulo").forEach(div => {
+    const c = N.capitulos[Number(div.dataset.cap) - 1];
+    div.innerHTML = `<div class="selo">Capítulo ${c.selo} · em jogo: Selo ${c.selo}</div><h2>${c.fase}</h2>
+      <blockquote>${c.abertura}</blockquote><div class="missao"><b>Sua missão:</b> ${c.missao}</div>`;
+  });
+})();
 
 /* ---------- MAPA E BUSCA ---------- */
 (function () {
@@ -349,11 +409,22 @@ function desenhaAVL(svg, raiz, destaque) {
   passos.reiniciar();
 })();
 
-/* ---------- MÉTRICAS ---------- */
+/* ---------- AUDITORIA FINAL ---------- */
 (function () {
+  const A = DADOS.auditoria;
+  document.getElementById("aud-etapas").innerHTML = A.etapas.map(e => `
+    <div style="margin-bottom:10px"><b>${e.nome}: <span class="${e.ok ? "ok" : "falha"}"
+      style="color:${e.ok ? cor("--ok") : cor("--erro")}">${e.ok ? "CONSISTENTE" : "NÃO CONSISTENTE"}</span></b>
+      ${e.origem ? `<span class="legenda"> — origem: ${e.origem}</span>` : ""}<br>
+      <span class="legenda">${e.detalhe}</span>
+      ${e.checagens.map(([d, ok]) => `<div class="check"><span class="${ok ? "ok" : "falha"}">${ok ? "✔" : "✘"}</span> ${d}</div>`).join("")}
+    </div>`).join("");
   const t = document.getElementById("tab-metricas");
   t.innerHTML = "<tr><th>cenário</th><th>estratégia</th><th>ações</th><th>expandidos</th><th>gerados</th><th>repetidos</th><th>fronteira máx.</th></tr>" +
     DADOS.metricas.map(m => `<tr><td>${m.cenario}</td><td>${m.estrategia}</td><td>${m.acoes}</td><td>${m.expandidos}</td><td>${m.gerados}</td><td>${m.repetidos}</td><td>${m.fronteira}</td></tr>`).join("");
+  document.getElementById("cofre").innerHTML = A.consistente
+    ? `<h3>🔓 Cofre de Verificação aberto</h3>` + DADOS.narrativa.epilogo.map(p => `<p>${p}</p>`).join("")
+    : `<h3>🔒 Cofre fechado</h3><p>Alguma etapa não foi consistente.</p>`;
 })();
 </script>
 </body>

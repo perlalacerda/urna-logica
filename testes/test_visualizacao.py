@@ -22,7 +22,10 @@ class TestVisualizacao(unittest.TestCase):
         self.assertEqual(re.findall(r'(?:src|href)="https?://', html), [])   # nada externo
         bloco = html.split("const DADOS = ", 1)[1].split(";\n", 1)[0]
         dados = json.loads(bloco)
-        self.assertEqual(set(dados), {"busca", "avl", "triagem", "ordenacao", "metricas"})
+        self.assertEqual(set(dados), {"busca", "avl", "triagem", "ordenacao", "metricas",
+                                      "narrativa", "auditoria"})
+        self.assertEqual(len(dados["narrativa"]["capitulos"]), 5)       # um capítulo por selo
+        self.assertTrue(dados["auditoria"]["consistente"])              # Fase 5 executada de verdade
 
     def test_dados_vem_da_execucao_real(self):
         avl = dados_avl()

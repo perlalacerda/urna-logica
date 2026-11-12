@@ -24,6 +24,8 @@ from jogo.fase2 import Fase2, ProblemaTriagem
 from jogo.fase3 import ProblemaMapa, construir_mapa, LOCAIS, PISTAS, PORTAS, ARESTAS
 from jogo.fase4 import Fase4, OPCOES_ROTACAO
 from jogo.cenarios import cenarios_de_comparacao
+from jogo.fase5 import Fase5
+from jogo import narrativa
 
 # posições dos locais no desenho (escolhidas à mão para não haver cruzamentos)
 POSICOES = {"A": (90, 235), "B": (230, 130), "C": (230, 340), "E": (230, 450),
@@ -164,10 +166,33 @@ def dados_metricas():
     return linhas
 
 
+# ------------------------------------------------------------ narrativa e auditoria
+def dados_narrativa():
+    return {"titulo": narrativa.TITULO, "prologo": narrativa.PROLOGO, "aviso": narrativa.AVISO,
+            "capitulos": narrativa.CAPITULOS, "epilogo": narrativa.EPILOGO}
+
+
+def dados_auditoria():
+    """Executa a Fase 5 de verdade (solver resolve as etapas) e devolve o relatório."""
+    f = Fase5()
+    f.etapa_lote(algoritmo="merge")
+    f.etapa_triagem()
+    f.etapa_mapa()
+    f.comparar_estrategias()
+    etapas = []
+    for chave, nome in (("lote", "Etapa 1 — Lote de registros"), ("triagem", "Etapa 2 — Central de Triagem"),
+                        ("mapa", "Etapa 3 — Mapa das Seções")):
+        e = f.etapas[chave]
+        etapas.append({"nome": nome, "ok": e["ok"], "detalhe": e["detalhe"],
+                       "origem": e.get("origem", ""), "checagens": [[d, ok] for d, ok in e["checagens"]]})
+    return {"etapas": etapas, "consistente": f.consistente()}
+
+
 # ------------------------------------------------------------ página
 def gerar_html(caminho="visualizacao.html"):
     dados = {"busca": dados_busca(), "avl": dados_avl(), "triagem": dados_triagem(),
-             "ordenacao": dados_ordenacao(), "metricas": dados_metricas()}
+             "ordenacao": dados_ordenacao(), "metricas": dados_metricas(),
+             "narrativa": dados_narrativa(), "auditoria": dados_auditoria()}
     modelo_path = os.path.join(os.path.dirname(__file__), "visualizacao_modelo.html")
     with open(modelo_path, encoding="utf-8") as arq:
         modelo = arq.read()

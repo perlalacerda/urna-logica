@@ -22,9 +22,12 @@ Material de apoio: `docs/guia-codigo-conceitos.md` (cartões por conceito e perg
 
 ---
 
-## Bloco 1 ★ — Abertura e arquitetura (2 min)
+## Bloco 1 ★ — Abertura: a história e a arquitetura (2 min)
 
-**Mostrar:** o menu inicial do jogo.
+**Mostrar:** a visualização na aba **"A missão"** (prólogo e os 5 selos). Ler em voz alta o primeiro e o último parágrafo do prólogo.
+> "Ano 2042: uma falha embaralhou a auditoria de Verídia. Sou Analista de Integridade de Dados da CIV, uma comissão apartidária. A pergunta é: dá para reconstruir a trilha da apuração respeitando todas as regras? Cada selo exige um conceito da disciplina."
+
+Depois, ir para o terminal com o **menu inicial do jogo** (o mesmo prólogo aparece ao abrir o jogo).
 
 **Fala sugerida:**
 > "O jogo é uma investigação fictícia em Verídia: cinco fases, cada uma com um selo. A ideia central do projeto é que **cada fase é um problema de busca**: um estado inicial, ações válidas e um objetivo. O jogador escolhe as ações; o solver explora sozinho. E os dois usam **as mesmas funções de regra** — por isso o solver não tem resposta pronta."
@@ -124,6 +127,8 @@ Inserir **todos os 9 lacres** (previsões erradas não impedem o selo; só a Sal
 
 **Ações:** Fase 5 → escolher Merge Sort.
 > "A Fase 5 não aceita nada porque sim: refaz as minhas jogadas das Fases 2 e 3 com as regras e confere. Depois compara BFS e DFS em dois cenários — o segundo é um mapa de 30 locais gerado por seed — e ordena a tabela com Merge Sort, como pede o item 9.3."
+
+Fechar a história na visualização, aba **"5 · Auditoria Final"**, quadro **Cofre de Verificação aberto** (epílogo).
 
 Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 × 35 ações no cenário 2) e a mensagem do **Cofre de Verificação aberto**.
 

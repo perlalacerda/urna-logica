@@ -223,7 +223,9 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 - **Teoria × experimento:** as contagens confirmam a teoria das aulas (Bubble n(n−1)/2; Quick no pior caso n(n−1)/2; AVL com altura ≈ log₂ n). Os tempos dependem da máquina; as contagens, não.
 - **Um erro real encontrado por teste de integração:** a Fase 5 lia o histórico da Fase 2 num formato errado. Uma partida simulada do início ao fim revelou o erro; ele foi corrigido e virou o teste `test_integracao_com_o_historico_real_das_fases_2_e_3`.
 
-### 20. Modularização e interface
+### 20. Narrativa, modularização e interface
+
+- **Narrativa:** `jogo/narrativa.py` é a fonte única da história (prólogo, capítulos, epílogo), usada pelo terminal e pela visualização. Cada fase tem a mensagem de abertura do enunciado e um selo; os 5 selos abrem o Cofre de Verificação.
 
 - **Separação (seção 12):** `estruturas/` não sabe nada do jogo; `algoritmos/` não sabe nada da tela; `jogo/` tem as regras; `interface/` só mostra e lê opções. Por isso as mesmas regras servem ao jogador, ao solver, aos testes e à visualização.
 - **Feedback:** toda jogada recusada explica o motivo e não altera nada (seção 6.4).
@@ -247,7 +249,8 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 
 - **O que é:** uma página HTML única, que abre no navegador **sem internet** e sem bibliotecas externas.
 - **Como funciona:** o Python executa os algoritmos de verdade e grava cada passo (fila ou pilha da busca, AVL antes e depois, estruturas da Fase 2, cada escrita no vetor durante a ordenação). Esses dados vão embutidos na página; um JavaScript simples desenha passo a passo. Nada é inventado: tudo vem do código Python.
-- **Abas:** Mapa e busca · Árvore de busca · AVL · Triagem (Fase 2) · Ordenação · Métricas.
+- **Organizada como a história:** a aba "A missão" traz o prólogo de Verídia e a jornada dos 5 selos; cada aba seguinte é um capítulo (fase) com a mensagem de abertura do EP; a Auditoria Final termina com o relatório de consistência e o Cofre de Verificação aberto. Os textos vêm de `jogo/narrativa.py`, o mesmo módulo usado pelo jogo no terminal.
+- **Abas:** A missão · 1 Arquivo Embaralhado (ordenação) · 2 Central de Triagem · 3 Mapa das Seções (BFS/DFS) · 3 Árvore de busca · 4 Cofre dos Estados (AVL) · 5 Auditoria Final.
 - **Prova:** `testes/test_visualizacao.py` confere que a página não tem referência externa e que os dados batem com a execução real (rotações da AVL, caminho da BFS).
 
 ### B2. Gerador de mapas com verificador
