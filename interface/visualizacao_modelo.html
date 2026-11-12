@@ -3,429 +3,634 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Urna Lógica — Visualização</title>
+<title>Audiência Pública da CIV — Verídia 2042</title>
 <style>
+  /* Paleta retrofuturista de repartição dos anos 1960 (criação própria) */
   :root {
-    --fundo: #0f1419; --painel: #172029; --painel2: #1e2a35; --borda: #2c3b49;
-    --texto: #e6edf3; --suave: #93a4b5; --destaque: #4fb3ff; --ok: #3fcf8e;
-    --alerta: #f5b041; --erro: #ff6b6b; --caminho: #c084fc;
+    --parede: #3a2516; --parede2: #4a301c; --papel: #f4e7c9; --papel2: #eadbb6; --tinta: #2b1d12;
+    --tinta2: #6b5236; --laranja: #d9682b; --laranja2: #b8521c; --petroleo: #1f5f5b; --petroleo2: #2d7a74;
+    --ambar: #ffb347; --crt: #15110c; --verde: #2e7d4f; --vermelho: #b5321e;
+    --titulo: "Futura", "Century Gothic", "Avenir Next", "Trebuchet MS", sans-serif;
+    --maquina: "Courier New", "Courier", monospace;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--fundo); color: var(--texto);
-         font: 15px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif; }
-  header { padding: 18px 24px 8px; }
-  h1 { font-size: 20px; margin: 0; }
-  header p { color: var(--suave); margin: 4px 0 0; font-size: 13px; }
-  nav { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 24px; border-bottom: 1px solid var(--borda); }
-  nav button { background: var(--painel); color: var(--suave); border: 1px solid var(--borda);
-               padding: 7px 14px; border-radius: 8px; cursor: pointer; font: inherit; }
-  nav button.ativo { background: var(--destaque); color: #06121c; border-color: var(--destaque); font-weight: 600; }
-  main { padding: 18px 24px 40px; max-width: 1200px; }
-  section { display: none; } section.ativo { display: block; }
-  .conceito { background: var(--painel); border-left: 4px solid var(--destaque); padding: 10px 14px;
-              border-radius: 6px; margin-bottom: 14px; color: var(--suave); }
-  .conceito b { color: var(--texto); }
-  .controles { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
-  .controles button, .controles select { background: var(--painel2); color: var(--texto);
-      border: 1px solid var(--borda); padding: 6px 12px; border-radius: 6px; font: inherit; cursor: pointer; }
-  .controles .passo { color: var(--suave); margin-left: 6px; }
-  .grade { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 16px; }
-  @media (max-width: 860px) { .grade { grid-template-columns: 1fr; } }
-  .caixa { background: var(--painel); border: 1px solid var(--borda); border-radius: 8px; padding: 12px; overflow-x: auto; }
-  .caixa h3 { margin: 0 0 8px; font-size: 14px; color: var(--suave); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
-  .fila { display: flex; flex-wrap: wrap; gap: 6px; min-height: 34px; align-items: center; }
-  .item { background: var(--painel2); border: 1px solid var(--borda); padding: 4px 9px; border-radius: 5px;
-          font-family: Consolas, monospace; font-size: 13px; }
-  .item.primeiro { border-color: var(--destaque); color: var(--destaque); }
-  .seta { color: var(--suave); }
-  .msg { padding: 8px 12px; border-radius: 6px; background: var(--painel2); margin-top: 10px; }
-  table { border-collapse: collapse; width: 100%; font-size: 13px; }
-  th, td { border-bottom: 1px solid var(--borda); padding: 6px 8px; text-align: right; }
-  th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
-  th { color: var(--suave); font-weight: 600; }
-  svg text { fill: var(--texto); font-family: "Segoe UI", system-ui, sans-serif; }
-  .legenda { color: var(--suave); font-size: 13px; margin-top: 6px; }
-  .tag { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 12px; margin-right: 6px; }
-  code { font-family: Consolas, monospace; background: var(--painel2); padding: 1px 5px; border-radius: 4px; }
-  .capitulo { background: linear-gradient(135deg, #1b2a3a, #172029); border: 1px solid var(--borda);
-              border-radius: 10px; padding: 14px 18px; margin-bottom: 14px; }
-  .capitulo .selo { color: var(--alerta); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
-  .capitulo h2 { margin: 2px 0 8px; font-size: 19px; }
-  .capitulo blockquote { margin: 0 0 8px; padding: 6px 12px; border-left: 3px solid var(--alerta);
-              color: var(--texto); font-style: italic; white-space: pre-line; }
-  .capitulo .missao { color: var(--suave); }
-  .prologo p { max-width: 820px; font-size: 16px; }
-  .jornada { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
-  .etapa { background: var(--painel); border: 1px solid var(--borda); border-radius: 10px; padding: 12px; }
-  .etapa .num { font-size: 26px; color: var(--alerta); font-weight: 700; }
-  .etapa h4 { margin: 2px 0 6px; font-size: 15px; }
-  .etapa p { margin: 0 0 6px; color: var(--suave); font-size: 13px; }
-  .etapa button { background: var(--destaque); color: #06121c; border: 0; border-radius: 6px; padding: 5px 10px;
-                  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
-  .aviso { color: var(--suave); font-size: 13px; border: 1px dashed var(--borda); padding: 8px 12px; border-radius: 6px; margin-top: 14px; }
-  .cofre { border: 2px solid var(--alerta); background: #2a2414; border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
-  .cofre h3 { margin: 0 0 8px; color: var(--alerta); }
-  .check { margin: 2px 0; }
-  .check .ok { color: var(--ok); font-weight: 700; }
-  .check .falha { color: var(--erro); font-weight: 700; }
+  html, body { margin: 0; }
+  body { background: var(--parede); color: var(--tinta); font: 17px/1.55 Georgia, "Times New Roman", serif;
+         background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 40px, transparent 40px 80px); }
+  /* barra superior tipo painel */
+  .painel { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 14px;
+            background: linear-gradient(#2a1a0f, #1d120a); border-bottom: 4px solid var(--laranja);
+            padding: 8px 18px; color: var(--papel); }
+  .painel .marca { font-family: var(--titulo); letter-spacing: .14em; font-size: 13px; text-transform: uppercase; }
+  .painel .luzes { display: flex; gap: 6px; margin-left: auto; }
+  .painel .luz { width: 12px; height: 12px; border-radius: 50%; background: #4a3a2a; box-shadow: inset 0 0 3px #000; }
+  .painel .luz.acesa { background: var(--ambar); box-shadow: 0 0 8px var(--ambar); }
+  .painel button { font-family: var(--titulo); text-transform: uppercase; letter-spacing: .08em; font-size: 12px;
+                   background: var(--petroleo); color: var(--papel); border: 2px solid #0e3533; border-radius: 4px;
+                   padding: 5px 10px; cursor: pointer; }
+  .progresso { height: 4px; background: #1d120a; } .progresso div { height: 100%; background: var(--ambar); width: 0; transition: width .3s; }
+  main { max-width: 1120px; margin: 0 auto; padding: 22px 18px 90px; }
+  /* cada slide é uma ficha de papel */
+  .slide { background: var(--papel); border-radius: 6px; padding: 30px 36px 34px; margin: 0 0 26px;
+           box-shadow: 0 10px 0 var(--parede2), 0 14px 30px rgba(0,0,0,.45); position: relative; min-height: 560px; }
+  .slide::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 10px; border-radius: 6px 6px 0 0;
+                   background: repeating-linear-gradient(90deg, var(--laranja) 0 30px, var(--petroleo) 30px 60px); }
+  body.modo-slides .slide { display: none; } body.modo-slides .slide.atual { display: block; }
+  .rotulo { font-family: var(--titulo); text-transform: uppercase; letter-spacing: .16em; font-size: 12px; color: var(--laranja2); }
+  h1, h2, h3 { font-family: var(--titulo); text-transform: uppercase; letter-spacing: .05em; margin: 4px 0 12px; color: var(--tinta); }
+  h1 { font-size: 34px; } h2 { font-size: 26px; } h3 { font-size: 17px; letter-spacing: .08em; }
+  p { margin: 0 0 12px; }
+  .dois { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; }
+  .tres { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 820px) { .dois, .tres { grid-template-columns: 1fr; } .slide { padding: 24px 18px; } }
+  /* documento datilografado */
+  .doc { font-family: var(--maquina); background: #fbf3df; border: 1px solid #cdb98f; padding: 12px 16px; font-size: 15px;
+         white-space: pre-line; box-shadow: 2px 2px 0 #d9c69d; }
+  /* monitor de tubo (CRT) */
+  .crt { background: var(--crt); color: var(--ambar); font-family: var(--maquina); border-radius: 14px; padding: 14px 16px;
+         border: 10px solid #5b4632; box-shadow: inset 0 0 30px rgba(255,179,71,.18), 0 0 0 2px #2a1d12;
+         background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px); position: relative; overflow-x: auto; }
+  .crt .tit { font-family: var(--titulo); letter-spacing: .12em; font-size: 12px; text-transform: uppercase; color: #d79b4b; margin-bottom: 6px; }
+  .crt svg text { fill: var(--ambar); font-family: var(--maquina); }
+  /* fala da auditora e do APURA-42 */
+  .fala { display: flex; gap: 14px; align-items: flex-start; margin: 10px 0 16px; }
+  .fala .quem { flex: 0 0 auto; }
+  .balao { background: #fff8e8; border: 2px solid var(--tinta); border-radius: 14px; padding: 10px 14px; position: relative; max-width: 760px; }
+  .balao::before { content: ""; position: absolute; left: -11px; top: 18px; border: 10px solid transparent; border-right-color: var(--tinta); border-left: 0; }
+  .balao b.nome { font-family: var(--titulo); text-transform: uppercase; letter-spacing: .08em; font-size: 12px; color: var(--laranja2); display: block; }
+  /* botões */
+  .btn { font-family: var(--titulo); text-transform: uppercase; letter-spacing: .06em; font-size: 13px; cursor: pointer;
+         background: var(--laranja); color: #fff6e4; border: 2px solid var(--laranja2); border-bottom-width: 5px;
+         border-radius: 6px; padding: 7px 12px; margin: 3px 4px 3px 0; }
+  .btn:active { transform: translateY(2px); border-bottom-width: 3px; }
+  .btn.sec { background: var(--petroleo); border-color: #0e3533; }
+  .btn.neutro { background: var(--papel2); color: var(--tinta); border-color: var(--tinta2); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .controles { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; margin: 8px 0; }
+  .controles .passo { font-family: var(--maquina); font-size: 14px; color: var(--tinta2); margin-left: 8px; }
+  select { font: inherit; font-family: var(--titulo); font-size: 13px; padding: 6px; border: 2px solid var(--tinta2); background: #fff8e8; border-radius: 6px; }
+  /* carimbo */
+  .carimbo { display: inline-block; font-family: var(--titulo); text-transform: uppercase; letter-spacing: .12em; font-weight: 700;
+             color: var(--vermelho); border: 4px double var(--vermelho); padding: 6px 14px; transform: rotate(-6deg); border-radius: 6px;
+             background: rgba(181,50,30,.05); font-size: 20px; }
+  .carimbo.verde { color: var(--verde); border-color: var(--verde); }
+  /* fichas, filas, pilhas */
+  .ficha { display: inline-block; font-family: var(--maquina); background: #fff8e8; border: 2px solid var(--tinta2); border-radius: 5px;
+           padding: 4px 9px; margin: 3px; font-size: 15px; }
+  .ficha.destaque { background: var(--ambar); border-color: var(--laranja2); }
+  .linha { display: flex; flex-wrap: wrap; align-items: center; min-height: 44px; }
+  .seta { color: var(--tinta2); margin: 0 2px; }
+  .pilha { display: flex; flex-direction: column; align-items: flex-start; min-height: 44px; }
+  .caixa { background: #fbf3df; border: 2px dashed #cdb98f; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+  .caixa h3 { font-size: 13px; margin: 0 0 6px; color: var(--tinta2); }
+  table.reg { border-collapse: collapse; font-family: var(--maquina); font-size: 14px; width: 100%; }
+  table.reg th { font-family: var(--titulo); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; text-align: left; color: var(--tinta2); border-bottom: 2px solid var(--tinta2); padding: 4px 6px; }
+  table.reg td { border-bottom: 1px dotted #cdb98f; padding: 3px 6px; }
+  table.reg tr.hl td { background: var(--ambar); color: #15110c !important; font-weight: 700; }
+  table.reg tr.erro td { background: #f2b8a8; }
+  /* ficha técnica (para a professora) */
+  details.tecnica { margin-top: 18px; border: 2px solid var(--petroleo); border-radius: 8px; background: #e6efe9; }
+  details.tecnica summary { cursor: pointer; padding: 8px 14px; font-family: var(--titulo); text-transform: uppercase; letter-spacing: .08em; font-size: 13px; color: var(--petroleo); }
+  details.tecnica div { padding: 0 16px 12px; font-size: 15px; }
+  details.tecnica code { font-family: var(--maquina); background: #fff; padding: 0 4px; border-radius: 3px; }
+  .analogia { background: #fff3d6; border-left: 6px solid var(--laranja); padding: 10px 14px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+  .analogia b { font-family: var(--titulo); text-transform: uppercase; letter-spacing: .06em; font-size: 13px; color: var(--laranja2); }
+  .msg { font-family: var(--maquina); background: #fff8e8; border: 2px solid var(--tinta2); border-radius: 6px; padding: 8px 12px; margin-top: 10px; min-height: 42px; white-space: pre-line; }
+  .msg.ok { border-color: var(--verde); background: #e5f2e6; } .msg.nao { border-color: var(--vermelho); background: #f8e1da; }
+  .selos { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; margin-top: 14px; }
+  .selo { text-align: center; background: #fbf3df; border: 2px solid var(--tinta2); border-radius: 10px; padding: 10px 6px; font-size: 14px; }
+  .selo .disco { width: 54px; height: 54px; border-radius: 50%; margin: 0 auto 6px; background: radial-gradient(circle at 35% 35%, #e98a4a, var(--laranja2));
+                 border: 3px solid #7a3510; color: #fff6e4; font-family: var(--titulo); font-size: 22px; line-height: 48px; }
+  .legenda { font-size: 14px; color: var(--tinta2); }
+  .nav-rodape { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 8px; align-items: center;
+                background: #1d120a; border: 3px solid var(--laranja); border-radius: 30px; padding: 6px 12px; color: var(--papel); font-family: var(--maquina); }
+  body:not(.modo-slides) .nav-rodape { display: none; }
+  .nav-rodape button { background: var(--laranja); color: #fff6e4; border: 0; border-radius: 20px; padding: 6px 14px; font-family: var(--titulo); cursor: pointer; }
 </style>
 </head>
-<body>
-<header>
-  <h1>Urna Lógica — o Enigma da Eleição de Verídia</h1>
-  <p>A investigação contada capítulo a capítulo. Cada animação vem da execução real dos algoritmos do jogo. Funciona sem internet. Dados inteiramente fictícios.</p>
-</header>
-<nav id="abas"></nav>
-<main>
+<body class="modo-slides">
+<div class="painel">
+  <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true">
+    <circle cx="32" cy="32" r="29" fill="#d9682b" stroke="#f4e7c9" stroke-width="3"/>
+    <rect x="18" y="26" width="28" height="22" rx="3" fill="#f4e7c9"/><rect x="25" y="23" width="14" height="4" fill="#2b1d12"/>
+    <path d="M23 37 l6 6 l12 -13" stroke="#1f5f5b" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </svg>
+  <span class="marca">Comissão Independente de Verificação · Verídia · 2042</span>
+  <span class="luzes" id="luzes"></span>
+  <button id="modo">Modo leitura</button>
+</div>
+<div class="progresso"><div id="barra"></div></div>
+<main id="slides"></main>
+<div class="nav-rodape"><button id="ant">◀</button><span id="contador"></span><button id="prox">▶</button></div>
 
-<section id="aba-missao">
-  <div class="prologo" id="prologo"></div>
-  <h3 style="margin-top:18px">A jornada: cinco selos até o Cofre de Verificação</h3>
-  <div class="jornada" id="jornada"></div>
-  <div class="aviso" id="aviso"></div>
-</section>
-
-<section id="aba-busca">
-  <div class="capitulo" data-cap="3"></div>
-  <div class="conceito"><b>Grafo + BFS/DFS (aula 09).</b> Cada local é um vértice; cada corredor, uma aresta.
-    A BFS usa uma <b>FILA</b> e explora por camadas; a DFS usa uma <b>PILHA</b> (ou a pilha de chamadas da recursão)
-    e mergulha num caminho antes de voltar. O "estado" inclui posição, pistas e energia: por isso o mesmo local
-    pode ser visitado mais de uma vez.</div>
-  <div class="controles">
-    <select id="busca-estrategia"></select>
-    <button data-c="inicio">⏮</button><button data-c="voltar">◀ passo</button>
-    <button data-c="tocar">▶ tocar</button><button data-c="avancar">passo ▶</button><button data-c="fim">⏭</button>
-    <span class="passo" id="busca-passo"></span>
-  </div>
-  <div class="grade">
-    <div class="caixa"><h3>Mapa de Verídia</h3><svg id="mapa" viewBox="0 0 760 500" width="100%"></svg>
-      <div class="legenda"><span class="tag" style="background:#4fb3ff;color:#06121c">atual</span>
-        <span class="tag" style="background:#2c6b4f">já expandido</span>
-        <span class="tag" style="background:#c084fc;color:#06121c">caminho final</span>
-        🔑 pista · 🔒 porta (exige pista)</div></div>
-    <div>
-      <div class="caixa"><h3>Estado expandido agora</h3><div id="busca-atual" class="item primeiro" style="display:inline-block"></div></div>
-      <div class="caixa" style="margin-top:12px"><h3 id="busca-tipo"></h3><div id="busca-fronteira" class="fila"></div>
-        <div class="legenda" id="busca-dica"></div></div>
-      <div class="caixa" style="margin-top:12px"><h3>Resultado</h3><div id="busca-resumo"></div></div>
-    </div>
-  </div>
-</section>
-
-<section id="aba-arvore">
-  <div class="capitulo" data-cap="3"></div>
-  <div class="conceito"><b>Árvore de busca (item 9.2 do EP).</b> Cada nó é um <b>estado</b>; cada aresta, a ação que levou
-    a ele. Em roxo, o caminho até a solução. Compare a forma da árvore: a BFS fica larga e rasa; a DFS, estreita e funda.</div>
-  <div class="controles"><select id="arvore-estrategia"></select></div>
-  <div class="caixa"><svg id="arvore"></svg>
-    <div class="legenda">Rótulo: posição {pistas} p:portas liberadas e:energia. Exemplo: <code>D {AUT,SEQ} p:H e4</code>.</div></div>
-</section>
-
-<section id="aba-avl">
-  <div class="capitulo" data-cap="4"></div>
-  <div class="conceito"><b>Árvore AVL (aula 08).</b> FB = altura da esquerda − altura da direita; precisa ficar entre −1 e +1.
-    Quando um nó chega a ±2, uma rotação (RD, RE, RED ou RDE) reequilibra a árvore. Sequência do exemplo da aula.</div>
-  <div class="controles">
-    <button data-c="inicio">⏮</button><button data-c="voltar">◀ passo</button>
-    <button data-c="tocar">▶ tocar</button><button data-c="avancar">passo ▶</button><button data-c="fim">⏭</button>
-    <span class="passo" id="avl-passo"></span>
-  </div>
-  <div class="msg" id="avl-msg"></div>
-  <div class="grade" style="margin-top:12px">
-    <div class="caixa"><h3>Antes da inserção</h3><svg id="avl-antes"></svg></div>
-    <div class="caixa"><h3>Depois (já reequilibrada)</h3><svg id="avl-depois"></svg></div>
-  </div>
-</section>
-
-<section id="aba-triagem">
-  <div class="capitulo" data-cap="2"></div>
-  <div class="conceito"><b>Fila, pilha e lista ligada (aula 06).</b> A fila só libera a primeira evidência (FIFO);
-    a pilha só libera o topo (LIFO); a lista de custódia cresce pelo fim. Solução encontrada pela BFS do solver.</div>
-  <div class="controles">
-    <button data-c="inicio">⏮</button><button data-c="voltar">◀ passo</button>
-    <button data-c="tocar">▶ tocar</button><button data-c="avancar">passo ▶</button><button data-c="fim">⏭</button>
-    <span class="passo" id="triagem-passo"></span>
-  </div>
-  <div class="caixa"><h3>Fila de entrada (início → final)</h3><div id="t-fila" class="fila"></div></div>
-  <div class="grade" style="margin-top:12px">
-    <div class="caixa"><h3>Pilha de espera (topo em cima)</h3><div id="t-pilha"></div></div>
-    <div class="caixa"><h3>Arquivo</h3><div id="t-arquivo" class="fila"></div></div>
-  </div>
-  <div class="caixa" style="margin-top:12px"><h3>Lista de custódia (cabeça → ...)</h3><div id="t-custodia" class="fila"></div>
-    <div class="legenda" id="t-alvo"></div></div>
-  <div class="msg" id="t-msg"></div>
-</section>
-
-<section id="aba-ordenacao">
-  <div class="capitulo" data-cap="1"></div>
-  <div class="conceito"><b>Ordenação (aulas 02 e 04).</b> Cada barra é um valor; em destaque, a posição que acabou de ser
-    escrita. Bubble faz n(n−1)/2 comparações sempre; Merge e Quick, da ordem de n log n no caso médio.</div>
-  <div class="controles">
-    <select id="ord-alg"></select>
-    <button data-c="inicio">⏮</button><button data-c="voltar">◀ passo</button>
-    <button data-c="tocar">▶ tocar</button><button data-c="avancar">passo ▶</button><button data-c="fim">⏭</button>
-    <span class="passo" id="ord-passo"></span>
-  </div>
-  <div class="caixa"><svg id="barras" viewBox="0 0 700 260" width="100%"></svg></div>
-  <div class="msg" id="ord-msg"></div>
-</section>
-
-<section id="aba-auditoria">
-  <div class="capitulo" data-cap="5"></div>
-  <div class="conceito"><b>Integração (seção 9 do EP).</b> Cada etapa é encontrada ou validada pelo solver, usando as
-    mesmas regras do jogador. Depois, BFS e DFS são comparadas em dois cenários (item 9.1); a tabela é ordenada com
-    Merge Sort (item 9.3).</div>
-  <div class="caixa"><h3>Relatório de consistência</h3><div id="aud-etapas"></div></div>
-  <div class="caixa" style="margin-top:12px"><h3>BFS × DFS em dois cenários</h3><table id="tab-metricas"></table>
-    <div class="legenda">A BFS garante o menor número de ações porque toda ação custa 1; a DFS não tem essa garantia.
-      "Repetidos" são estados barrados pela AVL de visitados.</div></div>
-  <div class="cofre" id="cofre"></div>
-</section>
-
-</main>
 <script>
-const DADOS = /*__DADOS__*/null;
-const NS = "http://www.w3.org/2000/svg";
-const cor = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const D = /*__DADOS__*/null;
 
-function el(tag, attrs = {}, pai = null, texto = null) {
+/* ===================== utilidades ===================== */
+const $ = (s, r = document) => r.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+function svgEl(tag, attrs, pai, texto) {
   const e = document.createElementNS(NS, tag);
   for (const k in attrs) e.setAttribute(k, attrs[k]);
-  if (texto !== null) e.textContent = texto;
+  if (texto !== undefined) e.textContent = texto;
   if (pai) pai.appendChild(e);
   return e;
 }
-function itens(div, lista, classePrimeiro = true) {
-  div.innerHTML = "";
-  if (!lista.length) { div.innerHTML = '<span class="legenda">(vazia)</span>'; return; }
-  lista.forEach((x, i) => {
-    const s = document.createElement("span");
-    s.className = "item" + (i === 0 && classePrimeiro ? " primeiro" : "");
-    s.textContent = x;
-    div.appendChild(s);
-  });
-}
+const fichas = (lista, destaque0 = false) => lista.length
+  ? lista.map((x, i) => `<span class="ficha${destaque0 && i === 0 ? " destaque" : ""}">${x}</span>`).join("")
+  : '<span class="legenda">(vazia)</span>';
 
-/* ---------- controle genérico de passos (voltar, avançar, tocar) ---------- */
-function Passos(secao, total, desenha, intervalo = 900) {
+/* APURA-42: mascote original da CIV (urna retrô com tela de tubo no rosto) */
+function apura(humor = "normal", tam = 92) {
+  const olhos = humor === "feliz"
+    ? '<path d="M27 33 q4 -5 8 0 M45 33 q4 -5 8 0" stroke="#ffb347" stroke-width="3" fill="none"/>'
+    : humor === "pensando"
+    ? '<rect x="27" y="29" width="7" height="7" fill="#ffb347"/><rect x="46" y="31" width="7" height="3" fill="#ffb347"/>'
+    : '<rect x="28" y="29" width="7" height="7" fill="#ffb347"/><rect x="45" y="29" width="7" height="7" fill="#ffb347"/>';
+  const boca = humor === "pensando" ? '<path d="M33 44 h14" stroke="#ffb347" stroke-width="3"/>'
+    : '<path d="M31 42 q9 8 18 0" stroke="#ffb347" stroke-width="3" fill="none"/>';
+  return `<svg width="${tam}" height="${tam * 1.25}" viewBox="0 0 80 100" role="img" aria-label="APURA-42">
+    <line x1="40" y1="8" x2="40" y2="16" stroke="#2b1d12" stroke-width="3"/><circle cx="40" cy="7" r="5" fill="#ffb347" stroke="#2b1d12" stroke-width="2"/>
+    <rect x="12" y="16" width="56" height="62" rx="10" fill="#1f5f5b" stroke="#2b1d12" stroke-width="3"/>
+    <rect x="28" y="19" width="24" height="4" rx="2" fill="#2b1d12"/>
+    <rect x="19" y="24" width="42" height="30" rx="7" fill="#15110c" stroke="#2b1d12" stroke-width="2"/>
+    ${olhos}${boca}
+    <circle cx="26" cy="64" r="4" fill="#d9682b"/><circle cx="40" cy="64" r="4" fill="#f4e7c9"/><circle cx="54" cy="64" r="4" fill="#d9682b"/>
+    <path d="M68 50 l9 -6" stroke="#2b1d12" stroke-width="4" stroke-linecap="round"/><circle cx="78" cy="40" r="7" fill="rgba(255,248,232,.6)" stroke="#2b1d12" stroke-width="3"/>
+    <rect x="22" y="78" width="8" height="12" fill="#2b1d12"/><rect x="50" y="78" width="8" height="12" fill="#2b1d12"/>
+    <rect x="17" y="88" width="16" height="6" rx="3" fill="#d9682b"/><rect x="47" y="88" width="16" height="6" rx="3" fill="#d9682b"/></svg>`;
+}
+function auditora(tam = 78) {   // ícone de crachá da Auditora-chefe (sem rosto de pessoa real)
+  return `<svg width="${tam}" height="${tam * 1.2}" viewBox="0 0 70 84" role="img" aria-label="Auditora-chefe">
+    <rect x="6" y="10" width="58" height="70" rx="8" fill="#f4e7c9" stroke="#2b1d12" stroke-width="3"/>
+    <rect x="26" y="3" width="18" height="12" rx="3" fill="#6b5236"/>
+    <circle cx="35" cy="34" r="12" fill="#d9682b" stroke="#2b1d12" stroke-width="2"/>
+    <path d="M17 64 q18 -20 36 0" fill="#1f5f5b" stroke="#2b1d12" stroke-width="2"/>
+    <rect x="14" y="68" width="42" height="6" fill="#2b1d12"/></svg>`;
+}
+const falaAud = txt => `<div class="fala"><div class="quem">${auditora()}</div><div class="balao"><b class="nome">Auditora-chefe da CIV</b>${txt}</div></div>`;
+const falaApura = (txt, humor = "normal", id = "") => `<div class="fala"><div class="quem" ${id ? `id="${id}-rosto"` : ""}>${apura(humor)}</div><div class="balao"><b class="nome">APURA-42 · computador da CIV</b><span ${id ? `id="${id}"` : ""}>${txt}</span></div></div>`;
+function apuraReage(id, txt, humor) { $("#" + id).innerHTML = txt; $("#" + id + "-rosto").innerHTML = apura(humor); }
+const tecnica = html => `<details class="tecnica"><summary>Ficha técnica (para a banca)</summary><div>${html}</div></details>`;
+const cap = n => D.narrativa.capitulos[n - 1];
+
+/* controle de passos para animações (escopo: um elemento) */
+function Passos(caixa, total, desenha, ms = 800) {
   let i = 0, timer = null;
-  const ir = n => { i = Math.max(0, Math.min(total() - 1, n)); desenha(i); };
-  secao.querySelectorAll(".controles button").forEach(b => b.onclick = () => {
+  caixa.innerHTML = `<button class="btn neutro" data-c="inicio">⏮</button><button class="btn neutro" data-c="voltar">◀</button>
+    <button class="btn" data-c="tocar">▶ tocar</button><button class="btn neutro" data-c="avancar">▶|</button>
+    <button class="btn neutro" data-c="fim">⏭</button><span class="passo"></span>`;
+  const ir = n => { i = Math.max(0, Math.min(total() - 1, n)); caixa.querySelector(".passo").textContent = `passo ${i + 1} de ${total()}`; desenha(i); };
+  caixa.querySelectorAll("button").forEach(b => b.onclick = () => {
     const c = b.dataset.c;
     if (c === "tocar") {
       if (timer) { clearInterval(timer); timer = null; b.textContent = "▶ tocar"; return; }
       b.textContent = "⏸ pausar";
-      timer = setInterval(() => { if (i >= total() - 1) { clearInterval(timer); timer = null; b.textContent = "▶ tocar"; } else ir(i + 1); }, intervalo);
+      timer = setInterval(() => { if (i >= total() - 1) { clearInterval(timer); timer = null; b.textContent = "▶ tocar"; } else ir(i + 1); }, ms);
     } else ir({inicio: 0, voltar: i - 1, avancar: i + 1, fim: total() - 1}[c]);
   });
   return { ir, reiniciar: () => ir(0) };
 }
 
-/* ---------- abas ---------- */
-const ABAS = [["missao", "A missão"], ["ordenacao", "1 · Arquivo Embaralhado"], ["triagem", "2 · Central de Triagem"],
-              ["busca", "3 · Mapa das Seções"], ["arvore", "3 · Árvore de busca"], ["avl", "4 · Cofre dos Estados"],
-              ["auditoria", "5 · Auditoria Final"]];
-const nav = document.getElementById("abas");
-const botoesAba = {};
-function abrirAba(id) { botoesAba[id].click(); window.scrollTo(0, 0); }
-ABAS.forEach(([id, nome], k) => {
-  const b = document.createElement("button");
-  b.textContent = nome;
-  b.onclick = () => {
-    document.querySelectorAll("nav button").forEach(x => x.classList.remove("ativo"));
-    document.querySelectorAll("section").forEach(x => x.classList.remove("ativo"));
-    b.classList.add("ativo");
-    document.getElementById("aba-" + id).classList.add("ativo");
-  };
-  nav.appendChild(b);
-  botoesAba[id] = b;
-  if (k === 0) b.click();
-});
+/* ===================== conteúdo dos slides ===================== */
+const S = [];   // cada item: {html, montar?}
+const L = D.lote, REG = L.registros;
+const linhaReg = (r, cls = "") => `<tr class="${cls}"><td>${r.id}</td><td>${r.zona}</td><td>${r.secao}</td><td>${r.opcao}</td><td>${r.hora}</td><td>${r.status}</td></tr>`;
+const tabelaReg = (ids, marcas = {}) => `<table class="reg"><tr><th>id_registro</th><th>zona</th><th>seção</th><th>opção</th><th>horário</th><th>situação</th></tr>
+  ${ids.map(id => linhaReg(REG[id], marcas[id] || "")).join("")}</table>`;
 
-/* ---------- NARRATIVA: prólogo, jornada e cabeçalho de cada capítulo ---------- */
-(function () {
-  const N = DADOS.narrativa;
-  document.getElementById("prologo").innerHTML = N.prologo.map(p => `<p>${p}</p>`).join("");
-  document.getElementById("aviso").textContent = N.aviso;
-  const destino = {1: "ordenacao", 2: "triagem", 3: "busca", 4: "avl", 5: "auditoria"};
-  document.getElementById("jornada").innerHTML = N.capitulos.map(c => `
-    <div class="etapa"><div class="num">Selo ${c.selo}</div><h4>${c.fase}</h4>
-      <p>${c.missao}</p><p><b>Ferramentas:</b> ${c.ferramentas}</p>
-      <button onclick="abrirAba('${destino[c.selo]}')">Abrir capítulo ${c.selo} →</button></div>`).join("");
-  document.querySelectorAll(".capitulo").forEach(div => {
-    const c = N.capitulos[Number(div.dataset.cap) - 1];
-    div.innerHTML = `<div class="selo">Capítulo ${c.selo} · em jogo: Selo ${c.selo}</div><h2>${c.fase}</h2>
-      <blockquote>${c.abertura}</blockquote><div class="missao"><b>Sua missão:</b> ${c.missao}</div>`;
-  });
-})();
+/* --- CAPA --- */
+S.push({ html: `
+  <div class="rotulo">Audiência pública nº 2042/07 · relatório à população</div>
+  <h1>Urna Lógica: o enigma da eleição de Verídia</h1>
+  <div class="dois">
+    <div>
+      ${falaAud("Boa noite, cidadãs e cidadãos de Verídia. Sou a Auditora-chefe da Comissão Independente de Verificação, a CIV. Hoje vou contar <b>o que encontramos</b> na auditoria da nossa eleição municipal — e, principalmente, <b>como</b> encontramos.")}
+      ${falaApura("E eu sou o APURA-42, o computador da CIV. Eu faço as contas; a Auditora explica. Em vários momentos vou pedir o <b>seu palpite</b> antes de mostrar a resposta!")}
+      <p class="legenda">Use as setas ◀ ▶ do teclado (ou os botões embaixo) para avançar. "Modo leitura" mostra tudo numa página só.</p>
+    </div>
+    <div class="crt"><div class="tit">Aviso oficial</div>
+      Verídia, seus locais, registros, códigos e candidatos são inteiramente fictícios.<br><br>
+      Nenhum nome, partido, número ou resultado de eleição real é usado.<br><br>
+      A CIV é apartidária: o objetivo NÃO é favorecer candidato algum, e sim verificar, com regras claras, se a apuração pode ser reconstruída.<br><br>
+      <span style="color:#d79b4b">Finalidade: acadêmica (Mestrado Profissional em Computação Aplicada — IPT).</span></div>
+  </div>` });
 
-/* ---------- MAPA E BUSCA ---------- */
-(function () {
-  const B = DADOS.busca, svg = document.getElementById("mapa");
-  const sel = document.getElementById("busca-estrategia");
-  Object.keys(B.estrategias).forEach(n => sel.add(new Option(n, n)));
-  const pos = {}; B.mapa.vertices.forEach(v => pos[v.id] = v);
-  function desenhaMapa(q, est) {
-    svg.innerHTML = "";
-    const fim = q === est.quadros.length - 1;
-    const noCaminho = new Set(), arestaCaminho = new Set();
-    if (fim) est.caminho.forEach((v, k) => { noCaminho.add(v); if (k) arestaCaminho.add([est.caminho[k-1], v].sort().join()); });
-    B.mapa.arestas.forEach(([u, v]) => {
-      const c = arestaCaminho.has([u, v].sort().join());
-      el("line", {x1: pos[u].x, y1: pos[u].y, x2: pos[v].x, y2: pos[v].y,
-                  stroke: c ? cor("--caminho") : cor("--borda"), "stroke-width": c ? 5 : 3}, svg);
+/* --- O QUE ACONTECEU --- */
+S.push({ html: `
+  <div class="rotulo">Parte 1 · O que aconteceu</div><h2>Uma falha embaralhou a auditoria</h2>
+  <div class="dois">
+    <div class="doc">${D.narrativa.prologo.slice(0, 2).join("\n\n")}</div>
+    <div>
+      ${falaAud("Repare: <b>ninguém disse que os votos foram alterados</b>. O problema é que a <i>trilha</i> — o caminho que mostra de onde veio cada registro — ficou bagunçada. Sem trilha, ninguém consegue conferir.")}
+      <div class="caixa"><h3>Três estragos</h3>
+        1. Os registros chegaram <b>fora de ordem</b>.<br>2. <b>Conexões</b> entre locais de votação foram interrompidas.<br>3. Parte da <b>trilha de processamento</b> não pode ser consultada.</div>
+      <div class="caixa"><h3>A pergunta da CIV</h3>${D.narrativa.prologo[3]}</div>
+    </div>
+  </div>` });
+
+/* --- COMO TRABALHAMOS --- */
+S.push({ html: `
+  <div class="rotulo">Parte 2 · Como trabalhamos</div><h2>Cinco selos até o Cofre de Verificação</h2>
+  ${falaAud("Dividimos a investigação em <b>cinco desafios</b>. Cada um só termina quando provamos que seguimos uma regra — e então ganhamos um <b>selo</b>. Com os cinco selos, o <b>Cofre de Verificação</b> abre e a trilha está reconstruída.")}
+  <div class="selos">${D.narrativa.capitulos.map(c => `<div class="selo"><div class="disco">${c.selo}</div><b>${c.fase.replace(/Fase \d — /, "")}</b><br><span class="legenda">${c.missao}</span></div>`).join("")}</div>
+  ${falaApura("Um segredo: em todos os desafios eu uso <b>as mesmas regras</b> que um analista humano usaria. Eu não sei a resposta antes — eu <b>procuro</b>. É isso que vamos ver.", "feliz")}
+  ${tecnica(`Arquitetura: cada fase é um <b>problema de busca</b> (estado inicial, ações válidas, objetivo). O modo manual e o solver compartilham as funções de regra (<code>jogo/fase*.py</code>). Esta página é gerada por <code>interface/visualizacao.py</code> a partir da execução real do código Python; ela não tem regras próprias.`)}` });
+
+/* ===================== CAPÍTULO 1 ===================== */
+S.push({ html: `
+  <div class="rotulo">Anexo 1 · ${cap(1).fase} · selo 1</div><h2>O arquivo chegou embaralhado</h2>
+  <div class="dois">
+    <div><div class="doc">${cap(1).abertura}</div>
+      ${falaAud("Cada <b>registro</b> é uma ficha com seis campos: identificador, zona, seção, opção, horário e situação. Recebemos 12 fichas — fora de ordem.")}</div>
+    <div class="crt"><div class="tit">Lote recebido (embaralhado)</div>${tabelaReg(L.embaralhado).replace(/class="reg"/, 'class="reg" style="color:#ffb347"')}</div>
+  </div>
+  <div class="doc"><b>ENIGMA 5.3 —</b> ${L.enigma}</div>` });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 1 · como pensamos</div><h2>Ordenar por mais de um critério</h2>
+  <div class="analogia"><b>Parece com…</b> a lista de chamada da escola: primeiro separamos por <b>turma</b>; dentro da turma, por <b>número</b>. Só olhamos o número quando a turma é igual.</div>
+  ${falaAud("A auditoria pede: primeiro <b>zona</b>; empatou, olha a <b>seção</b>; empatou de novo, olha o <b>horário</b>. Chamamos isso de <b>chave composta</b>. E se tudo empatar? Usamos o identificador, que nunca se repete.")}
+  <div class="caixa"><h3>Sua vez: quem vem primeiro na ordem da auditoria?</h3>
+    <p>Os dois registros abaixo têm o <b>mesmo horário</b>, mas zonas diferentes.</p>
+    ${tabelaReg(L.par.map(r => r.id))}
+    <div><button class="btn" id="q1a">${L.par[0].id}</button><button class="btn" id="q1b">${L.par[1].id}</button></div>
+  </div>
+  ${falaApura("Pense: qual campo a auditoria olha primeiro?", "pensando", "q1fala")}`,
+  montar() {
+    const responde = id => {
+      const certo = id === L.par_primeiro;
+      const p = REG[L.par_primeiro];
+      apuraReage("q1fala", certo ? `Conferido! ${p.id} vem antes porque está na <b>zona ${p.zona}</b>, que vem antes. O horário só desempataria se a zona fosse igual.`
+        : `Hmm, olhe de novo: o horário é igual, então ele não decide. Quem decide é a <b>zona</b> — e a zona ${p.zona} vem antes.`, certo ? "feliz" : "pensando");
+    };
+    $("#q1a").onclick = () => responde(L.par[0].id); $("#q1b").onclick = () => responde(L.par[1].id);
+  } });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 1 · sua vez</div><h2>E se ordenarmos só pelo horário?</h2>
+  ${falaAud("Um cidadão sugeriu: \"Por que não ordenar só pelo horário? É mais simples!\"")}
+  <div class="caixa"><h3>Você aceitaria o lote assim?</h3>
+    <button class="btn" id="q2s">Sim, aceito</button><button class="btn sec" id="q2n">Não, vai dar errado</button></div>
+  <div class="msg" id="q2r">Faça seu palpite.</div>`,
+  montar() {
+    const r = certo => { const m = $("#q2r"); m.className = "msg " + (certo ? "ok" : "nao");
+      m.textContent = (certo ? "Isso mesmo! " : "Não seria aceito. ") + "Resposta do sistema de auditoria:\n\n" + L.recusa; };
+    $("#q2s").onclick = () => r(false); $("#q2n").onclick = () => r(true);
+  } });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 1 · o que a máquina fez</div><h2>Três jeitos de ordenar as fichas</h2>
+  <div class="tres">
+    <div class="analogia"><b>Bubble Sort</b><br>Compara vizinhos e troca os que estão fora de ordem. Os "pesados" afundam para o fim, como bolhas ao contrário.</div>
+    <div class="analogia"><b>Merge Sort</b><br>Divide o monte ao meio até sobrar 1 ficha; depois junta dois montinhos já ordenados, como intercalar dois baralhos.</div>
+    <div class="analogia"><b>Quick Sort</b><br>Escolhe um "juiz" (o pivô): menores para um lado, maiores para o outro. Depois repete em cada lado.</div>
+  </div>
+  <div class="controles"><select id="o-alg"></select><span id="o-ctl" class="controles"></span></div>
+  <div class="crt"><div class="tit" id="o-tit"></div><div id="o-tab"></div></div>`,
+  montar() {
+    const sel = $("#o-alg"); Object.keys(L.algoritmos).forEach(n => sel.add(new Option(n, n)));
+    const alg = () => L.algoritmos[sel.value];
+    const p = Passos($("#o-ctl"), () => alg().quadros.length, q => {
+      const a = alg(), f = a.quadros[q], marcas = {}; f.i.forEach(i => marcas[f.ids[i]] = "hl");
+      $("#o-tab").innerHTML = tabelaReg(f.ids, marcas).replace(/class="reg"/, 'class="reg" style="color:#ffb347"');
+      $("#o-tit").textContent = `${sel.value} — em destaque: as fichas que acabaram de trocar de lugar. Total: ${a.comparacoes} comparações.`;
+    }, 300);
+    sel.onchange = () => p.reiniciar(); p.reiniciar();
+  } });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 1 · a prova</div><h2>Lote aceito — e qual método é mais rápido</h2>
+  <div class="dois">
+    <div>
+      <p><span class="carimbo verde">Conferido</span></p>
+      <div class="caixa">✔ Ordem: zona → seção → horário<br>✔ Nenhum registro perdido ou criado<br>✔ Nenhum identificador repetido</div>
+      ${falaAud("Os três métodos chegaram à <b>mesma</b> ordem. Mas o trabalho foi muito diferente — veja a tabela.")}
+    </div>
+    <div class="crt"><div class="tit">Comparações feitas por método</div>
+      <table class="reg" style="color:#ffb347"><tr><th>fichas</th><th>Bubble</th><th>Merge</th><th>Quick</th></tr>
+      ${[12, 100, 500].map(n => { const v = a => (L.comparacao.find(c => c.n === n && c.alg.startsWith(a)) || {}).comp;
+        return `<tr><td>${n}</td><td>${v("Bubble")}</td><td>${v("Merge")}</td><td>${v("Quick")}</td></tr>`; }).join("")}</table></div>
+  </div>
+  ${falaApura("Com 500 fichas, o Bubble faz 124.750 comparações; o Merge, menos de 5 mil. Quando o lote dobra, o trabalho do Bubble <b>quadruplica</b>!", "feliz")}
+  ${tecnica(`Implementação literal das aulas 02 e 04 em <code>algoritmos/ordenacao.py</code>. Chave composta: <code>(zona, secao, timestamp, id_registro)</code>. Bubble: n(n−1)/2 comparações, Θ(n²). Merge: Θ(n log n). Quick: Θ(n log n) médio, Θ(n²) no pior caso (entrada ordenada: 499.500 comparações com n=1.000). O id desempata porque o Merge da aula e o Quick não são estáveis (<code>test_estabilidade</code>). O slide 31 (<code>quickSort(p,q)</code>) entra em laço infinito com pivô máximo; usamos <code>p..q−1</code> (<code>test_quick_versao_literal_do_slide_nao_termina</code>). Seed fixa 2042 + Fisher–Yates próprio.`)}` });
+
+/* ===================== CAPÍTULO 2 ===================== */
+const T = D.triagem_jogavel;
+S.push({ html: `
+  <div class="rotulo">Anexo 2 · ${cap(2).fase} · selo 2</div><h2>A cadeia de custódia</h2>
+  <div class="dois">
+    <div><div class="doc">${cap(2).abertura}</div>
+      ${falaAud("Seis evidências chegaram, nesta ordem: <b>E1, E2, E3, E4, E5, E6</b>. A regra exige montar a custódia na sequência <b>E2 → E4 → E1 → E6</b>. E3 e E5 não fazem parte dela.")}</div>
+    <div>
+      <div class="analogia"><b>Fila</b> = fila da cantina: só o primeiro é atendido.</div>
+      <div class="analogia"><b>Pilha</b> = pilha de pratos: só se pega o de cima. (O "desfazer" do celular funciona assim!)</div>
+      <div class="analogia"><b>Lista ligada</b> = caça ao tesouro: cada pista aponta para a próxima.</div>
+    </div>
+  </div>
+  <div class="caixa"><h3>As regras da Central de Triagem</h3>
+    <b>Aceitar:</b> a 1ª da fila entra na custódia, se for a próxima esperada. ·
+    <b>Guardar:</b> a 1ª da fila vai para o topo da pilha, se fizer parte da custódia e precisar sair antes de quem está no topo. ·
+    <b>Arquivar:</b> a 1ª da fila vai para o arquivo, se NÃO fizer parte da custódia. ·
+    <b>Liberar:</b> o topo da pilha entra na custódia, se for a próxima esperada. ·
+    <b>Desfazer:</b> volta à situação anterior.</div>` });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 2 · sua vez</div><h2>Monte a custódia você mesmo</h2>
+  <div class="dois">
+    <div>
+      <div class="caixa"><h3>Fila de entrada (o 1º está à esquerda)</h3><div class="linha" id="t-fila"></div></div>
+      <div class="caixa"><h3>Pilha de espera (topo em cima)</h3><div class="pilha" id="t-pilha"></div></div>
+      <div class="caixa"><h3>Arquivo</h3><div class="linha" id="t-arq"></div></div>
+    </div>
+    <div>
+      <div class="caixa"><h3>Custódia — objetivo: ${T.alvo.join(" → ")}</h3><div class="linha" id="t-cus"></div></div>
+      <div><button class="btn" data-a="aceitar">Aceitar</button><button class="btn" data-a="guardar">Guardar</button>
+        <button class="btn" data-a="arquivar">Arquivar</button><button class="btn" data-a="liberar">Liberar</button></div>
+      <div><button class="btn sec" id="t-desf">↶ Desfazer</button><button class="btn neutro" id="t-rein">Recomeçar</button></div>
+      ${falaApura("Comece! Dica: o E1 chegou primeiro, mas a custódia começa pelo E2…", "normal", "t-fala")}
+    </div>
+  </div>
+  ${tecnica(`O jogo inteiro tem <b>${T.estados.length} situações possíveis</b>. O Python calculou todas, com o resultado de cada ação (<code>dados_triagem_jogavel</code>), usando <code>Fase2.executar</code>. Esta página só consulta essa tabela. O desfazer usa uma pilha de estados (LIFO).`)}`,
+  montar() {
+    let atual = 0; const hist = [];
+    const desenha = () => {
+      const e = T.estados[atual];
+      $("#t-fila").innerHTML = fichas(e.fila, true);
+      $("#t-pilha").innerHTML = e.pilha.length ? e.pilha.map((x, i) => `<span class="ficha${i ? "" : " destaque"}" style="width:70px">${x}</span>`).join("") : '<span class="legenda">(vazia)</span>';
+      $("#t-arq").innerHTML = fichas(e.arquivo);
+      $("#t-cus").innerHTML = e.custodia.length ? '<span class="legenda">cabeça</span><span class="seta">→</span>' + e.custodia.map(x => `<span class="ficha">${x}</span>`).join('<span class="seta">→</span>') : '<span class="legenda">cabeça → (vazia)</span>';
+    };
+    document.querySelectorAll("[data-a]").forEach(b => b.onclick = () => {
+      const r = T.estados[atual].acoes[b.dataset.a];
+      if (r.ok) { hist.push(atual); atual = r.destino; }
+      desenha();
+      const venceu = T.estados[atual].venceu;
+      apuraReage("t-fala", venceu ? "Custódia completa! <b>Selo 2 conquistado.</b> Você usou a fila, a pilha e a lista ligada." : r.msg.replace(/\n/g, "<br>"), venceu ? "feliz" : r.ok ? "normal" : "pensando");
     });
-    const quadro = est.quadros[q], vistos = new Set(quadro.visitados);
-    B.mapa.vertices.forEach(v => {
-      let f = cor("--painel2");
-      if (vistos.has(v.id)) f = "#2c6b4f";
-      if (noCaminho.has(v.id)) f = cor("--caminho");
-      if (v.id === quadro.pos) f = cor("--destaque");
-      el("circle", {cx: v.x, cy: v.y, r: 24, fill: f, stroke: cor("--texto"), "stroke-width": 1.5}, svg);
-      el("text", {x: v.x, y: v.y + 6, "text-anchor": "middle", "font-size": 18, "font-weight": 700,
-                  style: (v.id === quadro.pos || noCaminho.has(v.id)) ? "fill:#06121c" : ""}, svg, v.id);
-      let extra = v.pista ? " 🔑" + v.pista : v.porta ? " 🔒" + v.porta : "";
-      el("text", {x: v.x, y: v.y + 44, "text-anchor": "middle", "font-size": 12, style: "fill:" + cor("--suave")}, svg, v.nome + extra);
-    });
-  }
-  const sec = document.getElementById("aba-busca");
-  const est = () => B.estrategias[sel.value];
-  const passos = Passos(sec, () => est().quadros.length, q => {
-    const e = est(), quadro = e.quadros[q];
-    desenhaMapa(q, e);
-    document.getElementById("busca-passo").textContent = `passo ${q + 1} de ${e.quadros.length}`;
-    document.getElementById("busca-atual").textContent = quadro.atual;
-    document.getElementById("busca-tipo").textContent = e.tipo_fronteira + (e.tipo_fronteira === "FILA" ? " (próximo a sair à esquerda)" : " (topo à esquerda)");
-    itens(document.getElementById("busca-fronteira"), quadro.fronteira);
-    document.getElementById("busca-dica").textContent = e.tipo_fronteira === "FILA"
-      ? "Os novos estados entram no FINAL da fila: quem chegou antes é explorado antes (por camadas)."
-      : "Os novos estados entram no TOPO: o mais recente é explorado primeiro (em profundidade).";
-    const r = e.resumo, fim = q === e.quadros.length - 1;
-    document.getElementById("busca-resumo").innerHTML = fim
-      ? `Solução com <b>${r.acoes} ações</b>: ${e.caminho.join(" → ")}<br>${r.expandidos} estados expandidos, ${r.gerados} gerados, ${r.repetidos} repetidos barrados pela AVL (altura ${r.avl_altura}), fronteira máxima ${r.fronteira}.`
-      : '<span class="legenda">Avance até o último passo para ver o caminho final.</span>';
-  });
-  sel.onchange = () => passos.reiniciar();
-  passos.reiniciar();
-})();
+    $("#t-desf").onclick = () => { if (hist.length) { atual = hist.pop(); desenha(); apuraReage("t-fala", "Desfeito! Voltei à situação anterior — a mais recente sai primeiro, como numa pilha.", "normal"); }
+      else apuraReage("t-fala", "Não há nada para desfazer.", "pensando"); };
+    $("#t-rein").onclick = () => { atual = 0; hist.length = 0; desenha(); apuraReage("t-fala", "Recomeçamos do início.", "normal"); };
+    desenha();
+  } });
 
-/* ---------- ÁRVORE DE BUSCA ---------- */
-(function () {
-  const sel = document.getElementById("arvore-estrategia"), svg = document.getElementById("arvore");
-  Object.keys(DADOS.busca.estrategias).forEach(n => sel.add(new Option(n, n)));
-  function desenha() {
-    const a = DADOS.busca.estrategias[sel.value].arvore;
-    const DX = 136, DY = 74, M = 70;
-    const maxX = Math.max(...a.nos.map(n => n.x)), maxY = Math.max(...a.nos.map(n => n.y));
-    const W = (maxX + 1) * DX + M, H = (maxY + 1) * DY + M;
-    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", "100%");
-    svg.style.minWidth = Math.min(W, 900) + "px";
-    svg.innerHTML = "";
-    const P = {}; a.nos.forEach(n => P[n.id] = {x: n.x * DX + M, y: n.y * DY + 30, n});
-    a.arestas.forEach(([p, f]) => el("line", {x1: P[p].x, y1: P[p].y, x2: P[f].x, y2: P[f].y,
-      stroke: P[p].n.caminho && P[f].n.caminho ? cor("--caminho") : cor("--borda"), "stroke-width": 2}, svg));
-    a.nos.forEach(n => {
-      const p = P[n.id];
-      el("rect", {x: p.x - 64, y: p.y - 13, width: 128, height: 26, rx: 6,
-                  fill: n.caminho ? cor("--caminho") : cor("--painel2"), stroke: cor("--borda")}, svg);
-      el("text", {x: p.x, y: p.y + 5, "text-anchor": "middle", "font-size": 12,
-                  style: n.caminho ? "fill:#06121c;font-weight:600" : ""}, svg, n.rotulo);
-    });
-  }
-  sel.onchange = desenha; desenha();
-})();
+S.push({ html: `
+  <div class="rotulo">Anexo 2 · o que a máquina fez</div><h2>O APURA-42 testou caminhos — por camadas</h2>
+  ${falaAud("O computador não sabia a resposta. Ele começou pela situação inicial e foi testando <b>todas as ações possíveis</b>, uma camada de cada vez. Cada bolinha abaixo é uma <b>situação</b> do jogo; cada linha, uma ação.")}
+  <div class="crt"><div class="tit">Mapa de todas as situações da triagem (da esquerda para a direita: 0, 1, 2… ações)</div><svg id="t-grafo" width="100%"></svg></div>
+  <p class="legenda">Laranja: o caminho da solução. A situação final (direita) é a única em que a custódia está completa.</p>
+  ${tecnica(`Espaço de estados implícito: estado = (fila, pilha, custódia). BFS (<code>algoritmos/solver.py</code>) com fila própria e controle de visitados por AVL. Primeira solução = menor número de ações (7), porque cada ação custa 1.`)}`,
+  montar() {
+    // profundidade de cada estado (camadas) via BFS sobre a tabela calculada pelo Python
+    const prof = [0], pai = {0: null}, fila = [0];
+    while (fila.length) { const u = fila.shift(); for (const a in T.estados[u].acoes) { const r = T.estados[u].acoes[a];
+      if (r.ok && prof[r.destino] === undefined) { prof[r.destino] = prof[u] + 1; pai[r.destino] = u; fila.push(r.destino); } } }
+    const fim = T.estados.findIndex(e => e.venceu), cam = new Set(); for (let v = fim; v !== null; v = pai[v]) cam.add(v);
+    const col = {}; T.estados.forEach((_, i) => { (col[prof[i]] = col[prof[i]] || []).push(i); });
+    const W = 960, H = 230, svg = $("#t-grafo"), P = {}; const ncol = Object.keys(col).length;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    Object.entries(col).forEach(([c, lista]) => lista.forEach((i, k) => P[i] = {x: 40 + c * (W - 80) / (ncol - 1), y: (k + 1) * H / (lista.length + 1)}));
+    T.estados.forEach((e, u) => { for (const a in e.acoes) { const r = e.acoes[a]; if (r.ok) svgEl("line", {x1: P[u].x, y1: P[u].y, x2: P[r.destino].x, y2: P[r.destino].y,
+      stroke: cam.has(u) && cam.has(r.destino) && pai[r.destino] === u ? "#d9682b" : "#6b5236", "stroke-width": cam.has(u) && pai[r.destino] === u && cam.has(r.destino) ? 4 : 2}, svg); } });
+    T.estados.forEach((e, u) => { svgEl("circle", {cx: P[u].x, cy: P[u].y, r: 11, fill: e.venceu ? "#2e7d4f" : cam.has(u) ? "#d9682b" : "#15110c", stroke: "#ffb347", "stroke-width": 2}, svg);
+      svgEl("text", {x: P[u].x, y: P[u].y + 4, "text-anchor": "middle", "font-size": 10}, svg, u); });
+  } });
 
-/* ---------- AVL ---------- */
-function desenhaAVL(svg, raiz, destaque) {
-  svg.innerHTML = "";
-  if (!raiz) { svg.setAttribute("viewBox", "0 0 300 60"); el("text", {x: 10, y: 35, style: "fill:" + cor("--suave")}, svg, "(árvore vazia)"); return; }
-  const nos = []; let x = 0;
-  (function inordem(n, d) { if (!n) return; inordem(n.e, d + 1); nos.push({n, x: x++, d}); inordem(n.d, d + 1); })(raiz, 0);
-  const DX = 62, DY = 72, W = nos.length * DX + 40, H = (Math.max(...nos.map(o => o.d)) + 1) * DY + 30;
-  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", W);
-  svg.style.maxWidth = "100%";
-  const P = new Map(); nos.forEach(o => P.set(o.n, {x: o.x * DX + 40, y: o.d * DY + 34}));
-  nos.forEach(o => ["e", "d"].forEach(l => { if (o.n[l]) { const a = P.get(o.n), b = P.get(o.n[l]);
-    el("line", {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: cor("--borda"), "stroke-width": 2}, svg); } }));
-  nos.forEach(o => {
-    const p = P.get(o.n), ruim = Math.abs(o.n.fb) > 1;
-    el("circle", {cx: p.x, cy: p.y, r: 20, fill: o.n.k === destaque ? cor("--destaque") : cor("--painel2"),
-                  stroke: ruim ? cor("--erro") : cor("--texto"), "stroke-width": ruim ? 3 : 1.5}, svg);
-    el("text", {x: p.x, y: p.y + 5, "text-anchor": "middle", "font-weight": 700,
-                style: o.n.k === destaque ? "fill:#06121c" : ""}, svg, o.n.k);
-    el("text", {x: p.x, y: p.y + 36, "text-anchor": "middle", "font-size": 11, style: "fill:" + cor("--suave")},
-       svg, `h=${o.n.h} FB=${o.n.fb > 0 ? "+" : ""}${o.n.fb}`);
+/* ===================== CAPÍTULO 3 ===================== */
+const B = D.busca, M = D.mapa_jogavel, POS = {}; B.mapa.vertices.forEach(v => POS[v.id] = v);
+function desenhaMapa(svg, opts = {}) {
+  svg.innerHTML = ""; svg.setAttribute("viewBox", "0 40 760 500");
+  const cam = new Set(), arcam = new Set(); (opts.caminho || []).forEach((v, k, a) => { cam.add(v); if (k) arcam.add([a[k - 1], v].sort().join()); });
+  B.mapa.arestas.forEach(([u, v]) => svgEl("line", {x1: POS[u].x, y1: POS[u].y, x2: POS[v].x, y2: POS[v].y,
+    stroke: arcam.has([u, v].sort().join()) ? "#ffb347" : "#6b5236", "stroke-width": arcam.has([u, v].sort().join()) ? 6 : 4}, svg));
+  B.mapa.vertices.forEach(v => {
+    const g = svgEl("g", {style: opts.clicavel ? "cursor:pointer" : ""}, svg);
+    let f = "#2a1d12"; if ((opts.vistos || []).includes(v.id)) f = "#1f5f5b"; if (cam.has(v.id)) f = "#b8521c"; if (v.id === opts.atual) f = "#ffb347";
+    svgEl("circle", {cx: v.x, cy: v.y, r: 28, fill: f, stroke: "#ffb347", "stroke-width": 2}, g);
+    svgEl("text", {x: v.x, y: v.y + 8, "text-anchor": "middle", "font-size": 24, "font-weight": 700, style: v.id === opts.atual ? "fill:#15110c" : ""}, g, v.id);
+    svgEl("text", {x: v.x, y: v.y + 46, "text-anchor": "middle", "font-size": 16}, g, v.nome);
+    if (v.pista || v.porta) svgEl("text", {x: v.x, y: v.y + 64, "text-anchor": "middle", "font-size": 15, style: "fill:#ff8a3d"}, g, v.pista ? "🔑 pista " + v.pista : "🔒 exige " + v.porta);
+    if (opts.clicavel) g.onclick = () => opts.clicavel(v.id);
   });
 }
-(function () {
-  const A = DADOS.avl, sec = document.getElementById("aba-avl");
-  Passos(sec, () => A.quadros.length, q => {
-    const f = A.quadros[q];
-    document.getElementById("avl-passo").textContent = `inserção ${q + 1} de ${A.quadros.length} — sequência: ${A.sequencia.join(", ")}`;
-    document.getElementById("avl-msg").innerHTML = `Inserindo <b>${f.codigo}</b> → rotação: <b>${f.rotacao}</b>. ${f.explicacao} (altura final: ${f.altura})`;
-    desenhaAVL(document.getElementById("avl-antes"), f.antes, null);
-    desenhaAVL(document.getElementById("avl-depois"), f.depois, f.codigo);
-  }, 1600).reiniciar();
-})();
+S.push({ html: `
+  <div class="rotulo">Anexo 3 · ${cap(3).fase} · selo 3</div><h2>Reconstruir a rota entre os locais</h2>
+  <div class="dois">
+    <div><div class="doc">${cap(3).abertura}</div>
+      <div class="analogia"><b>Parece com…</b> o mapa do metrô: as estações são os <b>locais</b> (vértices) e os trilhos, as <b>conexões</b> (arestas). Isso é um <b>grafo</b>.</div>
+      <div class="caixa"><h3>Regras do mapa (item 7.5)</h3>
+        🔒 O <b>Arquivo Oeste (H)</b> só abre com a pista de sequência (<b>SEQ</b>), guardada na Unidade Oeste (E).<br>
+        🔒 O <b>Centro de Validação (F)</b> só abre com a pista de autenticação (<b>AUT</b>), guardada na Unidade Leste (D).<br>
+        ⚡ Cada movimento gasta 1 de energia (começamos com 10).</div></div>
+    <div class="crt"><div class="tit">Mapa de Verídia</div><svg id="m-estatico"></svg></div>
+  </div>`,
+  montar() { desenhaMapa($("#m-estatico")); } });
 
-/* ---------- TRIAGEM ---------- */
-(function () {
-  const T = DADOS.triagem, sec = document.getElementById("aba-triagem");
-  document.getElementById("t-alvo").textContent = "Objetivo: " + T.alvo.join(" → ");
-  Passos(sec, () => T.quadros.length, q => {
-    const f = T.quadros[q];
-    document.getElementById("triagem-passo").textContent = `passo ${q} de ${T.quadros.length - 1}: ${f.acao}`;
-    itens(document.getElementById("t-fila"), f.fila);
-    const pilha = document.getElementById("t-pilha"); pilha.innerHTML = "";
-    if (!f.pilha.length) pilha.innerHTML = '<span class="legenda">(vazia)</span>';
-    f.pilha.forEach((x, i) => { const d = document.createElement("div"); d.className = "item" + (i ? "" : " primeiro");
-      d.style.margin = "3px 0"; d.style.width = "70px"; d.textContent = x; pilha.appendChild(d); });
-    itens(document.getElementById("t-arquivo"), f.arquivo, false);
-    itens(document.getElementById("t-custodia"), f.custodia, false);
-    document.getElementById("t-msg").textContent = f.msg;
-  }, 1300).reiniciar();
-})();
+S.push({ html: `
+  <div class="rotulo">Anexo 3 · sua vez</div><h2>Qual é o caminho mais curto até o Centro de Validação?</h2>
+  ${falaAud("Saindo da <b>Central de Auditoria (A)</b>, qual destas rotas você escolheria?")}
+  <div><button class="btn" data-r="0">A → C → G → F (3 trechos)</button><button class="btn" data-r="1">A → B → H → D → F (4 trechos)</button>
+    <button class="btn" data-r="2">A → C → E → C → B → H → D → F (7 trechos)</button></div>
+  ${falaApura("Cuidado com as portas trancadas…", "pensando", "r-fala")}
+  <div class="analogia"><b>A grande ideia:</b> no videogame, voltar à mesma sala <b>com a chave na mochila</b> não é a mesma coisa que estar lá sem ela. Por isso o computador não guarda só "onde estou", e sim <b>onde estou + o que tenho</b>. Chamamos isso de <b>estado</b>.</div>`,
+  montar() {
+    const resp = ["A rota A → C → G → F é a mais <b>curta</b>, mas chega em F <b>sem a pista AUT</b>: a porta não abre! O caminho mais curto pode não ser válido.",
+      "Boa tentativa! Mas a porta do Arquivo Oeste (H) exige a pista SEQ, que está em E. Sem passar por E, H não abre.",
+      "Conferido! É a rota válida mais curta: pega SEQ em E, <b>volta a C</b> (agora com a pista!), abre H, pega AUT em D e entra em F."];
+    document.querySelectorAll("[data-r]").forEach(b => b.onclick = () => apuraReage("r-fala", resp[b.dataset.r], b.dataset.r === "2" ? "feliz" : "pensando"));
+  } });
 
-/* ---------- ORDENAÇÃO ---------- */
-(function () {
-  const O = DADOS.ordenacao, sec = document.getElementById("aba-ordenacao"), sel = document.getElementById("ord-alg");
-  Object.keys(O.algoritmos).forEach(n => sel.add(new Option(n, n)));
-  const svg = document.getElementById("barras"), maior = Math.max(...O.entrada);
-  const alg = () => O.algoritmos[sel.value];
-  const passos = Passos(sec, () => alg().fotos.length, q => {
-    const a = alg(), foto = a.fotos[q], n = foto.v.length, L = 660 / n;
-    svg.innerHTML = "";
-    foto.v.forEach((x, i) => {
-      const h = x / maior * 200, destaque = foto.i.includes(i);
-      el("rect", {x: 20 + i * L + 6, y: 225 - h, width: L - 12, height: h, rx: 4,
-                  fill: destaque ? cor("--alerta") : cor("--destaque")}, svg);
-      el("text", {x: 20 + i * L + L / 2, y: 248, "text-anchor": "middle", "font-size": 14}, svg, x);
-    });
-    document.getElementById("ord-passo").textContent = `escrita ${q} de ${a.fotos.length - 1}`;
-    document.getElementById("ord-msg").innerHTML = `Entrada (exemplo da aula 02): ${O.entrada.join(", ")}. ` +
-      `Total: <b>${a.comparacoes}</b> comparações e <b>${a.movimentacoes}</b> movimentações.`;
-  }, 450);
-  sel.onchange = () => passos.reiniciar();
-  passos.reiniciar();
-})();
+S.push({ html: `
+  <div class="rotulo">Anexo 3 · sua vez</div><h2>Agora é você quem anda pelo mapa</h2>
+  <div class="dois">
+    <div class="crt"><div class="tit">Clique em um local vizinho</div><svg id="m-jogo"></svg></div>
+    <div>
+      <div class="caixa"><h3>Seu estado</h3><div id="m-estado" style="font-family:var(--maquina)"></div></div>
+      <div class="caixa"><h3>Trilha</h3><div id="m-trilha" style="font-family:var(--maquina)"></div></div>
+      <button class="btn sec" id="m-desf">↶ Desfazer</button><button class="btn neutro" id="m-rein">Recomeçar</button>
+      ${falaApura("Você está na Central de Auditoria (A). Para onde vamos?", "normal", "m-fala")}
+    </div>
+  </div>
+  ${tecnica(`Estado = (posição, pistas, portas liberadas, energia), modelo mínimo do item 7.3. Todas as <b>${M.estados.length} situações alcançáveis</b> e cada movimento foram calculados em Python por <code>jogo/fase3.py → mover()</code> (regras R1–R5). A página apenas consulta a tabela.`)}`,
+  montar() {
+    let atual = 0; const hist = [], trilha = ["A"];
+    const desenha = () => { const e = M.estados[atual];
+      desenhaMapa($("#m-jogo"), {atual: e.pos, vistos: trilha, clicavel: ir});
+      $("#m-estado").innerHTML = `posição: <b>${e.pos}</b> (${POS[e.pos].nome})<br>mochila (pistas): <b>${e.pistas.join(", ") || "vazia"}</b><br>portas abertas: ${e.portas.join(", ") || "nenhuma"}<br>energia: ${"⚡".repeat(e.energia)} (${e.energia})`;
+      $("#m-trilha").textContent = trilha.join(" → "); };
+    function ir(v) { const e = M.estados[atual];
+      if (!M.adjacencia[e.pos].includes(v)) { apuraReage("m-fala", v === e.pos ? "Você já está aqui!" : `Não há conexão direta entre ${e.pos} e ${v}. Escolha um vizinho: ${M.adjacencia[e.pos].join(", ")}.`, "pensando"); return; }
+      const r = e.movs[v]; if (r.ok) { hist.push(atual); atual = r.destino; trilha.push(v); } desenha();
+      const fim = M.estados[atual].venceu;
+      apuraReage("m-fala", fim ? `Você chegou ao Centro de Validação com a autenticação em ${trilha.length - 1} movimentos. <b>Selo 3 conquistado!</b>` : (r.ok ? "" : "Movimento recusado: ") + r.msg, fim ? "feliz" : r.ok ? "normal" : "pensando"); }
+    $("#m-desf").onclick = () => { if (hist.length) { atual = hist.pop(); trilha.pop(); desenha(); apuraReage("m-fala", "Voltei um passo (pilha do desfazer).", "normal"); } };
+    $("#m-rein").onclick = () => { atual = 0; hist.length = 0; trilha.length = 1; desenha(); apuraReage("m-fala", "De volta à Central de Auditoria.", "normal"); };
+    desenha();
+  } });
 
-/* ---------- AUDITORIA FINAL ---------- */
-(function () {
-  const A = DADOS.auditoria;
-  document.getElementById("aud-etapas").innerHTML = A.etapas.map(e => `
-    <div style="margin-bottom:10px"><b>${e.nome}: <span class="${e.ok ? "ok" : "falha"}"
-      style="color:${e.ok ? cor("--ok") : cor("--erro")}">${e.ok ? "CONSISTENTE" : "NÃO CONSISTENTE"}</span></b>
-      ${e.origem ? `<span class="legenda"> — origem: ${e.origem}</span>` : ""}<br>
-      <span class="legenda">${e.detalhe}</span>
-      ${e.checagens.map(([d, ok]) => `<div class="check"><span class="${ok ? "ok" : "falha"}">${ok ? "✔" : "✘"}</span> ${d}</div>`).join("")}
-    </div>`).join("");
-  const t = document.getElementById("tab-metricas");
-  t.innerHTML = "<tr><th>cenário</th><th>estratégia</th><th>ações</th><th>expandidos</th><th>gerados</th><th>repetidos</th><th>fronteira máx.</th></tr>" +
-    DADOS.metricas.map(m => `<tr><td>${m.cenario}</td><td>${m.estrategia}</td><td>${m.acoes}</td><td>${m.expandidos}</td><td>${m.gerados}</td><td>${m.repetidos}</td><td>${m.fronteira}</td></tr>`).join("");
-  document.getElementById("cofre").innerHTML = A.consistente
-    ? `<h3>🔓 Cofre de Verificação aberto</h3>` + DADOS.narrativa.epilogo.map(p => `<p>${p}</p>`).join("")
-    : `<h3>🔒 Cofre fechado</h3><p>Alguma etapa não foi consistente.</p>`;
-})();
+S.push({ html: `
+  <div class="rotulo">Anexo 3 · o que a máquina fez</div><h2>Duas formas de procurar: onda ou corredor</h2>
+  <div class="dois">
+    <div class="analogia"><b>Busca em largura (BFS)</b> = jogar uma pedra no lago: a onda chega primeiro a tudo que está a 1 passo, depois a 2 passos… Usa uma <b>fila</b>. Acha o caminho com <b>menos passos</b>.</div>
+    <div class="analogia"><b>Busca em profundidade (DFS)</b> = explorar um labirinto indo até o fim de um corredor antes de voltar. Usa uma <b>pilha</b>. Pode achar um caminho mais longo.</div>
+  </div>
+  <div class="controles"><select id="b-est"></select><span id="b-ctl" class="controles"></span></div>
+  <div class="dois">
+    <div class="crt"><div class="tit">Exploração</div><svg id="b-mapa"></svg></div>
+    <div><div class="caixa"><h3>Situação sendo examinada</h3><div id="b-atual" style="font-family:var(--maquina)"></div></div>
+      <div class="caixa"><h3 id="b-tipo"></h3><div class="linha" id="b-front"></div></div>
+      <div class="msg" id="b-res"></div></div>
+  </div>
+  ${tecnica(`BFS e DFS literais da aula 09 em <code>algoritmos/busca_grafo.py</code>; no espaço de estados, <code>algoritmos/solver.py</code> (BFS com fila própria; DFS recursiva e com pilha própria). A BFS encontra o menor número de arestas quando todas as ações têm o mesmo custo (aqui, 1); com pesos diferentes, não garante menor custo. Complexidade O(|V|+|E|).`)}`,
+  montar() {
+    const sel = $("#b-est"); Object.keys(B.estrategias).forEach(n => sel.add(new Option(n, n)));
+    const est = () => B.estrategias[sel.value];
+    const p = Passos($("#b-ctl"), () => est().quadros.length, q => { const e = est(), f = e.quadros[q], fim = q === e.quadros.length - 1;
+      desenhaMapa($("#b-mapa"), {atual: f.pos, vistos: f.visitados, caminho: fim ? e.caminho : []});
+      $("#b-atual").textContent = f.atual;
+      $("#b-tipo").textContent = e.tipo_fronteira === "FILA" ? "Fila de espera (próxima à esquerda)" : "Pilha (topo à esquerda)";
+      $("#b-front").innerHTML = fichas(f.fronteira, true);
+      $("#b-res").innerHTML = fim ? `Caminho encontrado com <b>${e.resumo.acoes} movimentos</b>: ${e.caminho.join(" → ")}. Situações examinadas: ${e.resumo.expandidos}.` : "Procurando…"; }, 900);
+    sel.onchange = () => p.reiniciar(); p.reiniciar();
+  } });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 3 · a prova</div><h2>A árvore de busca: tudo o que foi examinado</h2>
+  ${falaAud("Cada caixinha é uma situação que o computador examinou; cada linha, um passo. Em laranja, o caminho até o Centro de Validação. Note como o local <b>C aparece duas vezes</b> no caminho: na segunda vez, já com a pista SEQ na mochila.")}
+  <div class="controles"><select id="a-est"></select></div>
+  <div class="crt"><svg id="a-arv"></svg></div>
+  <p><span class="carimbo verde">Conferido</span> &nbsp; BFS: 7 movimentos · DFS: 9 movimentos · nenhuma porta violada</p>`,
+  montar() {
+    const sel = $("#a-est"); Object.keys(B.estrategias).forEach(n => sel.add(new Option(n, n)));
+    const desenha = () => { const a = B.estrategias[sel.value].arvore, svg = $("#a-arv"); svg.innerHTML = "";
+      const DX = 136, DY = 70, MG = 70, W = (Math.max(...a.nos.map(n => n.x)) + 1) * DX + MG, H = (Math.max(...a.nos.map(n => n.y)) + 1) * DY + 40;
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", "100%"); svg.style.minWidth = Math.min(W, 900) + "px";
+      const P = {}; a.nos.forEach(n => P[n.id] = {x: n.x * DX + MG, y: n.y * DY + 28, n});
+      a.arestas.forEach(([pp, f]) => svgEl("line", {x1: P[pp].x, y1: P[pp].y, x2: P[f].x, y2: P[f].y, stroke: P[pp].n.caminho && P[f].n.caminho ? "#d9682b" : "#6b5236", "stroke-width": 2}, svg));
+      a.nos.forEach(n => { const p = P[n.id]; svgEl("rect", {x: p.x - 64, y: p.y - 13, width: 128, height: 26, rx: 5, fill: n.caminho ? "#d9682b" : "#2a1d12", stroke: "#ffb347"}, svg);
+        svgEl("text", {x: p.x, y: p.y + 5, "text-anchor": "middle", "font-size": 12, style: n.caminho ? "fill:#15110c;font-weight:700" : ""}, svg, n.rotulo); }); };
+    sel.onchange = desenha; desenha();
+  } });
+
+/* ===================== CAPÍTULO 4 ===================== */
+const AV = D.avl;
+function desenhaAVL(svg, raiz, destaque) {
+  svg.innerHTML = ""; if (!raiz) { svg.setAttribute("viewBox", "0 0 300 60"); svg.setAttribute("width", 300); svgEl("text", {x: 10, y: 35}, svg, "(cofre vazio)"); return; }
+  const nos = []; let x = 0; (function io(n, d) { if (!n) return; io(n.e, d + 1); nos.push({n, x: x++, d}); io(n.d, d + 1); })(raiz, 0);
+  const DX = 62, DY = 70, W = nos.length * DX + 40, H = (Math.max(...nos.map(o => o.d)) + 1) * DY + 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", W); svg.style.maxWidth = "100%";
+  const P = new Map(); nos.forEach(o => P.set(o.n, {x: o.x * DX + 40, y: o.d * DY + 32}));
+  nos.forEach(o => ["e", "d"].forEach(l => { if (o.n[l]) { const a = P.get(o.n), b = P.get(o.n[l]); svgEl("line", {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: "#6b5236", "stroke-width": 3}, svg); } }));
+  nos.forEach(o => { const p = P.get(o.n), ruim = Math.abs(o.n.fb) > 1;
+    svgEl("circle", {cx: p.x, cy: p.y, r: 20, fill: o.n.k === destaque ? "#ffb347" : "#2a1d12", stroke: ruim ? "#ff6b4a" : "#ffb347", "stroke-width": ruim ? 4 : 2}, svg);
+    svgEl("text", {x: p.x, y: p.y + 5, "text-anchor": "middle", "font-weight": 700, style: o.n.k === destaque ? "fill:#15110c" : ""}, svg, o.n.k);
+    svgEl("text", {x: p.x, y: p.y + 34, "text-anchor": "middle", "font-size": 11}, svg, `FB ${o.n.fb > 0 ? "+" : ""}${o.n.fb}`); });
+}
+S.push({ html: `
+  <div class="rotulo">Anexo 4 · ${cap(4).fase} · selo 4</div><h2>Uma memória que não se perde</h2>
+  <div class="dois">
+    <div><div class="doc">${cap(4).abertura}</div>
+      ${falaAud("O computador precisa responder milhares de vezes: <b>\"já estive nesta situação?\"</b>. Procurar numa lista comprida demora. Então guardamos as situações numa <b>árvore</b> que se mantém equilibrada.")}</div>
+    <div>
+      <div class="analogia"><b>Parece com…</b> o jogo de adivinhar número: "é maior ou menor?". A cada pergunta, metade das opções some. Numa árvore equilibrada, até 10.000 itens se encontram com umas 14 perguntas.</div>
+      <div class="analogia"><b>E o equilíbrio?</b> Como uma gangorra: se um lado fica 2 andares mais alto (o "fator de balanceamento" vira +2 ou −2), a árvore <b>gira</b> para se reequilibrar. Essa árvore se chama <b>AVL</b>.</div>
+    </div>
+  </div>` });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 4 · sua vez</div><h2>Os lacres do cofre: a árvore vai girar?</h2>
+  ${falaAud("Vamos guardar os códigos dos lacres <b>70, 50, 40, 80, 90, 15, 25, 45, 42</b>, um de cada vez. Antes de cada um, dê seu palpite: a árvore vai precisar girar?")}
+  <div class="caixa"><h3 id="v-titulo"></h3>
+    <div id="v-botoes"><button class="btn" data-v="nenhuma">Não gira</button><button class="btn" data-v="RD">Gira à direita (RD)</button>
+      <button class="btn" data-v="RE">Gira à esquerda (RE)</button><button class="btn" data-v="RED">Giro duplo E-D</button><button class="btn" data-v="RDE">Giro duplo D-E</button></div>
+    <button class="btn sec" id="v-prox" style="display:none">Próximo lacre →</button> <button class="btn neutro" id="v-rein">Recomeçar</button></div>
+  ${falaApura("Dica: só gira quando um lado fica 2 andares mais alto que o outro.", "pensando", "v-fala")}
+  <div class="dois"><div class="crt"><div class="tit">Cofre antes</div><svg id="v-antes"></svg></div><div class="crt"><div class="tit">Cofre depois</div><svg id="v-depois"></svg></div></div>`,
+  montar() {
+    let k = 0, acertos = 0;
+    const mostra = () => { const q = AV.quadros[k];
+      $("#v-titulo").textContent = k < AV.quadros.length ? `Lacre ${k + 1} de ${AV.quadros.length}: código ${q.codigo}` : "";
+      desenhaAVL($("#v-antes"), q.antes, null); $("#v-depois").innerHTML = ""; $("#v-depois").setAttribute("viewBox", "0 0 10 10");
+      document.querySelectorAll("[data-v]").forEach(b => b.disabled = false); $("#v-prox").style.display = "none"; };
+    document.querySelectorAll("[data-v]").forEach(b => b.onclick = () => { const q = AV.quadros[k], certo = b.dataset.v === q.rotacao; acertos += certo;
+      desenhaAVL($("#v-depois"), q.depois, q.codigo);
+      apuraReage("v-fala", (certo ? "Conferido! " : `Quase: aconteceu <b>${q.rotacao === "nenhuma" ? "nenhum giro" : q.rotacao}</b>. `) + q.explicacao, certo ? "feliz" : "pensando");
+      document.querySelectorAll("[data-v]").forEach(x => x.disabled = true);
+      if (k < AV.quadros.length - 1) $("#v-prox").style.display = "inline-block";
+      else apuraReage("v-fala", `Cofre organizado! Você acertou ${acertos} de ${AV.quadros.length}. Vimos os quatro giros: RD, RE, E-D e D-E.`, "feliz"); });
+    $("#v-prox").onclick = () => { k++; mostra(); apuraReage("v-fala", "Próximo lacre. Qual seu palpite?", "pensando"); };
+    $("#v-rein").onclick = () => { k = 0; acertos = 0; mostra(); apuraReage("v-fala", "Cofre esvaziado. Vamos de novo!", "normal"); };
+    mostra();
+  } });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 4 · sua vez</div><h2>O estado que parece igual (enigma 8.2)</h2>
+  ${falaAud("Para não investigar a mesma situação duas vezes, o cofre precisa saber quando duas situações são <b>de fato</b> iguais. Mesmo lugar basta? Veja os pares.")}
+  <div id="pares"></div>
+  ${tecnica(`Chave na AVL = (posição, pistas, portas). A energia fica como valor, com regra de dominância: repetido com energia menor ou igual não é expandido; com mais energia, substitui. As respostas abaixo são calculadas por <code>chave_estado()</code> e pela regra do solver (<code>jogo/fase4.py</code>). Teste <code>test_estados_repetidos_nao_sao_expandidos</code>.`)}`,
+  montar() {
+    $("#pares").innerHTML = D.pares.map((p, i) => `<div class="caixa"><h3>Par ${i + 1}</h3>
+      <div style="font-family:var(--maquina)">já visto: ${p.visto}<br>novo: ${p.novo}</div>
+      São a mesma situação para o cofre? <button class="btn" data-p="${i}" data-s="1">Sim</button><button class="btn sec" data-p="${i}" data-s="0">Não</button>
+      <div class="msg" id="par${i}"></div></div>`).join("");
+    document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { const p = D.pares[b.dataset.p], certo = (b.dataset.s === "1") === p.resposta[0];
+      const m = $("#par" + b.dataset.p); m.className = "msg " + (certo ? "ok" : "nao"); m.textContent = (certo ? "Conferido! " : "Não é isso. ") + p.explicacao; });
+  } });
+
+/* ===================== CAPÍTULO 5 ===================== */
+const A = D.auditoria;
+S.push({ html: `
+  <div class="rotulo">Anexo 5 · ${cap(5).fase} · selo 5</div><h2>A auditoria final</h2>
+  <div class="doc">${cap(5).abertura}</div>
+  ${falaAud("Por fim, juntamos tudo e pedimos ao computador para <b>refazer cada etapa</b>, conferindo cada regra. Nada foi aceito \"porque sim\".")}
+  <div class="caixa">${A.etapas.map(e => `<p><b>${e.nome}:</b> ${e.ok ? '<span class="carimbo verde" style="font-size:13px">consistente</span>' : '<span class="carimbo">não consistente</span>'}<br>
+    <span class="legenda">${e.origem ? e.origem + " · " : ""}${e.detalhe}</span><br>${e.checagens.map(([d, ok]) => `${ok ? "✔" : "✘"} ${d}`).join("<br>")}</p>`).join("")}</div>
+  ${tecnica(`<code>jogo/fase5.py</code>: lote ordenado e conferido (sem perdas nem duplicatas); triagem e mapa encontrados pela BFS ou reexecutados a partir das jogadas do jogador com as mesmas regras; trilhas inválidas (ex.: A-C-G-F) são recusadas (<code>test_trilha_invalida_e_recusada</code>).`)}` });
+
+S.push({ html: `
+  <div class="rotulo">Anexo 5 · a prova</div><h2>Onda × corredor em dois mapas</h2>
+  ${falaAud("Testamos as duas formas de procurar no nosso mapa e num mapa bem maior, de 30 locais, sorteado pelo computador.")}
+  <div class="crt"><table class="reg" style="color:#ffb347"><tr><th>mapa</th><th>forma de procurar</th><th>movimentos na rota</th><th>situações examinadas</th></tr>
+    ${D.metricas.map(m => `<tr><td>${m.cenario.split(" — ")[1]}</td><td>${m.estrategia}</td><td>${m.acoes}</td><td>${m.expandidos}</td></tr>`).join("")}</table></div>
+  ${falaApura("No mapa grande, a onda (BFS) achou uma rota de 7 movimentos; o corredor (DFS), uma de 35! A onda garante o caminho com menos passos.", "feliz")}
+  ${tecnica(`Cenário 2 gerado por <code>jogo/cenarios.py</code> (árvore geradora + arestas extras, seed 2042, verificador por BFS). Tabela ordenada com Merge Sort no relatório da Fase 5 (item 9.3). Mais dados em <code>docs/metricas.md</code>: no mapa de 60 vértices, a DFS expandiu mais estados que a BFS (235 × 181).`)}` });
+
+S.push({ html: `
+  <div class="rotulo">Encerramento</div><h2>O Cofre de Verificação</h2>
+  <div class="dois">
+    <div>
+      <div class="selos" style="grid-template-columns:repeat(5,1fr)">${[1, 2, 3, 4, 5].map(n => `<div class="selo"><div class="disco">✔</div>Selo ${n}</div>`).join("")}</div>
+      <p style="margin-top:18px"><span class="carimbo verde" style="font-size:26px">${A.consistente ? "Trilha consistente" : "Trilha inconsistente"}</span></p>
+    </div>
+    <div class="doc">${D.narrativa.epilogo.join("\n\n")}</div>
+  </div>
+  ${falaAud("Cidadãs e cidadãos: <b>não precisamos confiar em ninguém</b> para chegar a essa conclusão. As regras estão escritas, os dados são claros e qualquer pessoa pode refazer cada passo. É isso que torna uma auditoria confiável.")}
+  ${falaApura("E vocês viram por dentro: fila, pilha, lista ligada, grafos, buscas em largura e profundidade, árvores que se equilibram. Até a próxima auditoria!", "feliz")}
+  ${tecnica(`Código, testes (95, <code>rodar_testes.bat</code>), métricas e documentação no repositório. Uso de IAG registrado em <code>docs/registro-iag.md</code>, com validação humana.`)}` });
+
+/* ===================== montagem e navegação ===================== */
+const main = $("#slides");
+S.forEach((s, i) => { const sec = document.createElement("section"); sec.className = "slide"; sec.innerHTML = s.html; main.appendChild(sec); });
+S.forEach((s, i) => { if (s.montar) s.montar(); });
+const slides = [...document.querySelectorAll(".slide")];
+let atual = 0;
+const luzes = $("#luzes"); luzes.innerHTML = slides.map(() => '<span class="luz"></span>').join("");
+function mostrar(n) {
+  atual = Math.max(0, Math.min(slides.length - 1, n));
+  slides.forEach((s, i) => s.classList.toggle("atual", i === atual));
+  [...luzes.children].forEach((l, i) => l.classList.toggle("acesa", i <= atual));
+  $("#contador").textContent = `${atual + 1} / ${slides.length}`;
+  $("#barra").style.width = ((atual + 1) / slides.length * 100) + "%";
+  if (document.body.classList.contains("modo-slides")) window.scrollTo(0, 0);
+}
+$("#ant").onclick = () => mostrar(atual - 1); $("#prox").onclick = () => mostrar(atual + 1);
+document.addEventListener("keydown", e => {
+  if (!document.body.classList.contains("modo-slides") || ["SELECT", "INPUT"].includes(document.activeElement.tagName)) return;
+  if (["ArrowRight", "PageDown"].includes(e.key)) mostrar(atual + 1);
+  if (["ArrowLeft", "PageUp"].includes(e.key)) mostrar(atual - 1);
+});
+$("#modo").onclick = () => { const s = document.body.classList.toggle("modo-slides"); $("#modo").textContent = s ? "Modo leitura" : "Modo slides"; mostrar(atual); };
+mostrar(0);
 </script>
 </body>
 </html>

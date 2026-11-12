@@ -218,7 +218,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 
 ### 19. Testes e análise de complexidade
 
-- **Onde:** `testes/` (95 testes, um arquivo por módulo, cobrindo a tabela da seção 15) e `experimentos.py` → `docs/metricas.md`.
+- **Onde:** `testes/` (97 testes, um arquivo por módulo, cobrindo a tabela da seção 15) e `experimentos.py` → `docs/metricas.md`.
 - **Como rodar:** `rodar_testes.bat` (dois cliques) ou `py -m unittest discover -s testes -t .`.
 - **Teoria × experimento:** as contagens confirmam a teoria das aulas (Bubble n(n−1)/2; Quick no pior caso n(n−1)/2; AVL com altura ≈ log₂ n). Os tempos dependem da máquina; as contagens, não.
 - **Um erro real encontrado por teste de integração:** a Fase 5 lia o histórico da Fase 2 num formato errado. Uma partida simulada do início ao fim revelou o erro; ele foi corrigido e virou o teste `test_integracao_com_o_historico_real_das_fases_2_e_3`.
@@ -245,13 +245,16 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 | Modo cooperativo | Não feito | — |
 | Fila de prioridade | Não feito (há heap na aula 08) | — |
 
-### B1. Visualização animada
+### B1. Visualização animada — "Audiência Pública da CIV"
 
-- **O que é:** uma página HTML única, que abre no navegador **sem internet** e sem bibliotecas externas.
-- **Como funciona:** o Python executa os algoritmos de verdade e grava cada passo (fila ou pilha da busca, AVL antes e depois, estruturas da Fase 2, cada escrita no vetor durante a ordenação). Esses dados vão embutidos na página; um JavaScript simples desenha passo a passo. Nada é inventado: tudo vem do código Python.
-- **Organizada como a história:** a aba "A missão" traz o prólogo de Verídia e a jornada dos 5 selos; cada aba seguinte é um capítulo (fase) com a mensagem de abertura do EP; a Auditoria Final termina com o relatório de consistência e o Cofre de Verificação aberto. Os textos vêm de `jogo/narrativa.py`, o mesmo módulo usado pelo jogo no terminal.
-- **Abas:** A missão · 1 Arquivo Embaralhado (ordenação) · 2 Central de Triagem · 3 Mapa das Seções (BFS/DFS) · 3 Árvore de busca · 4 Cofre dos Estados (AVL) · 5 Auditoria Final.
-- **Prova:** `testes/test_visualizacao.py` confere que a página não tem referência externa e que os dados batem com a execução real (rotações da AVL, caminho da BFS).
+- **O que é:** uma página HTML única (`visualizacao.html`), que abre no navegador **sem internet** e sem bibliotecas externas. Funciona em **modo slides** (setas do teclado, para projetar) e em **modo leitura** (rolagem).
+- **A história:** a Auditora-chefe da CIV presta contas à população de Verídia — o que aconteceu e *como* a trilha foi reconstruída. O desafio é exatamente o do enunciado (mesmas fases, enigmas, regras e selos); muda só quem conta e a linguagem.
+- **Para quem:** camada principal para jovens (9.º ano), com analogias do cotidiano, e uma **ficha técnica dobrável** em cada anexo para a banca (termo da disciplina, complexidade, código e teste).
+- **Estrutura de cada anexo (fase):** o problema → como pensamos (analogia) → **sua vez** (palpite ou jogo) → o que a máquina fez (animação real) → a prova (carimbo "Conferido").
+- **Mascote:** APURA-42, o computador da CIV (personagem original), reage aos palpites.
+- **Jogável na página:** a Fase 2 inteira e a Fase 3 inteira. O Python calcula **todas** as situações possíveis (14 na triagem, 160 no mapa) e o resultado de cada jogada, com as mesmas funções de regra do jogo; a página só consulta essas tabelas (`dados_triagem_jogavel`, `dados_mapa_jogavel`).
+- **Animações reais:** ordenação das 12 fichas do lote (Bubble, Merge, Quick), mapa de todas as situações da triagem, BFS × DFS no mapa, árvore de busca, AVL antes/depois com palpite de rotação, pares do enigma 8.2, relatório da Fase 5.
+- **Prova:** `testes/test_visualizacao.py` (página sem referências externas; dados batem com a execução; jogos da página seguem as regras do Python; animação sem fichas duplicadas).
 
 ### B2. Gerador de mapas com verificador
 

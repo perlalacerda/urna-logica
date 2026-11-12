@@ -188,11 +188,123 @@ def dados_auditoria():
     return {"etapas": etapas, "consistente": f.consistente()}
 
 
+# ------------------------------------------------------------ audiência: dados extras
+def dados_lote():
+    """Fase 1: o lote real, os quadros da ordenação (com registros) e o pedaço do enigma."""
+    from jogo.fase1 import Fase1
+    from jogo.registros import CRITERIOS
+    f = Fase1()
+    def reg(r):
+        return {"id": r.id_registro, "zona": r.zona, "secao": r.secao, "opcao": r.opcao,
+                "hora": r.timestamp, "status": r.status}
+    embaralhado = [reg(r) for r in f.registros]
+    # par para o "sua vez": mesmo horário, zonas diferentes
+    par = None
+    for a in f.registros:
+        for b in f.registros:
+            if a.timestamp == b.timestamp and a.zona != b.zona and a.id_registro < b.id_registro:
+                par = (a, b)
+                break
+        if par:
+            break
+    chave = CRITERIOS["auditoria"]
+    primeiro = min(par, key=chave)
+    # recusa ao ordenar só pelo horário (mensagem real do jogo)
+    tentativa = Fase1()
+    recusa = tentativa.ordenar("merge", "horario")
+    algs = {}
+    for nome, fn in (("Bubble Sort", bubble_sort), ("Merge Sort", merge_sort), ("Quick Sort", quick_sort)):
+        g = Fase1()
+        A = VetorRastreado(list(g.registros))
+        c = fn(A, chave)
+        # Mostra só os instantes em que o vetor é uma permutação completa (cada ficha uma vez):
+        # no meio de uma troca a mesma ficha aparece duas vezes, o que confunde o público.
+        quadros, mudou = [], set()
+        for foto in A.fotos:
+            ids = [r.id_registro for r in foto["v"]]
+            mudou.update(foto["i"])
+            if len(set(ids)) == len(ids):
+                quadros.append({"ids": ids, "i": sorted(mudou)})
+                mudou = set()
+        algs[nome] = {"quadros": quadros,
+                      "comparacoes": c.comparacoes, "movimentacoes": c.movimentacoes}
+    comparacao = [{"n": n, "alg": a, "comp": comp, "mov": mov}
+                  for n, a, comp, mov, _ in Fase1().comparar_algoritmos(tamanhos=(12, 100, 500))]
+    return {"registros": {r["id"]: r for r in embaralhado}, "embaralhado": [r["id"] for r in embaralhado],
+            "par": [reg(par[0]), reg(par[1])], "par_primeiro": primeiro.id_registro,
+            "recusa": recusa["mensagem"], "algoritmos": algs, "comparacao": comparacao,
+            "enigma": Fase1.ENIGMA}
+
+
+def dados_triagem_jogavel():
+    """
+    Fase 2 inteira: TODOS os estados alcançáveis (são só 14) e, para cada um,
+    o resultado das 4 ações calculado pelas regras do Python. A página só
+    consulta esta tabela — não tem regras próprias.
+    """
+    from collections import deque
+    inicial = Fase2().estado()
+    ids, ordem, fila = {inicial: 0}, [inicial], deque([inicial])
+    while fila:
+        e = fila.popleft()
+        for _, novo in Fase2.a_partir_do_estado(e).sucessores():
+            if novo not in ids:
+                ids[novo] = len(ordem)
+                ordem.append(novo)
+                fila.append(novo)
+    estados = []
+    for e in ordem:
+        f = Fase2.a_partir_do_estado(e)
+        acoes = {}
+        for acao in Fase2.ACOES:
+            g = Fase2.a_partir_do_estado(e)
+            ok, msg = g.executar(acao)
+            acoes[acao] = {"ok": ok, "msg": msg, "destino": ids[g.estado()] if ok else None}
+        estados.append({"fila": list(e[0]), "pilha": list(e[1]), "custodia": list(e[2]),
+                        "arquivo": f.arquivo, "venceu": f.venceu(), "acoes": acoes})
+    return {"estados": estados, "alvo": list(Fase2().alvo)}
+
+
+def dados_mapa_jogavel():
+    """Fase 3: todos os estados alcançáveis e o resultado de cada movimento (regras do Python)."""
+    from collections import deque
+    from jogo.fase3 import mover, estado_inicial, DESTINO
+    G = construir_mapa()
+    inicial = estado_inicial()
+    ids, ordem, fila = {inicial: 0}, [inicial], deque([inicial])
+    while fila:
+        e = fila.popleft()
+        for v in G.vizinhos(e[0]):
+            ok, novo, _ = mover(G, e, v)
+            if ok and novo not in ids:
+                ids[novo] = len(ordem)
+                ordem.append(novo)
+                fila.append(novo)
+    estados = []
+    for e in ordem:
+        movs = {}
+        for v in G.vizinhos(e[0]):              # não vizinhos: a página só diz "não há corredor"
+            ok, novo, msg = mover(G, e, v)
+            movs[v] = {"ok": ok, "msg": msg, "destino": ids[novo] if ok else None}
+        estados.append({"pos": e[0], "pistas": list(e[1]), "portas": list(e[2]), "energia": e[3],
+                        "venceu": e[0] == DESTINO, "movs": movs})
+    return {"estados": estados, "adjacencia": {v: G.vizinhos(v) for v in G.vertices()}}
+
+
+def dados_pares():
+    from jogo.fase4 import PARES_ESTADOS, resposta_correta, explicar
+    from jogo.fase3 import rotulo
+    return [{"visto": rotulo(a), "novo": rotulo(b), "resposta": list(resposta_correta(a, b)),
+             "explicacao": explicar(a, b)} for a, b in PARES_ESTADOS]
+
+
 # ------------------------------------------------------------ página
 def gerar_html(caminho="visualizacao.html"):
     dados = {"busca": dados_busca(), "avl": dados_avl(), "triagem": dados_triagem(),
              "ordenacao": dados_ordenacao(), "metricas": dados_metricas(),
-             "narrativa": dados_narrativa(), "auditoria": dados_auditoria()}
+             "narrativa": dados_narrativa(), "auditoria": dados_auditoria(),
+             "lote": dados_lote(), "triagem_jogavel": dados_triagem_jogavel(),
+             "mapa_jogavel": dados_mapa_jogavel(), "pares": dados_pares()}
     modelo_path = os.path.join(os.path.dirname(__file__), "visualizacao_modelo.html")
     with open(modelo_path, encoding="utf-8") as arq:
         modelo = arq.read()

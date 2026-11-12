@@ -12,7 +12,7 @@ Material de apoio: `docs/guia-codigo-conceitos.md` (cartões por conceito e perg
 
 - [ ] Notebook ligado na tomada; modo avião não atrapalha (nada usa internet).
 - [ ] Pasta do projeto aberta no Explorador.
-- [ ] Rodar `rodar_testes.bat` uma vez: precisa terminar em `OK` (95 testes).
+- [ ] Rodar `rodar_testes.bat` uma vez: precisa terminar em `OK` (97 testes).
 - [ ] Rodar `visualizar.bat`: deixar a página aberta no navegador, na aba "Mapa e busca".
 - [ ] Abrir `jogar.bat` e deixar no **menu inicial** (sem jogar: os selos começam vazios).
 - [ ] Abrir no editor (Bloco de Notas ou VS Code) os arquivos que serão mostrados:
@@ -136,7 +136,7 @@ Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 
 
 ## Bloco 8 — Testes, métricas e bônus (1 min)
 
-- Mostrar o resultado de `rodar_testes.bat`: **95 testes, OK**.
+- Mostrar o resultado de `rodar_testes.bat`: **97 testes, OK**.
   > "Os testes cobrem a tabela da seção 15: estrutura vazia, um elemento, vários, inválidos, rotações, BFS com a ordem do exemplo da aula, integração manual × solver."
 - Citar um teste que pegou erro real: a Fase 5 lia o histórico da Fase 2 no formato errado; a partida simulada revelou; virou teste.
 - Bônus feitos: visualização animada offline; gerador de mapas por seed com verificador de solução. No mapa de 60 locais, a DFS expandiu **mais** estados que a BFS (235 × 181) — a DFS não garante explorar menos.
@@ -180,3 +180,20 @@ Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 
 | | **Total** | **20** |
 
 Para **10 minutos**: blocos 1, 2 (só passo 4), 4 (só passos 2–3), 5 (só a visualização), 6 (só a aba AVL), 7 e 9.
+
+---
+
+## Versão "Audiência Pública" (turma do 9.º ano, ~25 min)
+
+Abrir `visualizar.bat`, deixar em **tela cheia** (F11) e avançar com as setas. A apresentadora fala como **Auditora-chefe da CIV**; o APURA-42 é o computador que "pede o palpite".
+
+| Slides | Momento | O que fazer |
+|---|---|---|
+| 1–3 | Capa, o que aconteceu, os 5 selos | Ler o aviso: tudo é fictício e apartidário. Perguntar: "por que uma auditoria precisa de *trilha*?" |
+| 4–8 | Anexo 1 — fichas embaralhadas | No slide 5, a turma vota quem vem primeiro; no 6, se aceitaria ordenar só pelo horário. No 7, tocar Bubble e depois Merge e comparar o número de passos. |
+| 9–11 | Anexo 2 — triagem | Slide 10: chamar um voluntário para montar a custódia (fila da cantina, pilha de pratos, caça ao tesouro). Mostrar o "Desfazer". |
+| 12–16 | Anexo 3 — mapa | Slide 13: votação da rota (a mais curta é inválida!). Slide 14: voluntário anda pelo mapa. Slide 15: BFS "onda" × DFS "corredor". |
+| 17–19 | Anexo 4 — cofre | Slide 18: a turma dá palpite em cada lacre (vai girar?). Slide 19: os pares "mesma situação?". |
+| 20–22 | Anexo 5 e encerramento | Relatório "consistente"; frase final: "não precisamos confiar em ninguém: as regras estão escritas e qualquer um pode refazer cada passo". |
+
+As fichas técnicas (verde) ficam fechadas para a turma e abertas para a banca.
