@@ -62,6 +62,10 @@ O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e 
 - **Estado e chave da AVL (Fase 4):** estado = (posição, pistas, portas, energia). A chave da AVL é (posição, pistas, portas); a energia é guardada como valor e usada por **dominância**: um estado repetido com energia menor ou igual não é expandido; com energia maior, substitui o anterior. Justificativa: com as mesmas pistas e portas, ter menos energia nunca permite fazer algo novo. Evita multiplicar o número de estados por (energia + 1). [Equipe]
 - **Solver:** BFS (fila própria), DFS recursiva (pilha de chamadas) e DFS com pilha própria, todas usando as mesmas funções de regra do modo manual. O dicionário `pais` serve apenas para reconstruir o caminho; o controle de visitados é feito exclusivamente pela AVL. [EP] [Equipe]
 
+- **Fase 4 (adotado):** três salas. Sala 1: o jogador prevê a rotação antes de cada inserção, com a sequência do exemplo da aula 08 (70, 50, 40, 80, 90, 15, 25, 45, 42), que provoca RD, RE, RED e RDE; árvore desenhada antes e depois, com h e FB. Sala 2: enigma 8.2 com 4 pares de estados; as respostas certas são calculadas por `chave_estado()` e pela regra de dominância do solver, não escritas à mão. Sala 3: busca existente e inexistente, com o caminho na árvore. Selo 4 = Sala 1 completa + Sala 2 toda correta. [EP 8] [Aula] [Equipe]
+- **Fase 5 (adotado):** etapas lote → triagem → mapa → relatório. Se o jogador resolveu as Fases 2 e 3, suas ações são reexecutadas e conferidas pelas regras; senão, a BFS resolve. A tabela BFS × DFS do relatório é ordenada com Merge Sort (item 9.3). Selo 5 = as três etapas consistentes; com os 5 selos, abre-se o Cofre de Verificação. [EP 9]
+- **Cenários de comparação:** cenário 1 = mapa padrão; cenário 2 = mapa de 30 vértices gerado por seed (árvore geradora + arestas extras), com verificador automático de solução por BFS (bônus "geração procedural" e "gerador com verificador"). [EP 9.1, 18]
+
 ## Pendências com a professora
 
 1. Quick Sort: `p..q` do slide × `p..q-1`.

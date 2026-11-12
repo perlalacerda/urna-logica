@@ -192,6 +192,16 @@ class ArvoreAVL:
     def contem(self, chave):
         return self.buscar(chave)[0]
 
+    def caminho_busca(self, chave):
+        """Chaves visitadas da raiz até achar (ou até chegar a NULL)."""
+        r, visitados = self.raiz, []
+        while r is not None:
+            visitados.append(r.chave)
+            if chave == r.chave:
+                break
+            r = r.esq if chave < r.chave else r.dir
+        return visitados
+
     def atualizar_valor(self, chave, valor):
         """Troca o valor associado a uma chave que já existe. O(log n)"""
         r = self.raiz

@@ -90,13 +90,13 @@ def regra_porta(v, pistas, portas=PORTAS):
     exigida = portas.get(v)
     if exigida is None or exigida in pistas:
         return True, ""
-    return False, (f"Porta bloqueada: entrar em {v} ({LOCAIS.get(v, v)}) exige a "
+    return False, (f"Porta bloqueada: entrar em {v} ({LOCAIS.get(v, v) if v in LOCAIS else 'local ' + v}) exige a "
                    f"{NOMES_PISTAS.get(exigida, exigida)} ({exigida}).")
 
 
-def estado_inicial(energia=ENERGIA_PADRAO):
+def estado_inicial(energia=ENERGIA_PADRAO, inicio=INICIO):
     """(posição, pistas, portas_liberadas, energia) — tuplas ordenadas, para comparar."""
-    return (INICIO, (), (), energia)
+    return (inicio, (), (), energia)
 
 
 def mover(G, estado, v, portas=PORTAS, pistas_mapa=PISTAS):
@@ -109,7 +109,7 @@ def mover(G, estado, v, portas=PORTAS, pistas_mapa=PISTAS):
         if not ok:
             return False, None, motivo
     novas_pistas, novas_portas = set(pistas), set(abertas)
-    msg = f"Você foi de {pos} ({LOCAIS[pos]}) para {v} ({LOCAIS[v]})."
+    msg = f"Você foi de {pos} ({G.nomes[pos]}) para {v} ({G.nomes[v]})."
     if v in portas:
         if v not in novas_portas:
             msg += f" Porta de {v} liberada."
@@ -139,18 +139,22 @@ def rotulo(estado):
 class ProblemaMapa:
     """Adaptador da Fase 3 para o solver (mesmas regras do jogador)."""
 
-    def __init__(self, G=None, energia=ENERGIA_PADRAO, destino=DESTINO):
+    def __init__(self, G=None, energia=ENERGIA_PADRAO, destino=DESTINO, inicio=INICIO,
+                 pistas=PISTAS, portas=PORTAS):
         self.G = G or construir_mapa()
         self.energia = energia
         self.destino = destino
+        self.inicio = inicio
+        self.pistas = pistas
+        self.portas = portas
 
     def estado_inicial(self):
-        return estado_inicial(self.energia)
+        return estado_inicial(self.energia, self.inicio)
 
     def sucessores(self, estado):
         res = []
         for v in self.G.vizinhos(estado[0]):
-            ok, novo, _ = mover(self.G, estado, v)
+            ok, novo, _ = mover(self.G, estado, v, self.portas, self.pistas)
             if ok:
                 res.append((f"ir para {v}", novo, 1))
         return res

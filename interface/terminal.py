@@ -7,6 +7,8 @@ from jogo.fase1 import Fase1
 from jogo.fase2 import Fase2, EVIDENCIAS, proximo_esperado, ProblemaTriagem, rotulo_triagem
 from jogo.fase3 import Fase3, ProblemaMapa, LOCAIS, PISTAS, PORTAS, NOMES_PISTAS, rotulo as rotulo_mapa
 from algoritmos.solver import bfs, dfs_recursiva, dfs_pilha, desenhar_arvore_de_busca
+from jogo.fase4 import Fase4, OPCOES_ROTACAO, descrever_par
+from jogo.fase5 import Fase5
 from jogo.registros import DESCRICAO_CRITERIOS
 
 LINHA = "=" * 70
@@ -45,9 +47,12 @@ class JogoTerminal:
         self.fase1 = Fase1(seed=seed)
         self.fase2 = Fase2()
         self.fase3 = Fase3()
+        self.fase4 = Fase4()
+        self.fase5 = Fase5()
 
     def selos(self):
-        return [self.fase1.selo, self.fase2.venceu(), self.fase3.venceu(), False, False]
+        return [self.fase1.selo, self.fase2.venceu(), self.fase3.venceu(),
+                self.fase4.venceu(), self.fase5.venceu()]
 
     def barra_de_selos(self):
         return "  ".join(f"[{'X' if s else ' '}] Selo {i}" for i, s in enumerate(self.selos(), 1))
@@ -82,8 +87,8 @@ class JogoTerminal:
             print("  1. " + Fase1.NOME + ("  (selo obtido)" if self.fase1.selo else ""))
             print("  2. " + Fase2.NOME + ("  (selo obtido)" if self.fase2.venceu() else ""))
             print("  3. " + Fase3.NOME + ("  (selo obtido)" if self.fase3.venceu() else ""))
-            print("  4. Fase 4 — O Cofre dos Estados     (em construção)")
-            print("  5. Fase 5 — A Auditoria Final       (em construção)")
+            print("  4. " + Fase4.NOME + ("  (selo obtido)" if self.fase4.venceu() else ""))
+            print("  5. " + Fase5.NOME + ("  (selo obtido)" if self.fase5.venceu() else ""))
             print("  0. Voltar")
             op = ler_opcao(["1", "2", "3", "4", "5", "0"])
             if op == "1":
@@ -92,10 +97,12 @@ class JogoTerminal:
                 self.jogar_fase2()
             elif op == "3":
                 self.jogar_fase3()
-            elif op == "0":
-                return
+            elif op == "4":
+                self.jogar_fase4()
+            elif op == "5":
+                self.jogar_fase5()
             else:
-                print("  Esta fase será liberada nas próximas versões.")
+                return
 
     def menu_resolver(self):
         while True:
@@ -302,6 +309,139 @@ class JogoTerminal:
                 ok, msg = f.ir_para(op)
                 print("\n  " + ("OK: " if ok else "") + msg.replace("\n", "\n  "))
 
+    # ======================================================== FASE 4
+    def jogar_fase4(self):
+        f = self.fase4
+        titulo(f.NOME)
+        print(f.ABERTURA)
+        while True:
+            sala1 = f"{f.proximo}/{len(f.sequencia)} lacres" + (" (completa)" if f.sala1_completa() else "")
+            sala2 = f"{sum(f.respostas_sala2.values())}/{len(f.pares)} corretas" + (" (completa)" if f.sala2_completa() else "")
+            print(f"\n  1. Sala 1 — Lacres do cofre (AVL e rotações)   [{sala1}]")
+            print(f"  2. Sala 2 — O estado que parece igual         [{sala2}]")
+            print("  3. Sala 3 — Consulta ao cofre (busca)")
+            print("  4. Reiniciar a fase\n  0. Voltar")
+            op = ler_opcao(["1", "2", "3", "4", "0"])
+            if op == "1":
+                self.sala1()
+            elif op == "2":
+                self.sala2()
+            elif op == "3":
+                self.sala3()
+            elif op == "4":
+                f.reiniciar()
+                print("  Fase reiniciada.")
+            else:
+                return
+            if f.venceu():
+                print("\n  O cofre reconheceu a memória organizada. Selo 4 conquistado!")
+                pausa()
+                return
+
+    def sala1(self):
+        f = self.fase4
+        print("\n  O cofre indexa os códigos dos lacres numa árvore AVL.")
+        print("  Lembre: FB = altura da esquerda - altura da direita; deve ficar entre -1 e +1.")
+        print("  Se um nó chegar a +2 ou -2, uma rotação corrige:")
+        print("    +2 e entrou à esquerda da esquerda -> RD    -2 e à direita da direita -> RE")
+        print("    +2 e entrou à direita da esquerda  -> RED   -2 e à esquerda da direita -> RDE")
+        while not f.sala1_completa():
+            codigo = f.sequencia[f.proximo]
+            print("\n  Árvore atual:")
+            print("  " + f.avl.desenhar().replace("\n", "\n  "))
+            print(f"\n  Próximo lacre: {codigo}. O que vai acontecer ao inseri-lo?")
+            for i, o in enumerate(OPCOES_ROTACAO, 1):
+                print(f"   {i}. {o}")
+            print("   0. sair da sala (o progresso fica guardado)")
+            op = ler_opcao(["1", "2", "3", "4", "5", "0"])
+            if op == "0":
+                return
+            r = f.inserir_proximo(OPCOES_ROTACAO[int(op) - 1])
+            print(f"\n  Inserido {r['codigo']}. " + ("Previsão CORRETA!" if r["acertou"] else
+                  f"Previsão incorreta: ocorreu '{r['ocorrido']}'."))
+            if r["ocorrido"] != "nenhuma":
+                print(f"  O nó {r['no']} ficou com FB = ±2 e foi corrigido com {r['ocorrido']}.")
+                print("\n  ANTES da inserção:\n  " + r["antes"].replace("\n", "\n  "))
+            print("\n  DEPOIS:\n  " + r["depois"].replace("\n", "\n  "))
+            print(f"  Altura da árvore: {r['altura']}   Continua AVL? {'sim' if r['eh_avl'] else 'NÃO'}")
+            pausa()
+        print(f"\n  Sala 1 completa: {f.acertos_sala1()} de {len(f.sequencia)} previsões corretas.")
+        rot = f.avl.rotacoes
+        print(f"  Rotações realizadas: RD={rot['RD']}, RE={rot['RE']}, RED={rot['RED']}, RDE={rot['RDE']}.")
+
+    def sala2(self):
+        f = self.fase4
+        print("\n  O solver guarda na AVL a CHAVE de cada estado: (posição, pistas, portas).")
+        print("  A energia não entra na chave: fica guardada junto, como valor.")
+        for i, par in enumerate(f.pares):
+            if f.respostas_sala2.get(i):
+                continue
+            print(f"\n  Par {i + 1}:\n  {descrever_par(par)}")
+            print("  a) Os dois devem ter a MESMA chave na AVL?  (s/n)")
+            mesma = ler_opcao(["s", "n"], "  Resposta: ") == "s"
+            print("  b) O solver deve EXPLORAR o estado novo?    (s/n)")
+            explorar = ler_opcao(["s", "n"], "  Resposta: ") == "s"
+            ok, explicacao, _ = f.responder_par(i, mesma, explorar)
+            print("  " + ("CORRETO. " if ok else "Não é isso. ") + explicacao)
+        if f.sala2_completa():
+            print("\n  Sala 2 completa.")
+        else:
+            print("\n  Há pares a rever. Entre de novo na Sala 2 para tentar outra vez.")
+        pausa()
+
+    def sala3(self):
+        f = self.fase4
+        if f.avl.raiz is None:
+            print("\n  O cofre está vazio: insira lacres na Sala 1 primeiro.")
+            return
+        print("\n  Árvore do cofre:\n  " + f.avl.desenhar().replace("\n", "\n  "))
+        try:
+            texto = input("\n  Código a procurar (número): ").strip()
+            codigo = int(texto)
+        except (ValueError, EOFError):
+            print("  Digite apenas números.")
+            return
+        achou, caminho, comps = f.consultar(codigo)
+        print(f"  Caminho na árvore: {' -> '.join(map(str, caminho)) or '(vazio)'}")
+        print(f"  {'ENCONTRADO' if achou else 'NÃO encontrado'} após {comps} comparações "
+              f"(altura da árvore: {f.avl.altura()}; no máximo altura + 1 comparações).")
+
+    # ======================================================== FASE 5
+    def jogar_fase5(self):
+        f = self.fase5
+        titulo(f.NOME)
+        print(f.ABERTURA)
+        print("\n  Etapa 1 — escolha o algoritmo para organizar o lote (seed 2042):")
+        print("  1. Bubble Sort   2. Merge Sort   3. Quick Sort")
+        alg = {"1": "bubble", "2": "merge", "3": "quick"}[ler_opcao(["1", "2", "3"])]
+        f.reiniciar()
+        f.etapa_lote(algoritmo=alg)
+        print("\n  Etapa 2 — triagem: " + ("usando as SUAS ações da Fase 2, que o solver vai conferir."
+              if self.fase2.venceu() else "você ainda não resolveu a Fase 2; o solver (BFS) vai resolver."))
+        f.etapa_triagem(self.fase2.acoes_feitas if self.fase2.venceu() else None)
+        print("  Etapa 3 — mapa: " + ("usando a SUA trilha da Fase 3, que o solver vai conferir."
+              if self.fase3.venceu() else "você ainda não resolveu a Fase 3; o solver (BFS) vai resolver."))
+        f.etapa_mapa(self.fase3.trilha if self.fase3.venceu() else None)
+        print("  Etapa 4 — comparando BFS e DFS em dois cenários...")
+        f.comparar_estrategias()
+        print("\n" + f.relatorio_texto())
+        try:
+            caminho = f.gravar_relatorio()
+            print(f"\n  Relatório gravado em: {caminho}")
+        except OSError:
+            print("\n  (Não foi possível gravar o relatório em arquivo.)")
+        if f.venceu():
+            print("\n  Selo 5 conquistado!")
+        if all(self.selos()):
+            titulo("COFRE DE VERIFICAÇÃO ABERTO")
+            print("  Os cinco selos foram reunidos e a trilha de auditoria é consistente.")
+            print("  A apuração simulada de Verídia pôde ser reconstruída a partir de regras")
+            print("  explícitas e dados claros. Missão cumprida, Analista!")
+        elif f.venceu():
+            faltam = [str(i) for i, s in enumerate(self.selos(), 1) if not s]
+            print(f"  Para abrir o Cofre de Verificação, conquiste também o(s) selo(s): {', '.join(faltam)}.")
+        pausa()
+
     # ======================================================== outros
     def instrucoes(self):
         titulo("INSTRUÇÕES")
@@ -311,6 +451,8 @@ class JogoTerminal:
         print("  - Você pode reiniciar uma fase sem reiniciar o jogo.")
         print("  - Nas Fases 2 e 3 é possível desfazer ações (pilha do histórico).")
         print("  - Em 'Resolver', o computador resolve as Fases 2 e 3 com BFS ou DFS.")
+        print("  - Na Fase 4 você prevê as rotações da árvore AVL e decide quando dois")
+        print("    estados são o mesmo. Na Fase 5 o sistema confere tudo e emite o relatório.")
         print(f"  - Os dados são gerados com seed fixa ({self.seed}): a partida é reproduzível.")
         pausa()
 
@@ -327,4 +469,10 @@ class JogoTerminal:
         print("    " + (", ".join(f"{a} {e}" for a, e in self.fase2.acoes_feitas) or "(nenhuma)"))
         print("\n  Fase 3 — trilha percorrida:")
         print(f"    {' -> '.join(self.fase3.trilha)}  (energia restante: {self.fase3.estado[3]})")
+        print("\n  Fase 4 — cofre:")
+        print(f"    Sala 1: {self.fase4.proximo}/{len(self.fase4.sequencia)} lacres, "
+              f"{self.fase4.acertos_sala1()} previsões corretas; altura da AVL {self.fase4.avl.altura()}")
+        print(f"    Sala 2: {sum(self.fase4.respostas_sala2.values())}/{len(self.fase4.pares)} pares corretos")
+        print("\n  Fase 5 — auditoria: " + ("consistente" if self.fase5.venceu() else
+              "não executada" if not self.fase5.etapas else "NÃO consistente"))
         pausa()

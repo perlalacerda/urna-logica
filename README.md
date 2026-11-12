@@ -25,7 +25,9 @@ py -m unittest discover -s testes -t .
 
 Para abrir o jogo pelo terminal: `py jogo.py`.
 
-Situação atual: Fases 1, 2 e 3 jogáveis; solver (BFS, DFS recursiva, DFS com pilha) resolve as Fases 2 e 3; Fases 4 e 5 em construção.
+Situação atual: as 5 fases são jogáveis do início ao Cofre de Verificação; o solver (BFS, DFS recursiva, DFS com pilha) resolve as Fases 2 e 3; a Fase 5 valida tudo e grava `resultados/relatorio_auditoria.txt`.
+
+Para gerar as métricas do relatório técnico: `py experimentos.py` (grava `docs/metricas.md`).
 
 ## Organização
 
@@ -44,4 +46,5 @@ Cada função traz, em comentário, o pseudocódigo da aula correspondente, com 
 
 - `docs/notas-das-aulas.md` — pseudocódigo das aulas usado como referência.
 - `docs/decisoes.md` — escolhas de projeto e pendências.
+- `docs/metricas.md` — métricas de ordenação, busca e AVL (gerado por `experimentos.py`).
 - `docs/registro-iag.md` — registro de uso de IA generativa (seção 14.4).
