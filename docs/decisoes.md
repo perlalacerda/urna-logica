@@ -46,14 +46,19 @@ O slide 31 da aula 04 chama `quickSort(A, p, q)`. Com o particiona de Lomuto, se
 ### Desempate pelo id_registro
 O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e Quick **não são estáveis**; sem desempate, registros com a mesma chave podem sair em ordem diferente em cada algoritmo, e o teste "comparar resultado dos três algoritmos" falharia. Acrescentar `id_registro` (único) como último critério torna a ordem final única.
 
-## Regras das fases (em definição)
+## Regras das fases
 
-- **Fase 2:** o enigma E2 → E4 → E1 → E6 exige destino para E3 e E5. Proposta: ação **arquivar** (evidência fora da custódia). Pendente de aprovação.
-- **Fase 3:** o enunciado chama E de "Unidade Oeste" (7.1) e "Arquivo Oeste" (7.5); a porta que exige a pista de sequência fica em outro local no mapa final. Pendente.
+- **Fase 2 (adotado, documentado):** ações aceitar, guardar, arquivar, liberar e desfazer.
+  - **arquivar** dá destino a E3 e E5, que não fazem parte da custódia. [Equipe]
+  - **guardar** só aceita uma evidência que precise sair *antes* da que está no topo. Isso impede "enterrar" uma evidência na pilha (beco sem saída). [Equipe]
+  - **desfazer** guarda na pilha do histórico uma "foto" do estado antes de cada ação válida; desfazer restaura a foto mais recente (LIFO). [Equipe]
+  - O espaço de estados completo tem 14 estados e 1 estado objetivo (verificado por busca em largura). Pequeno o bastante para desenhar na apresentação.
+- **Fase 1:** o gerador sorteia poucos horários (cerca de n/3) para garantir horários repetidos em zonas diferentes, condição do enigma 5.3. Lote padrão: seed 2042, 12 registros.
+- **Fase 3 (pendente):** o enunciado chama E de "Unidade Oeste" (7.1) e "Arquivo Oeste" (7.5); a porta que exige a pista de sequência fica em outro local no mapa final. Pendente.
 
 ## Pendências com a professora
 
 1. Quick Sort: `p..q` do slide × `p..q-1`.
-2. Fase 2: ação "arquivar".
+2. Fase 2: ação "arquivar" (adotada; confirmar se a professora aceita).
 3. Fase 3: nome e regra da porta do Oeste.
 4. Bônus "editor de fases": fases em arquivo JSON contam?

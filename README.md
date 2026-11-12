@@ -11,7 +11,9 @@ Jogo de lógica e investigação com dados **inteiramente fictícios**. Verídia
 
 ## Como executar
 
-**Jeito mais simples (Windows):** dê dois cliques em `rodar_testes.bat`.
+**Jogar (Windows):** dê dois cliques em `jogar.bat`.
+
+**Rodar os testes (Windows):** dê dois cliques em `rodar_testes.bat`.
 
 **Pelo terminal:** abra o `cmd`, entre na pasta do projeto com `cd` e rode:
 
@@ -21,7 +23,9 @@ py -m unittest discover -s testes -t .
 
 (No Linux/Mac, troque `py` por `python3`.)
 
-O jogo (`jogo.py`) será adicionado nas próximas etapas.
+Para abrir o jogo pelo terminal: `py jogo.py`.
+
+Situação atual: Fases 1 e 2 jogáveis; Fases 3 a 5 e o solver em construção.
 
 ## Organização
 
@@ -29,6 +33,7 @@ O jogo (`jogo.py`) será adicionado nas próximas etapas.
 estruturas/   implementações próprias: lista ligada, pilha, fila, AVL
 algoritmos/   Bubble, Merge e Quick Sort (BFS e DFS nas próximas etapas)
 jogo/         regras e dados do jogo (registros, fases, mapa)
+interface/    telas do terminal (sem regras do jogo)
 testes/       um arquivo de testes por módulo (seção 15 do enunciado)
 docs/         notas das aulas, decisões de projeto, registro de uso de IAG
 ```

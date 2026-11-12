@@ -69,6 +69,8 @@ def gerar_registros(n, seed, zonas=3, secoes_por_zona=4):
     """
     rng = random.Random(seed)
     horarios_base = [f"18:{m:02d}:{s:02d}" for m in range(0, 60, 7) for s in (0, 10, 30)]
+    # sorteia poucos horários (cerca de n/3) para que alguns SE REPITAM
+    horarios_base = rng.sample(horarios_base, max(2, min(len(horarios_base), n // 3)))
     registros = []
     for k in range(1, n + 1):
         zona = f"{rng.randint(1, zonas):02d}"
