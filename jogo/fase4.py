@@ -113,10 +113,12 @@ class Fase4:
         ocorrido = novas[0][0] if novas else "nenhuma"
         no_desbalanceado = novas[0][1] if novas else None
         acertou = previsao == ocorrido
+        explicacao = explicar_rotacao(ocorrido, no_desbalanceado, codigo, len(self.avl))
         self.previsoes.append((codigo, previsao, ocorrido, acertou))
         self.proximo += 1
         return {"ok": True, "codigo": codigo, "antes": antes, "depois": self.avl.desenhar(),
                 "ocorrido": ocorrido, "no": no_desbalanceado, "acertou": acertou,
+                "explicacao": explicacao,
                 "altura": self.avl.altura(), "eh_avl": self.avl.eh_avl()}
 
     def acertos_sala1(self):
@@ -141,6 +143,27 @@ class Fase4:
     # ---------------------------------------------------- selo
     def venceu(self):
         return self.sala1_completa() and self.sala2_completa()
+
+
+def explicar_rotacao(ocorrido, no, codigo, quantidade):
+    """Explica POR QUE houve (ou não) rotação, nos termos da aula 08."""
+    if ocorrido == "nenhuma":
+        if quantidade < 3:
+            return ("Com menos de 3 nós nenhuma rotação é possível: para um nó ficar com "
+                    "FB = ±2, um lado precisa ter altura 1 e o outro ser vazio (altura -1).")
+        return (f"Depois de inserir {codigo}, todos os nós do caminho até a raiz ficaram "
+                f"com FB entre -1 e +1. A árvore continua AVL sem rotação.")
+    casos = {
+        "RD": (f"O nó {no} ficou com FB = +2 (esquerda mais alta) e {codigo} entrou na "
+               f"esquerda do filho esquerdo: caso \"reta\" -> Rotação Direita."),
+        "RE": (f"O nó {no} ficou com FB = -2 (direita mais alta) e {codigo} entrou na "
+               f"direita do filho direito: caso \"reta\" -> Rotação Esquerda."),
+        "RED": (f"O nó {no} ficou com FB = +2 e {codigo} entrou na DIREITA do filho esquerdo: "
+                f"caso \"curva\" -> rotação dupla Esquerda-Direita (RE no filho, depois RD em {no})."),
+        "RDE": (f"O nó {no} ficou com FB = -2 e {codigo} entrou na ESQUERDA do filho direito: "
+                f"caso \"curva\" -> rotação dupla Direita-Esquerda (RD no filho, depois RE em {no})."),
+    }
+    return casos[ocorrido]
 
 
 def descrever_par(par):

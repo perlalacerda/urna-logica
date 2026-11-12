@@ -359,8 +359,8 @@ class JogoTerminal:
             r = f.inserir_proximo(OPCOES_ROTACAO[int(op) - 1])
             print(f"\n  Inserido {r['codigo']}. " + ("Previsão CORRETA!" if r["acertou"] else
                   f"Previsão incorreta: ocorreu '{r['ocorrido']}'."))
+            print("  Por quê? " + r["explicacao"])
             if r["ocorrido"] != "nenhuma":
-                print(f"  O nó {r['no']} ficou com FB = ±2 e foi corrigido com {r['ocorrido']}.")
                 print("\n  ANTES da inserção:\n  " + r["antes"].replace("\n", "\n  "))
             print("\n  DEPOIS:\n  " + r["depois"].replace("\n", "\n  "))
             print(f"  Altura da árvore: {r['altura']}   Continua AVL? {'sim' if r['eh_avl'] else 'NÃO'}")
