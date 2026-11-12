@@ -11,7 +11,9 @@ Jogo de lógica e investigação com dados **inteiramente fictícios**. Verídia
 
 ## Como executar
 
-Abra um terminal (no Windows: tecla Windows → digite `cmd` → Enter), entre na pasta do projeto e rode:
+**Jeito mais simples (Windows):** dê dois cliques em `rodar_testes.bat`.
+
+**Pelo terminal:** abra o `cmd`, entre na pasta do projeto com `cd` e rode:
 
 ```
 py -m unittest discover -s testes -t .
