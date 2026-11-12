@@ -66,6 +66,8 @@ O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e 
 - **Fase 5 (adotado):** etapas lote → triagem → mapa → relatório. Se o jogador resolveu as Fases 2 e 3, suas ações são reexecutadas e conferidas pelas regras; senão, a BFS resolve. A tabela BFS × DFS do relatório é ordenada com Merge Sort (item 9.3). Selo 5 = as três etapas consistentes; com os 5 selos, abre-se o Cofre de Verificação. [EP 9]
 - **Cenários de comparação:** cenário 1 = mapa padrão; cenário 2 = mapa de 30 vértices gerado por seed (árvore geradora + arestas extras), com verificador automático de solução por BFS (bônus "geração procedural" e "gerador com verificador"). [EP 9.1, 18]
 
+- **Visualização (bônus "visualização animada"):** `interface/visualizacao.py` executa os algoritmos reais, grava cada passo (fronteira da BFS/DFS, AVL antes/depois, estruturas da Fase 2, escritas no vetor) e embute os dados num único `visualizacao.html`, sem bibliotecas nem internet. Seis abas: mapa e busca, árvore de busca, AVL, triagem, ordenação, métricas. [EP 18] [Equipe]
+
 ## Pendências com a professora
 
 1. Quick Sort: `p..q` do slide × `p..q-1`.

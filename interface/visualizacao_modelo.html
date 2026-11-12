@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Urna Lógica — Visualização</title>
+<style>
+  :root {
+    --fundo: #0f1419; --painel: #172029; --painel2: #1e2a35; --borda: #2c3b49;
+    --texto: #e6edf3; --suave: #93a4b5; --destaque: #4fb3ff; --ok: #3fcf8e;
+    --alerta: #f5b041; --erro: #ff6b6b; --caminho: #c084fc;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fundo); color: var(--texto);
+         font: 15px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif; }
+  header { padding: 18px 24px 8px; }
+  h1 { font-size: 20px; margin: 0; }
+  header p { color: var(--suave); margin: 4px 0 0; font-size: 13px; }
+  nav { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 24px; border-bottom: 1px solid var(--borda); }
+  nav button { background: var(--painel); color: var(--suave); border: 1px solid var(--borda);
+               padding: 7px 14px; border-radius: 8px; cursor: pointer; font: inherit; }
+  nav button.ativo { background: var(--destaque); color: #06121c; border-color: var(--destaque); font-weight: 600; }
+  main { padding: 18px 24px 40px; max-width: 1200px; }
+  section { display: none; } section.ativo { display: block; }
+  .conceito { background: var(--painel); border-left: 4px solid var(--destaque); padding: 10px 14px;
+              border-radius: 6px; margin-bottom: 14px; color: var(--suave); }
+  .conceito b { color: var(--texto); }
+  .controles { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+  .controles button, .controles select { background: var(--painel2); color: var(--texto);
+      border: 1px solid var(--borda); padding: 6px 12px; border-radius: 6px; font: inherit; cursor: pointer; }
+  .controles .passo { color: var(--suave); margin-left: 6px; }
+  .grade { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 16px; }
+  @media (max-width: 860px) { .grade { grid-template-columns: 1fr; } }
+  .caixa { background: var(--painel); border: 1px solid var(--borda); border-radius: 8px; padding: 12px; overflow-x: auto; }
+  .caixa h3 { margin: 0 0 8px; font-size: 14px; color: var(--suave); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .fila { display: flex; flex-wrap: wrap; gap: 6px; min-height: 34px; align-items: center; }
+  .item { background: var(--painel2); border: 1px solid var(--borda); padding: 4px 9px; border-radius: 5px;
+          font-family: Consolas, monospace; font-size: 13px; }
+  .item.primeiro { border-color: var(--destaque); color: var(--destaque); }
+  .seta { color: var(--suave); }
+  .msg { padding: 8px 12px; border-radius: 6px; background: var(--painel2); margin-top: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { border-bottom: 1px solid var(--borda); padding: 6px 8px; text-align: right; }
+  th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+  th { color: var(--suave); font-weight: 600; }
+  svg text { fill: var(--texto); font-family: "Segoe UI", system-ui, sans-serif; }
+  .legenda { color: var(--suave); font-size: 13px; margin-top: 6px; }
+  .tag { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 12px; margin-right: 6px; }
+  code { font-family: Consolas, monospace; background: var(--painel2); padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Urna Lógica — o Enigma da Eleição de Verídia</h1>
+  <p>Visualização gerada pela execução real dos algoritmos do jogo. Funciona sem internet. Dados inteiramente fictícios.</p>
+</header>
+<nav id="abas"></nav>
+<main>
+
+<section id="aba-busca">
+  <div class="conceito"><b>Grafo + BFS/DFS (aula 09).</b> Cada local é um vértice; cada corredor, uma aresta.
+    A BFS usa uma <b>FILA</b> e explora por camadas; a DFS usa uma <b>PILHA</b> (ou a pilha de chamadas da recursão)
+    e mergulha num caminho antes de voltar. O "estado" inclui posição, pistas e energia: por isso o mesmo local
+    pode ser visitado mais de uma vez.</div>
+  <div class="controles">
+    <select id="busca-estrategia"></select>
+    <button data-c="inicio">⏮</button><button data-c="voltar">◀ passo</button>
+    <button data-c="tocar">▶ tocar</button><button data-c="avancar">passo ▶</button><button data-c="fim">⏭</button>
+    <span class="passo" id="busca-passo"></span>
+  </div>
+  <div class="grade">
+    <div class="caixa"><h3>Mapa de Verídia</h3><svg id="mapa" viewBox="0 0 760 500" width="100%"></svg>
+      <div class="legenda"><span class="tag" style="background:#4fb3ff;color:#06121c">atual</span>
+        <span class="tag" style="background:#2c6b4f">já expandido</span>
+        <span class="tag" style="background:#c084fc;color:#06121c">caminho final</span>
+        🔑 pista · 🔒 porta (exige pista)</div></div>
+    <div>
+      <div class="caixa"><h3>Estado expandido agora</h3><div id="busca-atual" class="item primeiro" style="display:inline-block"></div></div>
+      <div class="caixa" style="margin-top:12px"><h3 id="busca-tipo"></h3><div id="busca-fronteira" class="fila"></div>
+        <div class="legenda" id="busca-dica"></div></div>
+      <div class="caixa" style="margin-top:12px"><h3>Resultado</h3><div id="busca-resumo"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="aba-arvore">
+  <div class="conceito"><b>Árvore de busca (item 9.2 do EP).</b> Cada nó é um <b>estado</b>; cada aresta, a ação que levou
+    a ele. Em roxo, o caminho até a solução. Compare a forma da árvore: a BFS fica larga e rasa; a DFS, estreita e funda.</div>
+  <div class="controles"><select id="arvore-estrategia"></select></div>
+  <div class="caixa"><svg id="arvore"></svg>
+    <div class="legenda">Rótulo: posição {pistas} p:portas liberadas e:energia. Exemplo: <code>D {AUT,SEQ} p:H e4</code>.</div></div>
+</section>
+
+<section id="aba-avl">
+  <div class="conceito"><b>Árvore AVL (aula 08).</b> FB = altura da esquerda − altura da direita; precisa ficar entre −1 e +1.
+    Quando um nó chega a ±2, uma rotação (RD, RE, RED ou RDE) reequilibra a árvore. Sequência do exemplo da aula.</div>
+  <div class="controles">
+    <button data-c="inicio">⏮</button><button data-c="voltar">◀ passo</button>
+    <button data-c="tocar">▶ tocar</button><button data-c="avancar">passo ▶</button><button data-c="fim">⏭</button>
+    <span class="passo" id="avl-passo"></span>
+  </div>
+  <div class="msg" id="avl-msg"></div>
+  <div class="grade" style="margin-top:12px">
+    <div class="caixa"><h3>Antes da inserção</h3><svg id="avl-antes"></svg></div>
+    <div class="caixa"><h3>Depois (já reequilibrada)</h3><svg id="avl-depois"></svg></div>
+  </div>
+</section>
+
+<section id="aba-triagem">
+  <div class="conceito"><b>Fila, pilha e lista ligada (aula 06).</b> A fila só libera a primeira evidência (FIFO);
+    a pilha só libera o topo (LIFO); a lista de custódia cresce pelo fim. Solução encontrada pela BFS do solver.</div>
+  <div class="controles">
+    <button data-c="inicio">⏮</button><button data-c="voltar">◀ passo</button>
+    <button data-c="tocar">▶ tocar</button><button data-c="avancar">passo ▶</button><button data-c="fim">⏭</button>
+    <span class="passo" id="triagem-passo"></span>
+  </div>
+  <div class="caixa"><h3>Fila de entrada (início → final)</h3><div id="t-fila" class="fila"></div></div>
+  <div class="grade" style="margin-top:12px">
+    <div class="caixa"><h3>Pilha de espera (topo em cima)</h3><div id="t-pilha"></div></div>
+    <div class="caixa"><h3>Arquivo</h3><div id="t-arquivo" class="fila"></div></div>
+  </div>
+  <div class="caixa" style="margin-top:12px"><h3>Lista de custódia (cabeça → ...)</h3><div id="t-custodia" class="fila"></div>
+    <div class="legenda" id="t-alvo"></div></div>
+  <div class="msg" id="t-msg"></div>
+</section>
+
+<section id="aba-ordenacao">
+  <div class="conceito"><b>Ordenação (aulas 02 e 04).</b> Cada barra é um valor; em destaque, a posição que acabou de ser
+    escrita. Bubble faz n(n−1)/2 comparações sempre; Merge e Quick, da ordem de n log n no caso médio.</div>
+  <div class="controles">
+    <select id="ord-alg"></select>
+    <button data-c="inicio">⏮</button><button data-c="voltar">◀ passo</button>
+    <button data-c="tocar">▶ tocar</button><button data-c="avancar">passo ▶</button><button data-c="fim">⏭</button>
+    <span class="passo" id="ord-passo"></span>
+  </div>
+  <div class="caixa"><svg id="barras" viewBox="0 0 700 260" width="100%"></svg></div>
+  <div class="msg" id="ord-msg"></div>
+</section>
+
+<section id="aba-metricas">
+  <div class="conceito"><b>BFS × DFS em dois cenários (item 9.1).</b> A BFS garante o menor número de ações porque toda
+    ação custa 1. A DFS não tem essa garantia. "Repetidos" são estados barrados pela AVL de visitados.</div>
+  <div class="caixa"><table id="tab-metricas"></table></div>
+</section>
+
+</main>
+<script>
+const DADOS = /*__DADOS__*/null;
+const NS = "http://www.w3.org/2000/svg";
+const cor = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function el(tag, attrs = {}, pai = null, texto = null) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (texto !== null) e.textContent = texto;
+  if (pai) pai.appendChild(e);
+  return e;
+}
+function itens(div, lista, classePrimeiro = true) {
+  div.innerHTML = "";
+  if (!lista.length) { div.innerHTML = '<span class="legenda">(vazia)</span>'; return; }
+  lista.forEach((x, i) => {
+    const s = document.createElement("span");
+    s.className = "item" + (i === 0 && classePrimeiro ? " primeiro" : "");
+    s.textContent = x;
+    div.appendChild(s);
+  });
+}
+
+/* ---------- controle genérico de passos (voltar, avançar, tocar) ---------- */
+function Passos(secao, total, desenha, intervalo = 900) {
+  let i = 0, timer = null;
+  const ir = n => { i = Math.max(0, Math.min(total() - 1, n)); desenha(i); };
+  secao.querySelectorAll(".controles button").forEach(b => b.onclick = () => {
+    const c = b.dataset.c;
+    if (c === "tocar") {
+      if (timer) { clearInterval(timer); timer = null; b.textContent = "▶ tocar"; return; }
+      b.textContent = "⏸ pausar";
+      timer = setInterval(() => { if (i >= total() - 1) { clearInterval(timer); timer = null; b.textContent = "▶ tocar"; } else ir(i + 1); }, intervalo);
+    } else ir({inicio: 0, voltar: i - 1, avancar: i + 1, fim: total() - 1}[c]);
+  });
+  return { ir, reiniciar: () => ir(0) };
+}
+
+/* ---------- abas ---------- */
+const ABAS = [["busca", "Mapa e busca"], ["arvore", "Árvore de busca"], ["avl", "AVL"],
+              ["triagem", "Triagem (Fase 2)"], ["ordenacao", "Ordenação"], ["metricas", "Métricas"]];
+const nav = document.getElementById("abas");
+ABAS.forEach(([id, nome], k) => {
+  const b = document.createElement("button");
+  b.textContent = nome;
+  b.onclick = () => {
+    document.querySelectorAll("nav button").forEach(x => x.classList.remove("ativo"));
+    document.querySelectorAll("section").forEach(x => x.classList.remove("ativo"));
+    b.classList.add("ativo");
+    document.getElementById("aba-" + id).classList.add("ativo");
+  };
+  nav.appendChild(b);
+  if (k === 0) b.click();
+});
+
+/* ---------- MAPA E BUSCA ---------- */
+(function () {
+  const B = DADOS.busca, svg = document.getElementById("mapa");
+  const sel = document.getElementById("busca-estrategia");
+  Object.keys(B.estrategias).forEach(n => sel.add(new Option(n, n)));
+  const pos = {}; B.mapa.vertices.forEach(v => pos[v.id] = v);
+  function desenhaMapa(q, est) {
+    svg.innerHTML = "";
+    const fim = q === est.quadros.length - 1;
+    const noCaminho = new Set(), arestaCaminho = new Set();
+    if (fim) est.caminho.forEach((v, k) => { noCaminho.add(v); if (k) arestaCaminho.add([est.caminho[k-1], v].sort().join()); });
+    B.mapa.arestas.forEach(([u, v]) => {
+      const c = arestaCaminho.has([u, v].sort().join());
+      el("line", {x1: pos[u].x, y1: pos[u].y, x2: pos[v].x, y2: pos[v].y,
+                  stroke: c ? cor("--caminho") : cor("--borda"), "stroke-width": c ? 5 : 3}, svg);
+    });
+    const quadro = est.quadros[q], vistos = new Set(quadro.visitados);
+    B.mapa.vertices.forEach(v => {
+      let f = cor("--painel2");
+      if (vistos.has(v.id)) f = "#2c6b4f";
+      if (noCaminho.has(v.id)) f = cor("--caminho");
+      if (v.id === quadro.pos) f = cor("--destaque");
+      el("circle", {cx: v.x, cy: v.y, r: 24, fill: f, stroke: cor("--texto"), "stroke-width": 1.5}, svg);
+      el("text", {x: v.x, y: v.y + 6, "text-anchor": "middle", "font-size": 18, "font-weight": 700,
+                  style: (v.id === quadro.pos || noCaminho.has(v.id)) ? "fill:#06121c" : ""}, svg, v.id);
+      let extra = v.pista ? " 🔑" + v.pista : v.porta ? " 🔒" + v.porta : "";
+      el("text", {x: v.x, y: v.y + 44, "text-anchor": "middle", "font-size": 12, style: "fill:" + cor("--suave")}, svg, v.nome + extra);
+    });
+  }
+  const sec = document.getElementById("aba-busca");
+  const est = () => B.estrategias[sel.value];
+  const passos = Passos(sec, () => est().quadros.length, q => {
+    const e = est(), quadro = e.quadros[q];
+    desenhaMapa(q, e);
+    document.getElementById("busca-passo").textContent = `passo ${q + 1} de ${e.quadros.length}`;
+    document.getElementById("busca-atual").textContent = quadro.atual;
+    document.getElementById("busca-tipo").textContent = e.tipo_fronteira + (e.tipo_fronteira === "FILA" ? " (próximo a sair à esquerda)" : " (topo à esquerda)");
+    itens(document.getElementById("busca-fronteira"), quadro.fronteira);
+    document.getElementById("busca-dica").textContent = e.tipo_fronteira === "FILA"
+      ? "Os novos estados entram no FINAL da fila: quem chegou antes é explorado antes (por camadas)."
+      : "Os novos estados entram no TOPO: o mais recente é explorado primeiro (em profundidade).";
+    const r = e.resumo, fim = q === e.quadros.length - 1;
+    document.getElementById("busca-resumo").innerHTML = fim
+      ? `Solução com <b>${r.acoes} ações</b>: ${e.caminho.join(" → ")}<br>${r.expandidos} estados expandidos, ${r.gerados} gerados, ${r.repetidos} repetidos barrados pela AVL (altura ${r.avl_altura}), fronteira máxima ${r.fronteira}.`
+      : '<span class="legenda">Avance até o último passo para ver o caminho final.</span>';
+  });
+  sel.onchange = () => passos.reiniciar();
+  passos.reiniciar();
+})();
+
+/* ---------- ÁRVORE DE BUSCA ---------- */
+(function () {
+  const sel = document.getElementById("arvore-estrategia"), svg = document.getElementById("arvore");
+  Object.keys(DADOS.busca.estrategias).forEach(n => sel.add(new Option(n, n)));
+  function desenha() {
+    const a = DADOS.busca.estrategias[sel.value].arvore;
+    const DX = 136, DY = 74, M = 70;
+    const maxX = Math.max(...a.nos.map(n => n.x)), maxY = Math.max(...a.nos.map(n => n.y));
+    const W = (maxX + 1) * DX + M, H = (maxY + 1) * DY + M;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", "100%");
+    svg.style.minWidth = Math.min(W, 900) + "px";
+    svg.innerHTML = "";
+    const P = {}; a.nos.forEach(n => P[n.id] = {x: n.x * DX + M, y: n.y * DY + 30, n});
+    a.arestas.forEach(([p, f]) => el("line", {x1: P[p].x, y1: P[p].y, x2: P[f].x, y2: P[f].y,
+      stroke: P[p].n.caminho && P[f].n.caminho ? cor("--caminho") : cor("--borda"), "stroke-width": 2}, svg));
+    a.nos.forEach(n => {
+      const p = P[n.id];
+      el("rect", {x: p.x - 64, y: p.y - 13, width: 128, height: 26, rx: 6,
+                  fill: n.caminho ? cor("--caminho") : cor("--painel2"), stroke: cor("--borda")}, svg);
+      el("text", {x: p.x, y: p.y + 5, "text-anchor": "middle", "font-size": 12,
+                  style: n.caminho ? "fill:#06121c;font-weight:600" : ""}, svg, n.rotulo);
+    });
+  }
+  sel.onchange = desenha; desenha();
+})();
+
+/* ---------- AVL ---------- */
+function desenhaAVL(svg, raiz, destaque) {
+  svg.innerHTML = "";
+  if (!raiz) { svg.setAttribute("viewBox", "0 0 300 60"); el("text", {x: 10, y: 35, style: "fill:" + cor("--suave")}, svg, "(árvore vazia)"); return; }
+  const nos = []; let x = 0;
+  (function inordem(n, d) { if (!n) return; inordem(n.e, d + 1); nos.push({n, x: x++, d}); inordem(n.d, d + 1); })(raiz, 0);
+  const DX = 62, DY = 72, W = nos.length * DX + 40, H = (Math.max(...nos.map(o => o.d)) + 1) * DY + 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", W);
+  svg.style.maxWidth = "100%";
+  const P = new Map(); nos.forEach(o => P.set(o.n, {x: o.x * DX + 40, y: o.d * DY + 34}));
+  nos.forEach(o => ["e", "d"].forEach(l => { if (o.n[l]) { const a = P.get(o.n), b = P.get(o.n[l]);
+    el("line", {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: cor("--borda"), "stroke-width": 2}, svg); } }));
+  nos.forEach(o => {
+    const p = P.get(o.n), ruim = Math.abs(o.n.fb) > 1;
+    el("circle", {cx: p.x, cy: p.y, r: 20, fill: o.n.k === destaque ? cor("--destaque") : cor("--painel2"),
+                  stroke: ruim ? cor("--erro") : cor("--texto"), "stroke-width": ruim ? 3 : 1.5}, svg);
+    el("text", {x: p.x, y: p.y + 5, "text-anchor": "middle", "font-weight": 700,
+                style: o.n.k === destaque ? "fill:#06121c" : ""}, svg, o.n.k);
+    el("text", {x: p.x, y: p.y + 36, "text-anchor": "middle", "font-size": 11, style: "fill:" + cor("--suave")},
+       svg, `h=${o.n.h} FB=${o.n.fb > 0 ? "+" : ""}${o.n.fb}`);
+  });
+}
+(function () {
+  const A = DADOS.avl, sec = document.getElementById("aba-avl");
+  Passos(sec, () => A.quadros.length, q => {
+    const f = A.quadros[q];
+    document.getElementById("avl-passo").textContent = `inserção ${q + 1} de ${A.quadros.length} — sequência: ${A.sequencia.join(", ")}`;
+    document.getElementById("avl-msg").innerHTML = `Inserindo <b>${f.codigo}</b> → rotação: <b>${f.rotacao}</b>. ${f.explicacao} (altura final: ${f.altura})`;
+    desenhaAVL(document.getElementById("avl-antes"), f.antes, null);
+    desenhaAVL(document.getElementById("avl-depois"), f.depois, f.codigo);
+  }, 1600).reiniciar();
+})();
+
+/* ---------- TRIAGEM ---------- */
+(function () {
+  const T = DADOS.triagem, sec = document.getElementById("aba-triagem");
+  document.getElementById("t-alvo").textContent = "Objetivo: " + T.alvo.join(" → ");
+  Passos(sec, () => T.quadros.length, q => {
+    const f = T.quadros[q];
+    document.getElementById("triagem-passo").textContent = `passo ${q} de ${T.quadros.length - 1}: ${f.acao}`;
+    itens(document.getElementById("t-fila"), f.fila);
+    const pilha = document.getElementById("t-pilha"); pilha.innerHTML = "";
+    if (!f.pilha.length) pilha.innerHTML = '<span class="legenda">(vazia)</span>';
+    f.pilha.forEach((x, i) => { const d = document.createElement("div"); d.className = "item" + (i ? "" : " primeiro");
+      d.style.margin = "3px 0"; d.style.width = "70px"; d.textContent = x; pilha.appendChild(d); });
+    itens(document.getElementById("t-arquivo"), f.arquivo, false);
+    itens(document.getElementById("t-custodia"), f.custodia, false);
+    document.getElementById("t-msg").textContent = f.msg;
+  }, 1300).reiniciar();
+})();
+
+/* ---------- ORDENAÇÃO ---------- */
+(function () {
+  const O = DADOS.ordenacao, sec = document.getElementById("aba-ordenacao"), sel = document.getElementById("ord-alg");
+  Object.keys(O.algoritmos).forEach(n => sel.add(new Option(n, n)));
+  const svg = document.getElementById("barras"), maior = Math.max(...O.entrada);
+  const alg = () => O.algoritmos[sel.value];
+  const passos = Passos(sec, () => alg().fotos.length, q => {
+    const a = alg(), foto = a.fotos[q], n = foto.v.length, L = 660 / n;
+    svg.innerHTML = "";
+    foto.v.forEach((x, i) => {
+      const h = x / maior * 200, destaque = foto.i.includes(i);
+      el("rect", {x: 20 + i * L + 6, y: 225 - h, width: L - 12, height: h, rx: 4,
+                  fill: destaque ? cor("--alerta") : cor("--destaque")}, svg);
+      el("text", {x: 20 + i * L + L / 2, y: 248, "text-anchor": "middle", "font-size": 14}, svg, x);
+    });
+    document.getElementById("ord-passo").textContent = `escrita ${q} de ${a.fotos.length - 1}`;
+    document.getElementById("ord-msg").innerHTML = `Entrada (exemplo da aula 02): ${O.entrada.join(", ")}. ` +
+      `Total: <b>${a.comparacoes}</b> comparações e <b>${a.movimentacoes}</b> movimentações.`;
+  }, 450);
+  sel.onchange = () => passos.reiniciar();
+  passos.reiniciar();
+})();
+
+/* ---------- MÉTRICAS ---------- */
+(function () {
+  const t = document.getElementById("tab-metricas");
+  t.innerHTML = "<tr><th>cenário</th><th>estratégia</th><th>ações</th><th>expandidos</th><th>gerados</th><th>repetidos</th><th>fronteira máx.</th></tr>" +
+    DADOS.metricas.map(m => `<tr><td>${m.cenario}</td><td>${m.estrategia}</td><td>${m.acoes}</td><td>${m.expandidos}</td><td>${m.gerados}</td><td>${m.repetidos}</td><td>${m.fronteira}</td></tr>`).join("");
+})();
+</script>
+</body>
+</html>

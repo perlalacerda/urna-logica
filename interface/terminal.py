@@ -67,8 +67,9 @@ class JogoTerminal:
         while True:
             titulo("MENU INICIAL")
             print("  " + self.barra_de_selos())
-            print("\n  1. Jogar\n  2. Resolver (solver automático)\n  3. Instruções\n  4. Resultados\n  0. Sair")
-            op = ler_opcao(["1", "2", "3", "4", "0"])
+            print("\n  1. Jogar\n  2. Resolver (solver automático)\n  3. Instruções\n  4. Resultados"
+                  "\n  5. Visualização animada (abre no navegador)\n  0. Sair")
+            op = ler_opcao(["1", "2", "3", "4", "5", "0"])
             if op == "1":
                 self.menu_jogar()
             elif op == "2":
@@ -77,6 +78,8 @@ class JogoTerminal:
                 self.instrucoes()
             elif op == "4":
                 self.resultados()
+            elif op == "5":
+                self.abrir_visualizacao()
             else:
                 print("\nAté a próxima auditoria!")
                 return
@@ -443,6 +446,21 @@ class JogoTerminal:
         pausa()
 
     # ======================================================== outros
+    def abrir_visualizacao(self):
+        """Gera visualizacao.html com os algoritmos reais e abre no navegador (sem internet)."""
+        import pathlib
+        import webbrowser
+        from interface.visualizacao import gerar_html
+        print("\n  Gerando a visualização (executando os algoritmos)...")
+        caminho = gerar_html()
+        print(f"  Arquivo: {caminho}")
+        try:
+            webbrowser.open(pathlib.Path(caminho).as_uri())
+            print("  Aberto no navegador. Se não abrir, dê dois cliques no arquivo acima.")
+        except Exception:
+            print("  Não consegui abrir o navegador; dê dois cliques no arquivo acima.")
+        pausa()
+
     def instrucoes(self):
         titulo("INSTRUÇÕES")
         print("  - Escolha as opções digitando o número e teclando Enter.")

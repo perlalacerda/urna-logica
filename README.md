@@ -13,6 +13,8 @@ Jogo de lógica e investigação com dados **inteiramente fictícios**. Verídia
 
 **Jogar (Windows):** dê dois cliques em `jogar.bat`.
 
+**Visualização animada (Windows):** dê dois cliques em `visualizar.bat` (ou opção 5 do menu). Abre `visualizacao.html` no navegador, sem internet.
+
 **Rodar os testes (Windows):** dê dois cliques em `rodar_testes.bat`.
 
 **Pelo terminal:** abra o `cmd`, entre na pasta do projeto com `cd` e rode:

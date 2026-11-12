@@ -53,6 +53,7 @@ class Resultado:
         self.tempo_ms = 0.0
         self.ordem = []               # ordem em que os estados foram expandidos
         self.arvore = []              # arestas da árvore de busca: (pai, acao, filho)
+        self.passos = []              # para animação: (estado expandido, fronteira naquele momento)
         self.avl_altura = -1
         self.avl_nos = 0
         self.avl_rotacoes = 0
@@ -143,6 +144,7 @@ def bfs(problema):
         r.expandidos += 1
         r.ordem.append(u)
         if problema.eh_objetivo(u):
+            r.passos.append((u, Q.para_lista()))
             r.maior_fronteira = Q.maior_tamanho
             return _finalizar(r, problema, pais, u, visitados, inicio)
         for acao, v, _ in problema.sucessores(u):
@@ -154,6 +156,7 @@ def bfs(problema):
             pais[v] = (u, acao)
             r.arvore.append((u, acao, v))
             Q.enqueue(v)
+        r.passos.append((u, Q.para_lista()))
     r.maior_fronteira = Q.maior_tamanho
     return _finalizar(r, problema, pais, None, visitados, inicio)
 
@@ -178,9 +181,13 @@ def dfs_recursiva(problema):
     pais = {s: (None, None)}
     visitados.marcar(s)
 
+    chamadas = []                       # espelho da pilha de chamadas, só para animação
+
     def visita(u, profundidade):
+        chamadas.append(u)
         r.expandidos += 1
         r.ordem.append(u)
+        r.passos.append((u, list(reversed(chamadas))))
         r.maior_fronteira = max(r.maior_fronteira, profundidade)
         if problema.eh_objetivo(u):                       # caso-base 1
             return u
@@ -195,6 +202,7 @@ def dfs_recursiva(problema):
             achado = visita(v, profundidade + 1)          # chamada recursiva
             if achado is not None:                        # condição de retorno
                 return achado
+        chamadas.pop()
         return None                                       # caso-base 2: beco sem saída
 
     objetivo = visita(s, 1)
@@ -231,6 +239,7 @@ def dfs_pilha(problema):
         if pais[u][0] is not None:
             r.arvore.append((pais[u][0], pais[u][1], u))
         if problema.eh_objetivo(u):
+            r.passos.append((u, P.para_lista()))
             r.maior_fronteira = P.maior_tamanho
             return _finalizar(r, problema, pais, u, visitados, inicio)
         for acao, v, _ in reversed(problema.sucessores(u)):
@@ -240,6 +249,7 @@ def dfs_pilha(problema):
                 continue
             pais[v] = (u, acao)
             P.push(v)
+        r.passos.append((u, P.para_lista()))
     r.maior_fronteira = P.maior_tamanho
     return _finalizar(r, problema, pais, None, visitados, inicio)
 
