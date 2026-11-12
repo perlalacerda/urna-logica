@@ -55,6 +55,28 @@ class TestAlgoritmos(unittest.TestCase):
         with self.assertRaises(RecursionError):
             quick_sort_versao_do_slide([3, 1, 2])
 
+    def test_estabilidade(self):
+        """
+        Estável = elementos de chave igual mantêm a ordem original.
+        Bubble é estável; o Merge da aula (metade direita invertida) e o Quick não.
+        Por isso a chave da auditoria termina no id_registro (único).
+        """
+        import random
+        chave = lambda x: x[0]
+        instaveis = {}
+        for alg in (bubble_sort, merge_sort, quick_sort):
+            n = 0
+            for s in range(50):
+                r = random.Random(s)
+                A = [(r.randint(0, 3), i) for i in range(10)]   # (chave, posição original)
+                B = list(A)
+                alg(B, chave)
+                n += B != sorted(A, key=chave)                   # sorted() do Python é estável
+            instaveis[alg.__name__] = n
+        self.assertEqual(instaveis["bubble_sort"], 0)
+        self.assertGreater(instaveis["merge_sort"], 0)
+        self.assertGreater(instaveis["quick_sort"], 0)
+
     def test_primeiro_fora_de_ordem(self):
         self.assertEqual(primeiro_fora_de_ordem([1, 2, 5, 4, 6]), 2)
         self.assertEqual(primeiro_fora_de_ordem([1, 2, 3]), -1)
