@@ -232,3 +232,33 @@ class Fase2:
 
     def eh_objetivo(self):
         return self.venceu()
+
+
+# ======================================================== problema p/ o solver
+class ProblemaTriagem:
+    """Adaptador da Fase 2 para o solver: usa Fase2.sucessores (mesmas regras)."""
+
+    def __init__(self, entrada=ENTRADA_PADRAO, alvo=ALVO_PADRAO):
+        self.entrada, self.alvo = tuple(entrada), tuple(alvo)
+
+    def estado_inicial(self):
+        return Fase2(self.entrada, self.alvo).estado()
+
+    def sucessores(self, estado):
+        f = Fase2.a_partir_do_estado(estado, self.entrada, self.alvo)
+        return [(acao, novo, 1) for acao, novo in f.sucessores()]
+
+    def eh_objetivo(self, estado):
+        return Fase2.a_partir_do_estado(estado, self.entrada, self.alvo).venceu()
+
+    def chave(self, estado):
+        return estado            # (fila, pilha, custódia) já identifica o estado
+
+    def recurso(self, estado):
+        return 0                 # não há energia nesta fase
+
+
+def rotulo_triagem(estado):
+    fila, pilha, custodia = estado
+    return (f"fila[{' '.join(fila)}] pilha[{' '.join(pilha)}] "
+            f"custódia[{' '.join(custodia)}]")

@@ -54,11 +54,17 @@ O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e 
   - **desfazer** guarda na pilha do histórico uma "foto" do estado antes de cada ação válida; desfazer restaura a foto mais recente (LIFO). [Equipe]
   - O espaço de estados completo tem 14 estados e 1 estado objetivo (verificado por busca em largura). Pequeno o bastante para desenhar na apresentação.
 - **Fase 1:** o gerador sorteia poucos horários (cerca de n/3) para garantir horários repetidos em zonas diferentes, condição do enigma 5.3. Lote padrão: seed 2042, 12 registros.
-- **Fase 3 (pendente):** o enunciado chama E de "Unidade Oeste" (7.1) e "Arquivo Oeste" (7.5); a porta que exige a pista de sequência fica em outro local no mapa final. Pendente.
+- **Fase 3 (adotado):** mapa final com 9 vértices e 11 arestas, não orientado, em lista de adjacência feita de listas ligadas (aula 09). [EP] [Aula] [Equipe]
+  - O enunciado chama E de "Unidade Oeste" (7.1) e cita um "Arquivo Oeste" (7.5). Resolvido criando os dois: **E = Unidade Oeste** (guarda a pista SEQ) e **H = Arquivo Oeste** (porta que exige SEQ). Assim a regra deixa de ser circular. [Equipe]
+  - Ponto de autenticação: D (pista AUT). A porta de F exige AUT, o que força passar por D antes do Centro de Validação. [EP 7.5]
+  - Caminho mais curto em arestas: A-C-G-F (3), **inválido** pelas portas. Rota válida encontrada pelo solver: A-C-E-C-B-H-D-F (7). Passa duas vezes por C, com pistas diferentes: exemplo direto de "mesma posição, estado diferente". [EP 7.5, 8.2]
+  - Energia inicial 10; cada movimento custa 1. Com energia 6, não há solução (teste).
+- **Estado e chave da AVL (Fase 4):** estado = (posição, pistas, portas, energia). A chave da AVL é (posição, pistas, portas); a energia é guardada como valor e usada por **dominância**: um estado repetido com energia menor ou igual não é expandido; com energia maior, substitui o anterior. Justificativa: com as mesmas pistas e portas, ter menos energia nunca permite fazer algo novo. Evita multiplicar o número de estados por (energia + 1). [Equipe]
+- **Solver:** BFS (fila própria), DFS recursiva (pilha de chamadas) e DFS com pilha própria, todas usando as mesmas funções de regra do modo manual. O dicionário `pais` serve apenas para reconstruir o caminho; o controle de visitados é feito exclusivamente pela AVL. [EP] [Equipe]
 
 ## Pendências com a professora
 
 1. Quick Sort: `p..q` do slide × `p..q-1`.
 2. Fase 2: ação "arquivar" (adotada; confirmar se a professora aceita).
-3. Fase 3: nome e regra da porta do Oeste.
+3. Fase 3: "Unidade Oeste" × "Arquivo Oeste" (adotados como dois locais distintos).
 4. Bônus "editor de fases": fases em arquivo JSON contam?

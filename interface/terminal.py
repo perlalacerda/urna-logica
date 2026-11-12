@@ -4,7 +4,9 @@ fica aqui. As regras moram em jogo/ (separação exigida na seção 12).
 """
 
 from jogo.fase1 import Fase1
-from jogo.fase2 import Fase2, EVIDENCIAS, proximo_esperado
+from jogo.fase2 import Fase2, EVIDENCIAS, proximo_esperado, ProblemaTriagem, rotulo_triagem
+from jogo.fase3 import Fase3, ProblemaMapa, LOCAIS, PISTAS, PORTAS, NOMES_PISTAS, rotulo as rotulo_mapa
+from algoritmos.solver import bfs, dfs_recursiva, dfs_pilha, desenhar_arvore_de_busca
 from jogo.registros import DESCRICAO_CRITERIOS
 
 LINHA = "=" * 70
@@ -42,9 +44,10 @@ class JogoTerminal:
         self.seed = seed
         self.fase1 = Fase1(seed=seed)
         self.fase2 = Fase2()
+        self.fase3 = Fase3()
 
     def selos(self):
-        return [self.fase1.selo, self.fase2.venceu(), False, False, False]
+        return [self.fase1.selo, self.fase2.venceu(), self.fase3.venceu(), False, False]
 
     def barra_de_selos(self):
         return "  ".join(f"[{'X' if s else ' '}] Selo {i}" for i, s in enumerate(self.selos(), 1))
@@ -78,7 +81,7 @@ class JogoTerminal:
             titulo("ESCOLHA A FASE")
             print("  1. " + Fase1.NOME + ("  (selo obtido)" if self.fase1.selo else ""))
             print("  2. " + Fase2.NOME + ("  (selo obtido)" if self.fase2.venceu() else ""))
-            print("  3. Fase 3 — O Mapa das Seções       (em construção)")
+            print("  3. " + Fase3.NOME + ("  (selo obtido)" if self.fase3.venceu() else ""))
             print("  4. Fase 4 — O Cofre dos Estados     (em construção)")
             print("  5. Fase 5 — A Auditoria Final       (em construção)")
             print("  0. Voltar")
@@ -87,15 +90,58 @@ class JogoTerminal:
                 self.jogar_fase1()
             elif op == "2":
                 self.jogar_fase2()
+            elif op == "3":
+                self.jogar_fase3()
             elif op == "0":
                 return
             else:
                 print("  Esta fase será liberada nas próximas versões.")
 
     def menu_resolver(self):
-        titulo("SOLVER")
-        print("  O solver (BFS e DFS) será liberado junto com a Fase 3.")
-        pausa()
+        while True:
+            titulo("SOLVER — busca automática no espaço de estados")
+            print("  O solver usa AS MESMAS REGRAS do jogador. Cada situação do jogo é um")
+            print("  vértice; cada ação válida é uma aresta. A AVL guarda os estados já vistos.")
+            print("\n  Qual desafio?\n  1. Fase 2 — sequência de custódia\n  2. Fase 3 — rota no mapa\n  0. Voltar")
+            op = ler_opcao(["1", "2", "0"])
+            if op == "0":
+                return
+            problema, rotulo = ((ProblemaTriagem(), rotulo_triagem) if op == "1"
+                                else (ProblemaMapa(), rotulo_mapa))
+            print("\n  Estratégia:\n  1. BFS (fila)\n  2. DFS recursiva\n  3. DFS com pilha\n  4. Comparar as três")
+            est = ler_opcao(["1", "2", "3", "4"])
+            algs = {"1": [bfs], "2": [dfs_recursiva], "3": [dfs_pilha], "4": [bfs, dfs_recursiva, dfs_pilha]}[est]
+            resultados = [alg(problema) for alg in algs]
+            for r in resultados:
+                self.mostrar_resultado(r, rotulo, detalhar=len(algs) == 1)
+            if len(resultados) > 1:
+                self.tabela_comparativa(resultados)
+            pausa()
+
+    def mostrar_resultado(self, r, rotulo, detalhar=True):
+        print(f"\n  === {r.algoritmo} ===")
+        if r.encontrou:
+            print(f"  Solução com {r.numero_acoes()} ações (custo {r.custo}):")
+            for i, (acao, e) in enumerate(r.caminho):
+                print(f"    {i:>2}. {acao or 'início':12}  {rotulo(e)}")
+        else:
+            print("  Nenhuma solução: todos os estados alcançáveis foram explorados.")
+        print(f"  Estados expandidos: {r.expandidos} | gerados: {r.gerados} | "
+              f"repetidos ignorados (AVL): {r.repetidos}")
+        print(f"  Fronteira máxima: {r.maior_fronteira} | AVL: {r.avl_nos} nós, altura {r.avl_altura}, "
+              f"{r.avl_rotacoes} rotações | tempo: {r.tempo_ms:.3f} ms")
+        if detalhar:
+            print("\n  Árvore de busca (cada nó é um estado; cada aresta, a ação que levou a ele):")
+            print("  " + desenhar_arvore_de_busca(r, rotulo, limite=40).replace("\n", "\n  "))
+
+    def tabela_comparativa(self, resultados):
+        print(f"\n  {'estratégia':17} {'ações':>5} {'expandidos':>10} {'gerados':>8} {'repetidos':>9} "
+              f"{'fronteira':>9} {'tempo(ms)':>9}")
+        for r in resultados:
+            print(f"  {r.algoritmo:17} {r.numero_acoes() if r.encontrou else '-':>5} {r.expandidos:>10} "
+                  f"{r.gerados:>8} {r.repetidos:>9} {r.maior_fronteira:>9} {r.tempo_ms:>9.3f}")
+        print("\n  BFS garante o menor número de ações (cada ação custa 1);")
+        print("  DFS pode achar um caminho mais longo, explorando em profundidade.")
 
     # ======================================================== FASE 1
     def mostrar_lote(self):
@@ -195,6 +241,67 @@ class JogoTerminal:
             else:
                 return
 
+    # ======================================================== FASE 3
+    def mostrar_mapa(self):
+        f = self.fase3
+        pos, pistas, portas, energia = f.estado
+        print("\n  MAPA (lista de adjacência)")
+        for v in f.G.vertices():
+            extra = []
+            if v in PISTAS:
+                extra.append(f"pista {PISTAS[v]}")
+            if v in PORTAS:
+                extra.append(f"porta: exige {PORTAS[v]}")
+            marca = " <== VOCÊ" if v == pos else ""
+            print(f"   {v} {LOCAIS[v]:22} -> {', '.join(f.G.vizinhos(v)):12}"
+                  f"{('  [' + '; '.join(extra) + ']') if extra else ''}{marca}")
+        print(f"\n  Posição: {pos} ({LOCAIS[pos]})   Energia: {energia}   "
+              f"Pistas: {', '.join(pistas) or 'nenhuma'}   Portas liberadas: {', '.join(portas) or 'nenhuma'}")
+        print(f"  Trilha: {' -> '.join(f.trilha)}")
+
+    def regras_fase3(self):
+        print("\n  REGRAS DO MAPA")
+        print("  R1 Só é possível ir para um local vizinho (ligado por corredor).")
+        print("  R2 Cada movimento gasta 1 de energia. Com energia 0 não se move.")
+        print("  R3 O Arquivo Oeste (H) só abre para quem tem a pista de sequência (SEQ).")
+        print("  R4 O Centro de Validação (F) só abre para quem tem a pista de autenticação (AUT).")
+        print("  R5 Ao chegar na Unidade Oeste (E) você ganha SEQ; na Unidade Leste (D), AUT.")
+        print("  Objetivo: chegar ao Centro de Validação (F).")
+
+    def jogar_fase3(self):
+        f = self.fase3
+        titulo(f.NOME)
+        print(f.ABERTURA)
+        self.regras_fase3()
+        while True:
+            self.mostrar_mapa()
+            if f.venceu():
+                print("\n  Selo 3 conquistado! Caminho de auditoria reconstruído.")
+                pausa()
+                return
+            vizinhos = f.G.vizinhos(f.estado[0])
+            print(f"\n  Digite a letra do destino ({', '.join(vizinhos)}), ou:")
+            print("  U = desfazer   R = reiniciar   P = ver regras   M = menor caminho ignorando as portas   0 = voltar")
+            op = ler_opcao([v.lower() for v in f.G.vertices()] + ["u", "r", "p", "m", "0"],
+                           "Sua jogada: ")
+            if op == "0":
+                return
+            if op == "u":
+                print("\n  " + f.desfazer()[1])
+            elif op == "r":
+                f.reiniciar()
+                print("\n  Fase reiniciada.")
+            elif op == "p":
+                self.regras_fase3()
+            elif op == "m":
+                cam, ordem = f.menor_caminho_ignorando_portas()
+                print(f"\n  BFS no grafo puro (aula 09), a partir de A: ordem de visita {' '.join(ordem)}")
+                print(f"  Menor caminho em número de arestas: {' -> '.join(cam)} ({len(cam) - 1} arestas)")
+                print("  Atenção: ele ignora as portas. Será que é válido pelas regras?")
+            else:
+                ok, msg = f.ir_para(op)
+                print("\n  " + ("OK: " if ok else "") + msg.replace("\n", "\n  "))
+
     # ======================================================== outros
     def instrucoes(self):
         titulo("INSTRUÇÕES")
@@ -202,7 +309,8 @@ class JogoTerminal:
         print("  - Cada fase tem um objetivo, regras e um selo. Junte 5 selos.")
         print("  - Jogadas inválidas são recusadas com explicação e não alteram nada.")
         print("  - Você pode reiniciar uma fase sem reiniciar o jogo.")
-        print("  - Na Fase 2 é possível desfazer ações (pilha do histórico).")
+        print("  - Nas Fases 2 e 3 é possível desfazer ações (pilha do histórico).")
+        print("  - Em 'Resolver', o computador resolve as Fases 2 e 3 com BFS ou DFS.")
         print(f"  - Os dados são gerados com seed fixa ({self.seed}): a partida é reproduzível.")
         pausa()
 
@@ -217,4 +325,6 @@ class JogoTerminal:
                   f"{c.movimentacoes:>5} movimentações -> {'ACEITO' if aceito else 'recusado'}")
         print("\n  Fase 2 — ações válidas realizadas:")
         print("    " + (", ".join(f"{a} {e}" for a, e in self.fase2.acoes_feitas) or "(nenhuma)"))
+        print("\n  Fase 3 — trilha percorrida:")
+        print(f"    {' -> '.join(self.fase3.trilha)}  (energia restante: {self.fase3.estado[3]})")
         pausa()

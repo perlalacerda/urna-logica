@@ -25,13 +25,13 @@ py -m unittest discover -s testes -t .
 
 Para abrir o jogo pelo terminal: `py jogo.py`.
 
-Situação atual: Fases 1 e 2 jogáveis; Fases 3 a 5 e o solver em construção.
+Situação atual: Fases 1, 2 e 3 jogáveis; solver (BFS, DFS recursiva, DFS com pilha) resolve as Fases 2 e 3; Fases 4 e 5 em construção.
 
 ## Organização
 
 ```
-estruturas/   implementações próprias: lista ligada, pilha, fila, AVL
-algoritmos/   Bubble, Merge e Quick Sort (BFS e DFS nas próximas etapas)
+estruturas/   implementações próprias: lista ligada, pilha, fila, AVL, grafo
+algoritmos/   Bubble, Merge e Quick Sort; BFS e DFS da aula 09; solver no espaço de estados
 jogo/         regras e dados do jogo (registros, fases, mapa)
 interface/    telas do terminal (sem regras do jogo)
 testes/       um arquivo de testes por módulo (seção 15 do enunciado)

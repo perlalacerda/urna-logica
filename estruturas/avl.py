@@ -192,6 +192,16 @@ class ArvoreAVL:
     def contem(self, chave):
         return self.buscar(chave)[0]
 
+    def atualizar_valor(self, chave, valor):
+        """Troca o valor associado a uma chave que já existe. O(log n)"""
+        r = self.raiz
+        while r is not None:
+            if chave == r.chave:
+                r.valor = valor
+                return True
+            r = r.esq if chave < r.chave else r.dir
+        return False
+
     # ============================================================ consultas
     def altura(self):
         return altura(self.raiz)
