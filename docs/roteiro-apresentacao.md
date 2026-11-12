@@ -189,11 +189,15 @@ Abrir `visualizar.bat`, deixar em **tela cheia** (F11) e avançar com as setas. 
 
 | Slides | Momento | O que fazer |
 |---|---|---|
-| 1–5 | Capa, o que aconteceu, a equipe, a trilha de um voto, os 5 selos | Ler o aviso: tudo é fictício e apartidário. No slide 4, perguntar: "se eu der só o resultado final, como vocês conferem?" — e apresentar as migalhas de João e Maria. |
-| 6–10 | Anexo 1 — fichas embaralhadas | No slide 5, a turma vota quem vem primeiro; no 6, se aceitaria ordenar só pelo horário. No 7, tocar Bubble e depois Merge e comparar o número de passos. |
-| 11–13 | Anexo 2 — triagem | Slide 12: chamar um voluntário para montar a custódia (fila da cantina, pilha de pratos, caça ao tesouro). Mostrar o "Desfazer". |
-| 14–20 | Anexo 3 — mapa | Slide 15: votação da rota (a mais curta é inválida!). Slide 16: voluntário anda pelo mapa. Slide 17: BFS × DFS. Slide 18: a onda por camadas. Slide 19: as migalhas — voltar do fim ao começo. |
-| 21–23 | Anexo 4 — cofre | Slide 22: a turma dá palpite em cada lacre (vai girar?). Slide 23: os pares "mesma situação?". |
-| 24–26 | Anexo 5 e encerramento | Relatório "consistente"; frase final: "não precisamos confiar em ninguém: as regras estão escritas e qualquer um pode refazer cada passo". |
+| 1–2 | Capa e **glossário** | Ler o aviso (fictício, apartidário). Passar pelas palavras: lacre, custódia, cofre, selo — cada uma com o exemplo do grêmio. |
+| 3–5 | O que aconteceu, a equipe, **como vou contar** | Apresentar Miss Pearl, a Profa. Dra. Lucy (orientadora) e a turma 2026. No slide 5, apresentar a Bia e o Davi: "tudo o que a CIV fez, eles também fazem na eleição do grêmio". |
+| 6–7 | A trilha de um voto, os 5 selos | Perguntar: "se eu der só o resultado final, como vocês conferem?" |
+| 8–12 | Anexo 1 — fichas embaralhadas | Slide 9: votar quem vem primeiro. Slide 10: aceitaria ordenar só pelo horário? Slide 11: tocar Bubble e Merge (a foto do grêmio por altura). |
+| 13–15 | Anexo 2 — triagem | Slide 14: voluntário monta a custódia (fila da cantina, bandejas, livro de protocolo). |
+| 16–22 | Anexo 3 — mapa | Slide 17: votar a rota (a mais curta é inválida!). Slide 18: voluntário anda pelo mapa (a chave do laboratório). Slides 19–20: BFS (o recado no recreio) × DFS (o inspetor). Slide 21: os post-its "de onde vim". |
+| 23–25 | Anexo 4 — cofre | O fichário da secretaria. Slide 24: palpite em cada lacre. Slide 25: "o Davi no pátio com ou sem a chave". |
+| 26–28 | Anexo 5 e encerramento | A recontagem no pátio; frase final de Miss Pearl e a ata lida pela Bia e pelo Davi. |
+
+**Fio condutor:** em todo slide, Miss Pearl explica o lado técnico primeiro; o caderno do grêmio (folha pautada azul) conta a mesma ideia na escola logo depois.
 
 As fichas técnicas (verde) ficam fechadas para a turma e abertas para a banca.
