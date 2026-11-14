@@ -14,6 +14,7 @@ from jogo.fase3 import Fase3, ProblemaMapa, LOCAIS, PISTAS, PORTAS, NOMES_PISTAS
 from algoritmos.solver import bfs, dfs_recursiva, dfs_pilha, desenhar_arvore_de_busca
 from jogo.fase4 import Fase4, OPCOES_ROTACAO, descrever_par
 from jogo.fase5 import Fase5
+from jogo.mapa_custos import FaseMapaCustos, comparar as comparar_custos, dijkstra_grafo_puro, ENERGIA_CUSTOS
 from jogo.registros import DESCRICAO_CRITERIOS
 
 LINHA = "=" * 70
@@ -73,6 +74,7 @@ class JogoTerminal:
         self.fase3 = Fase3()
         self.fase4 = Fase4()
         self.fase5 = Fase5()
+        self.mapa_custos = FaseMapaCustos()      # desafio extra (aula 11), sem selo
 
     def selos(self):
         return [self.fase1.selo, self.fase2.venceu(), self.fase3.venceu(),
@@ -119,8 +121,9 @@ class JogoTerminal:
             print("  3. " + Fase3.NOME + ("  (selo obtido)" if self.fase3.venceu() else ""))
             print("  4. " + Fase4.NOME + ("  (selo obtido)" if self.fase4.venceu() else ""))
             print("  5. " + Fase5.NOME + ("  (selo obtido)" if self.fase5.venceu() else ""))
+            print("  6. " + FaseMapaCustos.NOME + ("  (concluído)" if self.mapa_custos.venceu() else ""))
             print("  0. Voltar")
-            op = ler_opcao(["1", "2", "3", "4", "5", "0"])
+            op = ler_opcao(["1", "2", "3", "4", "5", "6", "0"], apelidos={"custos": "6", "extra": "6"})
             if op == "1":
                 self.jogar_fase1()
             elif op == "2":
@@ -131,6 +134,8 @@ class JogoTerminal:
                 self.jogar_fase4()
             elif op == "5":
                 self.jogar_fase5()
+            elif op == "6":
+                self.jogar_mapa_custos()
             else:
                 return
 
@@ -139,10 +144,15 @@ class JogoTerminal:
             titulo("SOLVER — busca automática no espaço de estados")
             print("  O solver usa AS MESMAS REGRAS do jogador. Cada situação do jogo é um")
             print("  vértice; cada ação válida é uma aresta. A AVL guarda os estados já vistos.")
-            print("\n  Qual desafio?\n  1. Fase 2 — sequência de custódia\n  2. Fase 3 — rota no mapa\n  0. Voltar")
-            op = ler_opcao(["1", "2", "0"])
+            print("\n  Qual desafio?\n  1. Fase 2 — sequência de custódia\n  2. Fase 3 — rota no mapa"
+                  "\n  3. Desafio extra — mapa com custos (BFS × guloso × Dijkstra, aula 11)\n  0. Voltar")
+            op = ler_opcao(["1", "2", "3", "0"])
             if op == "0":
                 return
+            if op == "3":
+                self.comparar_mapa_custos()
+                pausa()
+                continue
             problema, rotulo = ((ProblemaTriagem(), rotulo_triagem) if op == "1"
                                 else (ProblemaMapa(), rotulo_mapa))
             print("\n  Estratégia:\n  1. BFS (fila)\n  2. DFS recursiva\n  3. DFS com pilha\n  4. Comparar as três")
@@ -357,6 +367,78 @@ class JogoTerminal:
             else:
                 ok, msg = f.ir_para(op)
                 print("\n  " + ("OK: " if ok else "") + msg.replace("\n", "\n  "))
+
+    # ======================================================== DESAFIO EXTRA: MAPA COM CUSTOS (aula 11)
+    def mostrar_mapa_custos(self):
+        f = self.mapa_custos
+        pos, pistas, portas, energia = f.estado
+        print("\n  MAPA COM CUSTOS (vizinho:custo de energia)")
+        for v in f.G.vertices():
+            extra = []
+            if v in PISTAS:
+                extra.append(f"pista {PISTAS[v]}")
+            if v in PORTAS:
+                extra.append(f"porta: exige {PORTAS[v]}")
+            viz = ", ".join(f"{w}:{f.G.peso(v, w)}" for w in f.G.vizinhos(v))
+            marca = " <== VOCÊ" if v == pos else ""
+            print(f"   {v} {LOCAIS[v]:22} -> {viz:20}"
+                  f"{('  [' + '; '.join(extra) + ']') if extra else ''}{marca}")
+        print(f"\n  Posição: {pos} ({LOCAIS[pos]})   Energia: {energia} de {f.energia_inicial} "
+              f"(gasto {f.gasto()})   Pistas: {', '.join(pistas) or 'nenhuma'}")
+        print(f"  Trilha: {' -> '.join(f.trilha)}")
+
+    def jogar_mapa_custos(self):
+        f = self.mapa_custos
+        titulo(f.NOME)
+        print(f.ABERTURA)
+        print("\n  Mesmas regras da Fase 3, com uma diferença: cada corredor gasta a energia")
+        print(f"  indicada ao lado do vizinho (ex.: B:2 = ir até B custa 2). Energia inicial: {ENERGIA_CUSTOS}.")
+        while True:
+            self.mostrar_mapa_custos()
+            if f.venceu():
+                print("\n  Você chegou ao Centro de Validação. Veja a comparação (T) ou volte (0).")
+            else:
+                orientar(dicas.orientacao_mapa_custos(f))
+            print("  Digite a LETRA do local, ou:  U = desfazer   R = reiniciar   "
+                  "T = tabela BFS × guloso × Dijkstra   ? = dica   0 = voltar")
+            op = ler_opcao([v.lower() for v in f.G.vertices()] + ["u", "r", "t", "?", "0"],
+                           "Sua jogada: ", apelidos={"desfazer": "u", "reiniciar": "r", "comparar": "t", "tabela": "t",
+                                                     "dica": "?", "ajuda": "?", "voltar": "0"})
+            if op == "?":
+                dica(dicas.dica_mapa_custos(f))
+            elif op == "0":
+                return
+            elif op == "u":
+                print("\n  " + f.desfazer()[1])
+            elif op == "r":
+                f.reiniciar()
+                print("\n  Desafio reiniciado.")
+            elif op == "t":
+                self.comparar_mapa_custos()
+                pausa()
+            elif f.venceu():
+                print("\n  Você já chegou. Use R para tentar outra rota.")
+            else:
+                ok, msg = f.ir_para(op)
+                print("\n  " + ("OK: " if ok else "") + msg.replace("\n", "\n  "))
+
+    def comparar_mapa_custos(self):
+        titulo("MAPA COM CUSTOS — BFS × GULOSO × DIJKSTRA (aula 11)")
+        resultados = comparar_custos()
+        print(f"\n  {'estratégia':30} {'chegou':>6} {'movim.':>6} {'energia':>7} {'expandidos':>10}  rota")
+        for r in resultados:
+            rota = "-".join(e[0] for _, e in r.caminho)
+            print(f"  {r.algoritmo:30} {'sim' if r.encontrou else 'NÃO':>6} {r.numero_acoes():>6} "
+                  f"{r.custo:>7} {r.expandidos:>10}  {rota}")
+        d, _, S, passos, cam = dijkstra_grafo_puro()
+        print("\n  Dijkstra da aula no grafo PURO (sem pistas e portas), a partir de A:")
+        print("    ordem de Extrai-Min: " + " ".join(f"{u}({d[u]})" for u in S))
+        print(f"    menor custo até F: {'-'.join(cam)} = {d['F']}  -> atravessa H sem SEQ: inválido no jogo.")
+        print("\n  O que a tabela mostra:")
+        print("  - BFS: MENOS MOVIMENTOS, mas pega o corredor A-C (custo 6) e gasta mais energia.")
+        print("  - Guloso (sempre o corredor mais barato): bom passo a passo, mas trava sem chegar.")
+        print("  - Dijkstra: também guloso, mas escolhe pelo custo TOTAL d[u] desde a origem,")
+        print("    usando fila de prioridade (heap). Com pesos >= 0, acha o MENOR CUSTO.")
 
     # ======================================================== FASE 4
     def jogar_fase4(self):

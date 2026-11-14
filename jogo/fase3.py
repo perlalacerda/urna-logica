@@ -22,6 +22,7 @@ MAPA (grafo NÃO orientado: os corredores valem nos dois sentidos)
 REGRAS FORMAIS (o item 7.5 transformado em condições verificáveis)
     R1 Adjacência : mover de u para v só se {u, v} é aresta do grafo.
     R2 Energia    : mover exige energia >= 1 e consome 1 unidade.
+                    (No mapa com custos, jogo/mapa_custos.py, consome w(u, v).)
     R3 Porta Oeste: entrar em H (Arquivo Oeste) exige a pista SEQ.
     R4 Porta Final: entrar em F (Centro de Validação) exige a pista AUT.
                     => a rota passa pelo ponto de autenticação ANTES de F.
@@ -80,10 +81,13 @@ def regra_adjacencia(G, u, v):
     return False, f"Não há conexão entre {u} ({G.nomes[u]}) e {v} ({G.nomes.get(v, '?')})."
 
 
-def regra_energia(energia):
-    if energia >= 1:
+def regra_energia(energia, custo=1):
+    """R2. No mapa com custos (variante da aula 11), o movimento consome w(u, v)."""
+    if energia >= custo:
         return True, ""
-    return False, "Energia insuficiente: cada movimento consome 1 unidade."
+    if custo == 1:
+        return False, "Energia insuficiente: cada movimento consome 1 unidade."
+    return False, f"Energia insuficiente: este corredor consome {custo} e restam {energia}."
 
 
 def regra_porta(v, pistas, portas=PORTAS):
@@ -105,7 +109,11 @@ def mover(G, estado, v, portas=PORTAS, pistas_mapa=PISTAS):
     É usada TANTO pelo jogador QUANTO pelo solver.
     """
     pos, pistas, abertas, energia = estado
-    for ok, motivo in (regra_adjacencia(G, pos, v), regra_energia(energia), regra_porta(v, pistas, portas)):
+    ok, motivo = regra_adjacencia(G, pos, v)
+    if not ok:
+        return False, None, motivo
+    custo = G.peso(pos, v)                     # 1 no mapa padrão; w(u, v) no mapa com custos
+    for ok, motivo in (regra_energia(energia, custo), regra_porta(v, pistas, portas)):
         if not ok:
             return False, None, motivo
     novas_pistas, novas_portas = set(pistas), set(abertas)
@@ -117,7 +125,9 @@ def mover(G, estado, v, portas=PORTAS, pistas_mapa=PISTAS):
     if v in pistas_mapa and pistas_mapa[v] not in novas_pistas:
         novas_pistas.add(pistas_mapa[v])
         msg += f" Pista coletada: {NOMES_PISTAS[pistas_mapa[v]]} ({pistas_mapa[v]})."
-    novo = (v, tuple(sorted(novas_pistas)), tuple(sorted(novas_portas)), energia - 1)
+    if custo != 1:
+        msg += f" Gastou {custo} de energia."
+    novo = (v, tuple(sorted(novas_pistas)), tuple(sorted(novas_portas)), energia - custo)
     return True, novo, msg
 
 
@@ -156,7 +166,7 @@ class ProblemaMapa:
         for v in self.G.vizinhos(estado[0]):
             ok, novo, _ = mover(self.G, estado, v, self.portas, self.pistas)
             if ok:
-                res.append((f"ir para {v}", novo, 1))
+                res.append((f"ir para {v}", novo, self.G.peso(estado[0], v)))
         return res
 
     def eh_objetivo(self, estado):

@@ -92,7 +92,8 @@ const fichas = (l, d0) => l.length ? l.map((x, i) => `<span class="ficha${d0 && 
 /* ================= progresso (fica salvo no navegador, se possível) ================= */
 const NOVO = () => ({ selos: [false, false, false, false, false],
   f1: { tentativas: [] }, f2: { atual: 0, hist: [], acoes: [] }, f3: { atual: 0, hist: [], trilha: ["A"] },
-  f4: { k: 0, acertos: 0, palpites: [], pares: {} }, f5: { feito: false, alg: null } });
+  f4: { k: 0, acertos: 0, palpites: [], pares: {} }, f5: { feito: false, alg: null },
+  mc: { atual: 0, hist: [], trilha: ["A"], melhor: null } });
 let P = NOVO();
 try { const s = localStorage.getItem("urna-logica"); if (s) P = Object.assign(NOVO(), JSON.parse(s)); } catch (e) {}
 function salvar() { try { localStorage.setItem("urna-logica", JSON.stringify(P)); } catch (e) {} desenharSelos(); }
@@ -119,6 +120,9 @@ TELAS.menu = () => {
     <div class="grade">${D.capitulos.map(c => `<div class="cartao"><h3>Fase ${c.selo} ${P.selos[c.selo - 1] ? "✔" : ""}</h3>
       <b>${D["fase" + c.selo].nome.replace(/Fase \d — /, "")}</b><p class="legenda">${c.missao}</p>
       <button class="btn${P.selos[c.selo - 1] ? " sec" : ""}" onclick="ir('f${c.selo}')">${P.selos[c.selo - 1] ? "Jogar de novo" : "Jogar"}</button></div>`).join("")}</div>
+    <div class="cartao" style="margin-top:14px;border-style:dashed"><h3>Desafio extra · Aula 11 (algoritmos gulosos) ${P.mc.melhor === D.custos.otimo ? "✔" : ""}</h3>
+      <b>O Mapa com Custos</b><p class="legenda">O mesmo mapa da Fase 3, mas cada corredor gasta uma energia diferente. O atalho é o caminho mais barato? Compare BFS, guloso e Dijkstra.</p>
+      <button class="btn sec" onclick="ir('custos')">Jogar o desafio</button></div>
     <div class="barra">
       <button class="btn sec grande" onclick="ir('solver')">Resolver (o computador joga)</button>
       <button class="btn neutro grande" onclick="ir('ajuda')">Como jogar</button>
@@ -225,12 +229,24 @@ function desenhaMapa(svg, opt) {
   svg.innerHTML = ""; svg.setAttribute("viewBox", "-30 70 790 480"); svg.setAttribute("width", "100%");
   const cam = new Set(), ar = new Set(); (opt.caminho || []).forEach((v, k, a) => { cam.add(v); if (k) ar.add([a[k - 1], v].sort().join()); });
   F.arestas.forEach(([u, v]) => svgEl("line", {x1: POS[u].x, y1: POS[u].y, x2: POS[v].x, y2: POS[v].y, stroke: ar.has([u, v].sort().join()) ? "#ffb347" : "#6b5236", "stroke-width": ar.has([u, v].sort().join()) ? 7 : 4}, svg));
+  // posição do nome de cada local; no mapa com custos, o nome de C vai para a esquerda para dar lugar ao custo de C-E
+  const rot = v => opt.pesos && v.id === "C" ? [v.x - 38, v.y + 6, "end"] : [v.x, v.y + (v.id === "G" ? -40 : 50), "middle"];
+  const caixas = []; F.vertices.forEach(v => { caixas.push([v.x, v.y, 34, 34]);           // círculo e rótulos de cada local
+    const [lx, ly, al] = rot(v), hw = v.nome.length * 4.8 + 4; caixas.push([al === "end" ? lx - hw : lx, ly - 5, hw, 11]);
+    if (v.pista || v.porta) caixas.push([v.x, v.y + 64, 58, 11]); });
+  const livre = (x, y) => caixas.every(([cx, cy, hw, hh]) => Math.abs(x - cx) > hw + 15 || Math.abs(y - cy) > hh + 15);
+  const lugar = (a, b) => { const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L;   // procura um ponto da linha sem texto em cima
+    for (const t of [.5, .42, .58, .34, .66]) for (const o of [0, 24, -24]) { const x = a.x + dx * t + nx * o, y = a.y + dy * t + ny * o; if (livre(x, y)) return [x, y]; }
+    return [a.x + dx / 2 + nx * 24, a.y + dy / 2 + ny * 24]; };
+  if (opt.pesos) F.arestas.forEach(([u, v]) => { const w = opt.pesos[u + "-" + v], [mx, my] = lugar(POS[u], POS[v]);
+    svgEl("circle", {cx: mx, cy: my, r: 15, fill: w >= 5 ? "#b5321e" : "#15110c", stroke: "#ffb347", "stroke-width": 2}, svg);
+    svgEl("text", {x: mx, y: my + 6, "text-anchor": "middle", "font-size": 17, "font-weight": 700, style: "fill:#fff6e4"}, svg, w); });
   const viz = new Set(opt.vizinhos || []);
   F.vertices.forEach(v => { const g = svgEl("g", {style: opt.clique ? "cursor:pointer" : ""}, svg);
     let f = "#2a1d12"; if (cam.has(v.id)) f = "#a9481a"; if (viz.has(v.id)) f = "#1f5f5b"; if (v.id === opt.atual) f = "#ffb347";
     svgEl("circle", {cx: v.x, cy: v.y, r: 30, fill: f, stroke: viz.has(v.id) ? "#fff6e4" : "#ffb347", "stroke-width": viz.has(v.id) ? 4 : 2, "stroke-dasharray": viz.has(v.id) ? "6 4" : ""}, g);
     svgEl("text", {x: v.x, y: v.y + 9, "text-anchor": "middle", "font-size": 26, "font-weight": 700, style: v.id === opt.atual ? "fill:#15110c" : ""}, g, v.id);
-    svgEl("text", {x: v.x, y: v.y + (v.id === "G" ? -40 : 50), "text-anchor": "middle", "font-size": 15}, g, v.nome);
+    const [lx, ly, al] = rot(v); svgEl("text", {x: lx, y: ly, "text-anchor": al, "font-size": 15}, g, v.nome);
     if (v.pista || v.porta) svgEl("text", {x: v.x, y: v.y + 69, "text-anchor": "middle", "font-size": 15, style: "fill:#ff8a3d"}, g, v.pista ? "🔑 pista " + v.pista : "🔒 exige " + v.porta);
     if (opt.clique) g.onclick = () => opt.clique(v.id); });
 }
@@ -267,6 +283,59 @@ TELAS.f3 = () => {
   $("#f3-rein").onclick = () => { S.atual = 0; S.hist = []; S.trilha = ["A"]; salvar(); $("#f3-msg").className = "msg"; $("#f3-msg").textContent = "De volta à Central de Auditoria."; desenha(); };
   $("#f3-curto").onclick = () => { const m = $("#f3-msg"); m.className = "msg dica"; m.textContent = `Ignorando as portas, a BFS acha ${F.curto.join(" → ")} (${F.curto.length - 1} corredores). Mas ele chega em F sem a pista AUT — tente e veja a porta recusar!`; };
   desenha();
+};
+
+/* ================= DESAFIO EXTRA: MAPA COM CUSTOS (aula 11) ================= */
+let mcVer = "Dijkstra";
+TELAS.custos = () => {
+  const F = D.custos, S = P.mc, C = F.comparacao, PU = F.puro;
+  $("#tela").innerHTML = `<div class="folha"><h2>${F.nome}</h2>
+    <details><summary>O que aconteceu (história)</summary><div class="doc">${F.abertura}</div></details>
+    <p><b>Sua missão:</b> chegar ao Centro de Validação (F) com as pistas SEQ e AUT, gastando o <b>mínimo</b> de energia. As regras são as da Fase 3; a diferença é que cada corredor tem um custo (o número no meio da linha; em vermelho, os corredores em obras).</p>
+    <div class="agora" id="mc-agora"></div>
+    <div class="dois"><div class="crt"><svg id="mc-mapa"></svg><p class="legenda" style="color:#d9b98a;margin:4px 8px">Círculos verdes tracejados = locais aonde você pode ir agora. O número em cada corredor é a energia que ele gasta.</p></div>
+    <div><div class="caixa"><h3>Seu estado</h3><div id="mc-estado" style="font-size:17px"></div></div>
+      <div class="caixa"><h3>Trilha</h3><div id="mc-trilha" class="codigo" style="font-size:16px"></div></div>
+      <button class="btn sec" id="mc-dica">💡 Dica (Dijkstra)</button><button class="btn neutro" id="mc-desf">↶ Desfazer</button><button class="btn neutro" id="mc-rein">Recomeçar</button>
+    </div></div>
+    <div class="msg" id="mc-msg">Você está na Central de Auditoria (A), com ${F.energia} de energia.</div>
+    <h3 style="margin-top:18px">Compare: quem gasta menos?</h3>
+    <table class="metr"><tr><th>estratégia</th><th>como escolhe</th><th>chegou?</th><th>movimentos</th><th>energia gasta</th><th>rota</th></tr>
+      ${C.map(r => `<tr><td><b>${r.algoritmo}</b></td><td>${{"BFS": "por camadas (fila): menos movimentos", "Dijkstra": "menor custo total d[u] (heap)"}[r.algoritmo] || "o próximo corredor mais barato"}</td>
+        <td>${r.encontrou ? "sim" : "<b>não</b> (travou)"}</td><td>${r.acoes}</td><td>${r.custo}</td><td class="codigo">${r.caminho.join("-")}</td></tr>`).join("")}</table>
+    <div class="escolha" id="mc-ver">${C.map(r => `<button data-k="${r.algoritmo}">Ver rota: ${r.algoritmo.split(" (")[0]}</button>`).join("")}</div>
+    <div class="crt"><svg id="mc-rota"></svg></div><div class="msg dica" id="mc-lição"></div>
+    <details><summary>Passo a passo do Dijkstra da aula (grafo puro, sem pistas e portas)</summary>
+      <p>Cada linha é um <b>Extrai-Min</b>: sai do heap o local com a <b>menor</b> distância estimada d[u], que passa a ser definitiva. Depois, <b>relaxa(u, v, w)</b> tenta melhorar d[v] de cada vizinho. ∞ = ainda não alcançado.</p>
+      <table class="metr"><tr><th>#</th><th>Extrai-Min</th><th>d[u]</th><th>relaxamentos que melhoraram</th><th>heap depois (vetor 1..n)</th></tr>
+        ${PU.passos.map((p, i) => `<tr><td>${i + 1}</td><td><b>${p.extraiu}</b></td><td>${p.d}</td><td>${p.melhorou.map(([v, a, b]) => `${v}: ${a === null ? "∞" : a} → ${b}`).join("; ") || "—"}</td>
+          <td class="codigo">${p.heap.map(([v, x]) => `${v}:${x === null ? "∞" : x}`).join(" | ") || "(vazio)"}</td></tr>`).join("")}</table>
+      <p>Resultado: menor custo até F = <b>${PU.d.F}</b> pela rota <b>${PU.caminho.join(" → ")}</b>. Mas essa rota passa pelo Arquivo Oeste (H) <b>sem a pista SEQ</b>: no jogo, a porta recusaria. Por isso o Dijkstra do desafio trabalha no <b>espaço de estados</b> (local + pistas + portas), como o solver da Fase 3.</p></details>
+    <div class="barra">${voltar} <span class="legenda">Código: <span class="codigo">algoritmos/dijkstra.py</span> · <span class="codigo">estruturas/heap.py</span> · <span class="codigo">jogo/mapa_custos.py</span></span></div></div>`;
+  const desenha = () => { const e = F.estados[S.atual];
+    desenhaMapa($("#mc-mapa"), {pesos: F.pesos, atual: e.pos, vizinhos: e.venceu ? [] : F.adjacencia[e.pos], caminho: e.venceu ? S.trilha : [], clique: e.venceu ? null : clique});
+    $("#mc-estado").innerHTML = `Posição: <b>${e.pos}</b> — ${D.fase3.vertices.find(v => v.id === e.pos).nome}<br>Pistas na mochila: <b>${e.pistas.join(", ") || "nenhuma"}</b><br>Energia: <b>${e.energia}</b> de ${F.energia} (gasto ${F.energia - e.energia})`;
+    $("#mc-trilha").textContent = S.trilha.join(" → ");
+    $("#mc-agora").innerHTML = "<b>O que fazer agora</b>" + e.orientacao; };
+  function clique(v) { const e = F.estados[S.atual], m = $("#mc-msg");
+    if (!F.adjacencia[e.pos].includes(v)) { m.className = "msg nao"; m.textContent = v === e.pos ? "Você já está aqui." : `Não há corredor entre ${e.pos} e ${v}. Clique num dos círculos verdes: ${F.adjacencia[e.pos].join(", ")}.`; return; }
+    const r = e.movs[v]; if (r.ok) { S.hist.push(S.atual); S.atual = r.destino; S.trilha.push(v); }
+    const n = F.estados[S.atual];
+    if (n.venceu) { const g = F.energia - n.energia; S.melhor = S.melhor === null ? g : Math.min(S.melhor, g); }
+    salvar(); m.className = "msg " + (n.venceu ? "vitoria" : r.ok ? "ok" : "nao");
+    m.textContent = (r.ok ? "" : "Movimento recusado: ") + r.msg + (n.venceu ? "\n" + n.avaliacao : ""); desenha(); }
+  $("#mc-dica").onclick = () => { const m = $("#mc-msg"); m.className = "msg dica"; m.textContent = F.estados[S.atual].dica; };
+  $("#mc-desf").onclick = () => { const m = $("#mc-msg"); if (S.hist.length) { S.atual = S.hist.pop(); S.trilha.pop(); m.className = "msg"; m.textContent = "Voltei um passo."; } else { m.className = "msg nao"; m.textContent = "Não há movimento para desfazer."; } salvar(); desenha(); };
+  $("#mc-rein").onclick = () => { S.atual = 0; S.hist = []; S.trilha = ["A"]; salvar(); $("#mc-msg").className = "msg"; $("#mc-msg").textContent = "De volta à Central de Auditoria."; desenha(); };
+  const LICAO = {"BFS": "A BFS conta movimentos, não energia: pega o atalho A-C (custo 6) e chega em 7 movimentos, mas gasta toda a energia. Menos movimentos ≠ menos custo quando os corredores têm pesos diferentes.",
+    "Dijkstra": "O Dijkstra também é guloso, mas escolhe pelo custo TOTAL desde a origem (d[u]), sempre o menor do heap. Com pesos ≥ 0 essa escolha é segura: dá mais um movimento que a BFS e gasta menos energia.",
+    "Guloso": "O guloso ingênuo escolhe o corredor mais barato a cada passo e nunca volta atrás. Cada passo parece bom, mas ele volta à Central sem nenhum movimento novo e trava — como o troco de 19 com moedas {2, 3, 6}: o guloso pega 6 + 6 + 6, faltam 1 e não há moeda, embora 6 + 6 + 3 + 2 + 2 resolva."};
+  const verRota = () => { const r = C.find(x => x.algoritmo === mcVer);
+    document.querySelectorAll("#mc-ver button").forEach(b => b.classList.toggle("sel", b.dataset.k === mcVer));
+    desenhaMapa($("#mc-rota"), {pesos: F.pesos, caminho: r.caminho, atual: r.caminho[r.caminho.length - 1]});
+    $("#mc-lição").textContent = LICAO[mcVer.split(" (")[0]]; };
+  document.querySelectorAll("#mc-ver button").forEach(b => b.onclick = () => { mcVer = b.dataset.k; verRota(); });
+  desenha(); verRota();
 };
 
 /* ================= FASE 4 ================= */
@@ -373,7 +442,7 @@ TELAS.solver = () => {
     <p>O solver usa <b>as mesmas regras</b> do jogador. Cada situação do jogo é um vértice; cada ação válida, uma aresta. A <b>BFS</b> explora por camadas (fila); a <b>DFS</b>, em profundidade (pilha). A árvore AVL lembra as situações já vistas.</p>
     <h3>Desafio</h3><div class="escolha" id="sv-p"><button data-k="triagem">Fase 2 — Triagem</button><button data-k="mapa">Fase 3 — Mapa</button></div>
     <h3>Estratégia</h3><div class="escolha" id="sv-a"><button data-k="BFS">BFS (fila)</button><button data-k="DFS (recursiva)">DFS recursiva</button><button data-k="DFS (pilha)">DFS com pilha</button></div>
-    <div id="sv-res"></div><div class="barra">${voltar} <span class="legenda">Código: <span class="codigo">algoritmos/solver.py</span></span></div></div>`;
+    <div id="sv-res"></div><div class="barra">${voltar} <button class="btn sec" onclick="ir('custos')">Mapa com custos: BFS × guloso × Dijkstra (aula 11) →</button> <span class="legenda">Código: <span class="codigo">algoritmos/solver.py</span></span></div></div>`;
   ["p", "a"].forEach(t => document.querySelectorAll(`#sv-${t} button`).forEach(b => { b.classList.toggle("sel", b.dataset.k === solv[t === "p" ? "prob" : "alg"]);
     b.onclick = () => { solv[t === "p" ? "prob" : "alg"] = b.dataset.k; TELAS.solver(); }; }));
   const r = D.solver[solv.prob][solv.alg], todos = D.solver[solv.prob];
@@ -401,7 +470,8 @@ TELAS.ajuda = () => {
       <tr><td>2. Central de Triagem</td><td>Montar a custódia E2 → E4 → E1 → E6 (Guardar, Aceitar, Arquivar, Aceitar, Liberar, Arquivar, Aceitar)</td></tr>
       <tr><td>3. Mapa das Seções</td><td>Pegar SEQ em E e AUT em D antes de entrar em F (A → C → E → C → B → H → D → F)</td></tr>
       <tr><td>4. Cofre dos Estados</td><td>Dar palpite nos 9 lacres e acertar os 4 pares</td></tr>
-      <tr><td>5. Auditoria Final</td><td>Escolher um método e ler o relatório</td></tr></table>
+      <tr><td>5. Auditoria Final</td><td>Escolher um método e ler o relatório</td></tr>
+      <tr><td>Desafio extra (aula 11)</td><td>Chegar a F gastando a menor energia: 11 (A → B → C → E → C → B → H → D → F). Não dá selo.</td></tr></table>
     <p class="legenda" style="margin-top:12px">Como esta página funciona: o Python executou as regras reais do jogo e calculou todas as situações possíveis de cada fase, o resultado de cada jogada e a dica do solver (BFS) para cada situação. A página só consulta essas tabelas: as regras estão no código em <span class="codigo">jogo/</span>, não aqui. O progresso fica guardado neste navegador.</p>
     ${voltar}</div>`;
 };
@@ -412,6 +482,7 @@ TELAS.resultados = () => {
     <div class="caixa"><h3>Fase 3 — trilha</h3>${P.f3.trilha.join(" → ")} (energia restante: ${D.fase3.estados[P.f3.atual].energia})</div>
     <div class="caixa"><h3>Fase 4 — cofre</h3>${P.f4.k}/${D.fase4.lacres.length} lacres, ${P.f4.acertos} palpites certos; ${Object.values(P.f4.pares).filter(x => x === true).length}/${D.fase4.pares.length} pares certos</div>
     <div class="caixa"><h3>Fase 5 — auditoria</h3>${P.f5.feito ? (P.selos[4] ? "consistente" : "não consistente") : "não executada"}</div>
+    <div class="caixa"><h3>Desafio extra — mapa com custos</h3>${P.mc.melhor === null ? "ainda não chegou a F" : `menor energia gasta: ${P.mc.melhor} (o Dijkstra gasta ${D.custos.otimo})`}</div>
     ${voltar}</div>`;
 };
 

@@ -148,3 +148,33 @@ def orientacao_fase5(selos):
 
 def lote_ok(f):
     return primeiro_fora_de_ordem(f.registros, CHAVE_AUDITORIA) == -1
+
+
+# ---------------------------------------------------- Desafio extra: mapa com custos (aula 11)
+def dica_mapa_custos(f):
+    """Dica pelo DIJKSTRA a partir da situação atual: o caminho de MENOR ENERGIA."""
+    from algoritmos.dijkstra import dijkstra_estados
+    if f.venceu():
+        return "Desafio concluído."
+    r = dijkstra_estados(_MapaDaqui(f.estado, f.G))
+    if not r.encontrou:
+        return ("Daqui não dá para chegar ao destino com a energia que resta. "
+                "Desfaça alguns movimentos (U) ou reinicie (R).")
+    prox = r.caminho[1][1][0]
+    return (f"O Dijkstra sugere ir para {prox} ({LOCAIS[prox]}). "
+            f"Pelo caminho mais barato, daqui ainda se gastam {r.custo} de energia "
+            f"em {r.numero_acoes()} movimento(s).")
+
+
+def orientacao_mapa_custos(f):
+    pos, pistas, _, energia = f.estado
+    if f.venceu():
+        return "Desafio concluído. Compare sua rota com BFS, guloso e Dijkstra (T)."
+    if "SEQ" not in pistas:
+        alvo = "Busque a pista SEQ na Unidade Oeste (E)."
+    elif "AUT" not in pistas:
+        alvo = "Com SEQ, a porta do Arquivo Oeste (H) abre. Busque AUT na Unidade Leste (D)."
+    else:
+        alvo = "Com AUT, siga para o Centro de Validação (F)."
+    return (f"{alvo} Energia restante: {energia}. Olhe o custo de cada corredor antes de andar. "
+            "Digite a letra de um vizinho (? = dica).")

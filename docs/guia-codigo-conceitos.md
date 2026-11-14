@@ -218,7 +218,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 
 ### 19. Testes e análise de complexidade
 
-- **Onde:** `testes/` (111 testes, um arquivo por módulo, cobrindo a tabela da seção 15) e `experimentos.py` → `docs/metricas.md`.
+- **Onde:** `testes/` (133 testes, um arquivo por módulo, cobrindo a tabela da seção 15) e `experimentos.py` → `docs/metricas.md`.
 - **Como rodar:** `rodar_testes.bat` (dois cliques) ou `py -m unittest discover -s testes -t .`.
 - **Teoria × experimento:** as contagens confirmam a teoria das aulas (Bubble n(n−1)/2; Quick no pior caso n(n−1)/2; AVL com altura ≈ log₂ n). Os tempos dependem da máquina; as contagens, não.
 - **Um erro real encontrado por teste de integração:** a Fase 5 lia o histórico da Fase 2 num formato errado. Uma partida simulada do início ao fim revelou o erro; ele foi corrigido e virou o teste `test_integracao_com_o_historico_real_das_fases_2_e_3`.
@@ -245,9 +245,9 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 | Gerador de enigmas com verificador automático de solução | **Feito** (para mapas) | `gerar_mapa` só entrega mapas que a BFS consegue resolver |
 | Níveis de dificuldade com mais vértices e estados | **Parcial** | Mapas de 30 e 60 vértices nos experimentos; não são selecionáveis no menu |
 | Editor de fases sem alterar o código | Não feito | — |
-| Heurística (ex.: A\*) comparada a BFS/DFS | Não feito | — |
+| Heurística (ex.: A\*) comparada a BFS/DFS | **Parcial**: Dijkstra e guloso ingênuo comparados à BFS no mapa com custos; A\* não feito | `jogo/mapa_custos.py` |
 | Modo cooperativo | Não feito | — |
-| Fila de prioridade | Não feito (há heap na aula 08) | — |
+| Fila de prioridade | **Feito**: heap binário de mínimo próprio (aula 08), usado pelo Dijkstra (aula 11) | `estruturas/heap.py` |
 
 ### B1. Visualização animada — "Audiência Pública da CIV"
 
@@ -263,6 +263,31 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 - **Animações reais:** ordenação das 12 fichas do lote (Bubble, Merge, Quick), mapa de todas as situações da triagem, BFS × DFS no mapa, árvore de busca, AVL antes/depois com palpite de rotação, pares do enigma 8.2, relatório da Fase 5.
 - **Prova:** `testes/test_visualizacao.py` (página sem referências externas; dados batem com a execução; jogos da página seguem as regras do Python; animação sem fichas duplicadas).
 
+### B3. Desafio extra — O Mapa com Custos (aula 11, algoritmos gulosos)
+
+- **O que é:** o mesmo mapa da Fase 3, com as mesmas pistas e portas, mas cada corredor gasta uma energia diferente (A-C, "em obras", custa 6). Energia inicial 15. A Fase 3 original não mudou: continua custando 1 por movimento. O item 7.4 do EP permite: "cada movimento pode consumir uma unidade ou ter custo definido por você".
+- **Onde jogar:** navegador → cartão "Desafio extra" no menu; terminal → Jogar → 6. Comparação pronta: Resolver → 3 (terminal) ou botão no Resolver (navegador).
+- **O que a comparação mostra** (números conferidos em `testes/test_mapa_custos.py`):
+
+| Estratégia | Como escolhe | Chegou? | Movimentos | Energia | Rota |
+|---|---|---|---|---|---|
+| BFS | por camadas (fila): menos movimentos | sim | 7 | 15 | A-C-E-C-B-H-D-F |
+| Guloso ingênuo | o próximo corredor mais barato | **não** | 6 | 6 | A-B-C-E-C-B-A (trava) |
+| Dijkstra | menor custo total d[u] (heap) | sim | 8 | **11** | A-B-C-E-C-B-H-D-F |
+
+- **Lição 1 — menos movimentos ≠ menos custo:** a BFS conta arestas e pega o atalho A-C (custo 6). É a resposta prática à exigência do item 7.2: "não afirmar que ela encontra menor custo em grafos ponderados sem considerar os pesos".
+- **Lição 2 — guloso nem sempre funciona:** o guloso ingênuo segue o algoritmo genérico da aula 11 (`seleciona` = corredor mais barato, tirado de um heap; `viável` = obedecer às regras e não repetir estado; nunca volta atrás). Volta à Central e fica sem movimento novo — como o troco de 19 com moedas {2, 3, 6}: o guloso pega 6 + 6 + 6, sobra 1 e não há moeda, embora 6 + 6 + 3 + 2 + 2 resolva.
+- **Lição 3 — o Dijkstra também é guloso, e funciona:** a cada passo, o Extrai-Min dá como definitivo o local de menor d[u]. Com pesos ≥ 0, nenhum caminho ainda não examinado pode ficar mais barato (somar pesos ≥ 0 nunca diminui o custo). A aula o chama de "generalização da BFS": com todos os pesos 1, ele dá o mesmo custo que a BFS (teste `test_sem_pesos_dijkstra_igual_bfs`).
+- **Lição 4 — o estado continua importando:** o Dijkstra da aula no grafo puro acha A-B-H-D-F, com custo 7, mas essa rota atravessa a porta H sem a pista SEQ. Por isso o desafio usa o Dijkstra no **espaço de estados** (local + pistas + portas), como o solver da Fase 3.
+- **Código:**
+  - `estruturas/heap.py` — heap de mínimo em vetor a partir da posição 1 (pai = k//2, filhos 2k e 2k+1). `inserir`/`_subir` e `extrair_minimo`/`_descer` seguem os slides 35, 36, 44 e 45 da aula 08, com a comparação invertida (a aula detalha o heap de máximo e diz que ele "pode ser facilmente adaptado" para o de mínimo). `diminuir_chave` faz o elemento subir quando o Dijkstra melhora d[v].
+  - `algoritmos/dijkstra.py` — `inicializa`, `relaxa` e `dijkstra` **linha a linha** da aula 11 (Q ← V[G] num heap; Extrai-Min; relaxa cada vizinho); `dijkstra_estados` (o mesmo método no grafo implícito do jogo: Q começa só com o estado inicial, e S, os estados definitivos, fica na AVL); `guloso_ingenuo`.
+  - `estruturas/grafo.py` — pesos w(u, v), com w = 1 quando não informado e w = ∞ quando a aresta não existe; peso negativo é recusado (o Dijkstra exige w ≥ 0).
+  - `jogo/mapa_custos.py` — o mapa, a energia, a fase jogável e a comparação.
+- **Complexidade (aula 11):** com heap, O((|V| + |E|) log |V|): até |V| Extrai-Min e até |E| relaxamentos, cada um O(log |V|). Com vetor no lugar do heap, O(|V|²), porque cada Extrai-Min percorre os vértices restantes. Heap (aula 08): inserir e remover em O(log n); com lista não ordenada, extrair custa O(n).
+- **Prova:** `testes/test_mapa_custos.py` (heap: vazio, extrai sempre o menor, relação pai × filho, `diminuir_chave`, empate; Dijkstra: exemplo do relaxamento 5 + 2 < 9 e exemplo orientado da aula 11, com d final s0, t8, x9, y5, z7 e Extrai-Min na ordem s, y, z, t, x; força bruta confirma que 11 é o mínimo; o guloso trava; a Fase 3 original continua custando 7) e `testes/test_jogo_web.py` (página e Python concordam em cada movimento; seguir as dicas gasta o mínimo).
+- **Não feito da aula 11:** Kruskal e conjuntos disjuntos (Union-Find). Encaixe possível: montar a árvore geradora do gerador de mapas (`jogo/cenarios.py`) como árvore geradora **mínima**.
+
 ### B2. Gerador de mapas com verificador
 
 - **Como garante que o mapa é conexo:** sorteia primeiro uma **árvore geradora** — cada novo vértice se liga a um já existente. Uma árvore com n vértices tem n − 1 arestas e liga todos. Depois acrescenta arestas extras, que criam ciclos e rotas alternativas.
@@ -277,7 +302,11 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 | Pergunta | Resposta |
 |---|---|
 | Por que BFS no solver? | Queremos a rota com menos movimentos; como cada movimento custa 1, a BFS garante isso. |
-| A BFS acha o menor custo? | Só se todas as ações custarem o mesmo. Com pesos diferentes, não. |
+| A BFS acha o menor custo? | Só se todas as ações custarem o mesmo. Com pesos diferentes, não: no mapa com custos, a BFS gasta 15 e o Dijkstra, 11. |
+| Por que o Dijkstra é guloso e mesmo assim acerta? | Escolhe sempre o menor d[u] e não volta atrás. Com pesos ≥ 0, nenhum caminho por examinar fica mais barato que d[u]. |
+| Por que o guloso "corredor mais barato" falha? | Olha só o próximo passo, não o custo desde a origem; no mapa com custos, volta à Central e trava. |
+| Por que heap no Dijkstra? | O Extrai-Min sai em O(log n) em vez de O(n). Total O((V + E) log V) com heap; O(V²) com vetor. |
+| O Dijkstra do jogo é igual ao do slide? | O método é o mesmo. A diferença: o grafo de estados não está pronto na memória, então Q começa com o estado inicial e os estados entram no heap quando são descobertos. O do slide, literal, está em `dijkstra()` e é testado com o exemplo da aula. |
 | Por que AVL e não lista para os visitados? | Na lista, cada consulta custa O(n); na AVL, O(log n). O solver consulta a cada estado gerado. |
 | Por que a energia não está na chave? | Dominância: mesmo lugar, mesmas pistas e portas, com menos energia, nunca é melhor. Evita multiplicar os estados. |
 | Dois estados na mesma posição são iguais? | Não, se as pistas ou portas forem diferentes: permitem ações diferentes (C sem SEQ × C com SEQ). |

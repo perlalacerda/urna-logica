@@ -17,17 +17,19 @@ Nada quebra o jogo: uma jogada errada é recusada com explicação e não muda n
 | **3. Mapa das Seções** | Anda pelo mapa até o Centro de Validação (F) | Pegar a pista **SEQ em E** e a pista **AUT em D** antes de entrar em F | Letra do local · U desfazer · R reiniciar · ? dica |
 | **4. Cofre dos Estados** | Guarda códigos numa árvore AVL | Sala 1: inserir os 9 lacres · Sala 2: acertar os 4 pares | 1–5 palpite de rotação · s/n · ? dica |
 | **5. Auditoria Final** | O sistema confere tudo | Escolher um algoritmo e ler o relatório | 1–3 |
+| **Extra (aula 11). Mapa com Custos** | Mesmo mapa, corredores com custos diferentes | Chegar a F gastando o mínimo: 11 de energia | Letra do local · U · R · T tabela · ? dica (Dijkstra) |
 
 **Caminhos que vencem** (para conferir rapidamente):
 
 - Fase 2: `2 1 3 1 4 3 1` (guardar, aceitar, arquivar, aceitar, liberar, arquivar, aceitar)
 - Fase 3: `C E C B H D F`
 - Fase 4, Sala 1: `1 1 2 1 3 1 4 1 5` · Sala 2: `n s` · `s n` · `s s` · `n s`
+- Desafio extra: `B C E C B H D F` (gasta 11; a rota da BFS, `C E C B H D F`, gasta 15)
 
 **Outras opções do menu inicial**
 
-- **2 Resolver:** o computador resolve as Fases 2 e 3 sozinho (BFS ou DFS) e mostra o caminho, os estados explorados e a árvore de busca.
+- **2 Resolver:** o computador resolve as Fases 2 e 3 sozinho (BFS ou DFS) e mostra o caminho, os estados explorados e a árvore de busca. A opção 3 compara BFS, guloso e Dijkstra no mapa com custos.
 - **4 Resultados:** o que você já fez em cada fase.
 - **5 Visualização:** abre no navegador a apresentação animada da investigação.
 
-**Para conferir o código:** `rodar_testes.bat` roda os 111 testes automáticos (deve terminar em `OK`). O código está organizado em `estruturas/` (lista, pilha, fila, AVL, grafo), `algoritmos/` (ordenações, BFS, DFS, solver), `jogo/` (regras das fases) e `interface/` (telas). Cada função traz no comentário o pseudocódigo da aula correspondente.
+**Para conferir o código:** `rodar_testes.bat` roda os 133 testes automáticos (deve terminar em `OK`). O código está organizado em `estruturas/` (lista, pilha, fila, AVL, heap, grafo), `algoritmos/` (ordenações, BFS, DFS, solver, Dijkstra), `jogo/` (regras das fases) e `interface/` (telas). Cada função traz no comentário o pseudocódigo da aula correspondente.

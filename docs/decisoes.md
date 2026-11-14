@@ -70,6 +70,10 @@ O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e 
 
 - **Audiência Pública (visualização):** narradora Miss Pearl e mascote APURA-42, personagens originais; estética retrofuturista própria (sem elementos da TVA/Marvel; pedido de usar a Senhorita Minutos como referência foi recusado por ser personagem protegido). A Profa. Dra. Lucy aparece só como crachá de orientadora, sem retrato. A analogia da vida real descreve o caminho genérico de um voto, sem locais nem números reais, porque o enunciado proíbe dados de eleições reais. [Equipe]
 
+- **Desafio extra — mapa com custos (aula 11, adotado):** variante da Fase 3 com os mesmos locais, pistas e portas e custos por corredor (A-B 1, A-C 6, B-C 1, B-H 2, B-I 2, C-E 1, C-G 2, D-F 2, D-H 2, F-G 5, G-I 1), energia 15. Os pesos foram escolhidos para que, no mesmo mapa, a BFS (7 movimentos, 15 de energia), o guloso ingênuo (trava) e o Dijkstra (8 movimentos, 11 de energia) deem respostas diferentes. A Fase 3 original e o selo 3 não mudam; o desafio não dá selo. Base no EP: item 7.4 ("custo definido por você") e item 7.2 (BFS × pesos). [EP 7.2, 7.4] [Aula 11] [Equipe]
+- **Heap e Dijkstra:** heap de mínimo próprio, adaptado do heap de máximo da aula 08 (comparações invertidas), com `diminuir_chave` para o relaxamento. O `dijkstra()` literal da aula roda no grafo puro; o `dijkstra_estados()` roda no grafo implícito de estados, com Q começando só com o estado inicial e S guardado na AVL. A energia sai do vértice porque energia restante = energia inicial − d. O guloso ingênuo proíbe voltar a um estado já visitado (senão andaria em círculo) e desempata pela ordem alfabética dos vizinhos. [Aula 08] [Aula 11] [Equipe]
+- **Tecla da tabela no desafio extra:** T, e não C, porque C é um local do mapa (mesmo problema que levou a dica da Fase 3 a usar ? em vez de D). [Equipe]
+
 ## Pendências com a professora
 
 1. Quick Sort: `p..q` do slide × `p..q-1`.

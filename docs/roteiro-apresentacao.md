@@ -12,7 +12,7 @@ Material de apoio: `docs/guia-codigo-conceitos.md` (cartões por conceito e perg
 
 - [ ] Notebook ligado na tomada; modo avião não atrapalha (nada usa internet).
 - [ ] Pasta do projeto aberta no Explorador.
-- [ ] Rodar `rodar_testes.bat` uma vez: precisa terminar em `OK` (111 testes).
+- [ ] Rodar `rodar_testes.bat` uma vez: precisa terminar em `OK` (133 testes).
 - [ ] Rodar `visualizar.bat`: deixar a página aberta no navegador, na aba "Mapa e busca".
 - [ ] Abrir `jogar.bat` e deixar no **menu inicial** (sem jogar: os selos começam vazios).
 - [ ] Abrir no editor (Bloco de Notas ou VS Code) os arquivos que serão mostrados:
@@ -98,6 +98,22 @@ Depois, ir para o terminal com o **menu inicial do jogo** (o mesmo prólogo apar
 
 ---
 
+## Bloco 5b — Desafio extra: algoritmos gulosos (aula 11) (2 min)
+
+**Ações (navegador):** menu → cartão **Desafio extra** → clicar **C** (o atalho).
+> "Mesmo mapa da Fase 3, mas agora cada corredor gasta uma energia diferente. O atalho A-C está em obras: custa 6."
+1. **Recomeçar** → **💡 Dica (Dijkstra)** → seguir B, C, E, C, B, H, D, F. Mensagem: "gastou 11 … Rota ótima".
+2. Rolar até **Compare: quem gasta menos?**
+   > "A BFS acha 7 movimentos, mas gasta 15: ela conta arestas, não custo. O Dijkstra dá 8 movimentos e gasta 11."
+3. Clicar **Ver rota: Guloso**.
+   > "O guloso ingênuo pega sempre o corredor mais barato e nunca volta atrás. Cada passo parece bom, mas ele trava na Central — como o troco de 19 com moedas 2, 3 e 6."
+4. Abrir **Passo a passo do Dijkstra da aula**: apontar o Extrai-Min e o relaxamento.
+   > "O Dijkstra também é guloso: escolhe sempre o menor d[u], tirado de um heap de mínimo (aula 08). Com pesos não negativos, essa escolha é segura. Complexidade O((V + E) log V)."
+
+**Se perguntarem do código:** `algoritmos/dijkstra.py` (pseudocódigo da aula 11 linha a linha) e `estruturas/heap.py` (subir e descer da aula 08).
+
+---
+
 ## Bloco 6 ★ — Fase 4: AVL e chave de estado (3 min)
 
 **Ações no jogo:** Fase 4 → Sala 1. Inserir os lacres prevendo a rotação; parar nas inserções que giram:
@@ -136,7 +152,7 @@ Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 
 
 ## Bloco 8 — Testes, métricas e bônus (1 min)
 
-- Mostrar o resultado de `rodar_testes.bat`: **111 testes, OK**.
+- Mostrar o resultado de `rodar_testes.bat`: **133 testes, OK**.
   > "Os testes cobrem a tabela da seção 15: estrutura vazia, um elemento, vários, inválidos, rotações, BFS com a ordem do exemplo da aula, integração manual × solver."
 - Citar um teste que pegou erro real: a Fase 5 lia o histórico da Fase 2 no formato errado; a partida simulada revelou; virou teste.
 - Bônus feitos: visualização animada offline; gerador de mapas por seed com verificador de solução. No mapa de 60 locais, a DFS expandiu **mais** estados que a BFS (235 × 181) — a DFS não garante explorar menos.
@@ -173,11 +189,12 @@ Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 
 | 3 ★ | Fase 2 — fila, pilha, lista | 3 |
 | 4 ★ | Fase 3 — grafo e estado | 3 |
 | 5 ★ | Solver — BFS × DFS | 3 |
+| 5b | Desafio extra — gulosos (aula 11) | 2 |
 | 6 ★ | Fase 4 — AVL | 3 |
 | 7 ★ | Fase 5 — auditoria | 1,5 |
 | 8 | Testes, métricas, bônus | 1 |
 | 9 ★ | IAG | 0,5 |
-| | **Total** | **20** |
+| | **Total** | **22** (20 sem o 5b) |
 
 Para **10 minutos**: blocos 1, 2 (só passo 4), 4 (só passos 2–3), 5 (só a visualização), 6 (só a aba AVL), 7 e 9.
 

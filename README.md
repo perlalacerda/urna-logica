@@ -33,13 +33,16 @@ Para abrir o jogo pelo terminal: `py jogo.py`.
 
 Situação atual: as 5 fases são jogáveis do início ao Cofre de Verificação; o solver (BFS, DFS recursiva, DFS com pilha) resolve as Fases 2 e 3; a Fase 5 valida tudo e grava `resultados/relatorio_auditoria.txt`.
 
+**Desafio extra (aula 11 — algoritmos gulosos):** o mapa da Fase 3 com corredores de custos diferentes. Compara BFS (menos movimentos), um guloso ingênuo (corredor mais barato, que trava) e o Dijkstra com heap próprio (menor energia). Ver `jogo/mapa_custos.py` e a seção B3 do guia.
+
 Para gerar as métricas do relatório técnico: `py experimentos.py` (grava `docs/metricas.md`).
 
 ## Organização
 
 ```
-estruturas/   implementações próprias: lista ligada, pilha, fila, AVL, grafo
-algoritmos/   Bubble, Merge e Quick Sort; BFS e DFS da aula 09; solver no espaço de estados
+estruturas/   implementações próprias: lista ligada, pilha, fila, AVL, heap de mínimo, grafo com pesos
+algoritmos/   Bubble, Merge e Quick Sort; BFS e DFS da aula 09; solver no espaço de estados;
+              Dijkstra e guloso ingênuo da aula 11
 jogo/         regras e dados do jogo (registros, fases, mapa)
 interface/    telas do terminal (sem regras do jogo)
 testes/       um arquivo de testes por módulo (seção 15 do enunciado)

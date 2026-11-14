@@ -29,6 +29,9 @@ from jogo.fase3 import (Fase3, ProblemaMapa, construir_mapa, mover, estado_inici
                         LOCAIS, PISTAS, PORTAS, ARESTAS, DESTINO)
 from jogo.fase4 import Fase4, PARES_ESTADOS, resposta_correta, explicar, OPCOES_ROTACAO
 from jogo.fase5 import Fase5
+from jogo.mapa_custos import (FaseMapaCustos, construir_mapa_custos, comparar as comparar_custos,
+                              dijkstra_grafo_puro, avaliar_chegada, PESOS, ENERGIA_CUSTOS)
+from jogo.dicas import dica_mapa_custos, orientacao_mapa_custos
 from jogo.registros import CRITERIOS, DESCRICAO_CRITERIOS
 from interface.visualizacao import POSICOES, arvore_para_dict, layout_arvore_busca
 
@@ -153,6 +156,59 @@ def dados_fase3():
             "curto": curto}
 
 
+# ============================================================ DESAFIO EXTRA: MAPA COM CUSTOS (aula 11)
+class _SituacaoCustos:
+    """Objeto mínimo para reaproveitar dica_mapa_custos e orientacao_mapa_custos."""
+
+    def __init__(self, estado, G):
+        self.estado, self.G = estado, G
+
+    def venceu(self):
+        return self.estado[0] == DESTINO
+
+
+def dados_mapa_custos():
+    """Mesma ideia da Fase 3: todas as situações, cada movimento, a dica (agora do Dijkstra)."""
+    G = construir_mapa_custos()
+    inicial = estado_inicial(ENERGIA_CUSTOS)
+    ids, ordem, fila = {inicial: 0}, [inicial], deque([inicial])
+    while fila:
+        e = fila.popleft()
+        for v in G.vizinhos(e[0]):
+            ok, novo, _ = mover(G, e, v)
+            if ok and novo not in ids:
+                ids[novo] = len(ordem)
+                ordem.append(novo)
+                fila.append(novo)
+    bfs_r, guloso_r, dij_r = comparar_custos()
+    otimo = dij_r.custo
+    sem_teclas = lambda t: _para_web(t).replace(" (U)", "").replace(" (R)", "").replace(" (T)", " (abaixo)")
+    estados = []
+    for e in ordem:
+        movs = {}
+        for v in G.vizinhos(e[0]):
+            ok, novo, msg = mover(G, e, v)
+            movs[v] = {"ok": ok, "msg": msg, "destino": ids[novo] if ok else None}
+        sit = _SituacaoCustos(e, G)
+        estados.append({"pos": e[0], "pistas": list(e[1]), "portas": list(e[2]), "energia": e[3],
+                        "venceu": e[0] == DESTINO, "movs": movs, "dica": sem_teclas(dica_mapa_custos(sit)),
+                        "orientacao": sem_teclas(orientacao_mapa_custos(sit)),
+                        "avaliacao": avaliar_chegada(ENERGIA_CUSTOS - e[3], otimo) if e[0] == DESTINO else ""})
+    d, _, S, passos, cam = dijkstra_grafo_puro()
+    resumo = lambda r: {"algoritmo": r.algoritmo, "encontrou": r.encontrou, "acoes": r.numero_acoes(),
+                        "custo": r.custo, "expandidos": r.expandidos, "fronteira": r.maior_fronteira,
+                        "caminho": [e[0] for _, e in r.caminho]}
+    return {"nome": FaseMapaCustos.NOME, "abertura": FaseMapaCustos.ABERTURA, "energia": ENERGIA_CUSTOS,
+            "estados": estados, "otimo": otimo,
+            "pesos": {f"{u}-{v}": w for (u, v), w in PESOS.items()},
+            "adjacencia": {v: G.vizinhos(v) for v in G.vertices()},
+            "comparacao": [resumo(r) for r in (bfs_r, guloso_r, dij_r)],
+            "puro": {"ordem": S, "d": {v: d[v] for v in S}, "caminho": cam,
+                     "passos": [{"extraiu": p["extraiu"], "d": p["d"],
+                                 "melhorou": [[v, (None if a == float("inf") else a), b] for v, a, b in p["melhorou"]],
+                                 "heap": [[v, None if x == float("inf") else x] for v, x in p["heap"]]} for p in passos]}}
+
+
 # ============================================================ FASE 4
 def dados_fase4():
     f = Fase4()
@@ -222,7 +278,8 @@ def gerar_dados():
     return {"titulo": narrativa.TITULO, "prologo": narrativa.PROLOGO, "aviso": narrativa.AVISO,
             "capitulos": narrativa.CAPITULOS,
             "fase1": dados_fase1(), "fase2": dados_fase2(), "fase3": dados_fase3(),
-            "fase4": dados_fase4(), "fase5": dados_fase5(), "solver": dados_solver()}
+            "fase4": dados_fase4(), "fase5": dados_fase5(), "solver": dados_solver(),
+            "custos": dados_mapa_custos()}
 
 
 def gerar_html(caminho="jogo.html"):

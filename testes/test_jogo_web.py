@@ -74,6 +74,29 @@ class TestJogoWeb(unittest.TestCase):
             trilha.append(v)
         self.assertEqual(trilha, ["A", "C", "E", "C", "B", "H", "D", "F"])
 
+    def test_mapa_custos_cada_movimento_igual_ao_python(self):
+        from jogo.mapa_custos import construir_mapa_custos, ENERGIA_CUSTOS
+        G, E = construir_mapa_custos(), self.D["custos"]["estados"]
+        for e in E:
+            estado = (e["pos"], tuple(e["pistas"]), tuple(e["portas"]), e["energia"])
+            for v, r in e["movs"].items():
+                ok, novo, msg = mover(G, estado, v)
+                self.assertEqual((ok, msg), (r["ok"], r["msg"]))
+                if ok:
+                    d = E[r["destino"]]
+                    self.assertEqual(novo, (d["pos"], tuple(d["pistas"]), tuple(d["portas"]), d["energia"]))
+        self.assertEqual(E[0]["energia"], ENERGIA_CUSTOS)
+
+    def test_mapa_custos_seguir_dicas_gasta_o_minimo(self):
+        E, i, trilha = self.D["custos"]["estados"], 0, ["A"]
+        while not E[i]["venceu"]:
+            v = re.search(r"ir para ([A-I]) ", E[i]["dica"]).group(1)
+            i = E[i]["movs"][v]["destino"]
+            trilha.append(v)
+        self.assertEqual(trilha, list("ABCECBHDF"))
+        self.assertEqual(self.D["custos"]["energia"] - E[i]["energia"], self.D["custos"]["otimo"])
+        self.assertIn("Rota ótima", E[i]["avaliacao"])
+
     def test_fase4_rotacoes_iguais_ao_python(self):
         f = Fase4()
         for q in self.D["fase4"]["lacres"]:
