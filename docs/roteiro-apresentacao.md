@@ -12,7 +12,7 @@ Material de apoio: `docs/guia-codigo-conceitos.md` (cartões por conceito e perg
 
 - [ ] Notebook ligado na tomada; modo avião não atrapalha (nada usa internet).
 - [ ] Pasta do projeto aberta no Explorador.
-- [ ] Rodar `rodar_testes.bat` uma vez: precisa terminar em `OK` (104 testes).
+- [ ] Rodar `rodar_testes.bat` uma vez: precisa terminar em `OK` (111 testes).
 - [ ] Rodar `visualizar.bat`: deixar a página aberta no navegador, na aba "Mapa e busca".
 - [ ] Abrir `jogar.bat` e deixar no **menu inicial** (sem jogar: os selos começam vazios).
 - [ ] Abrir no editor (Bloco de Notas ou VS Code) os arquivos que serão mostrados:
@@ -136,7 +136,7 @@ Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 
 
 ## Bloco 8 — Testes, métricas e bônus (1 min)
 
-- Mostrar o resultado de `rodar_testes.bat`: **104 testes, OK**.
+- Mostrar o resultado de `rodar_testes.bat`: **111 testes, OK**.
   > "Os testes cobrem a tabela da seção 15: estrutura vazia, um elemento, vários, inválidos, rotações, BFS com a ordem do exemplo da aula, integração manual × solver."
 - Citar um teste que pegou erro real: a Fase 5 lia o histórico da Fase 2 no formato errado; a partida simulada revelou; virou teste.
 - Bônus feitos: visualização animada offline; gerador de mapas por seed com verificador de solução. No mapa de 60 locais, a DFS expandiu **mais** estados que a BFS (235 × 181) — a DFS não garante explorar menos.
@@ -160,7 +160,7 @@ Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 
 | Navegador não abre a visualização | Dar dois cliques em `visualizacao.html` na pasta do projeto |
 | Errou uma jogada na demonstração | Usar **desfazer** (Fase 2: 5; Fase 3: U) — e aproveitar para mostrar a pilha |
 | Tempo acabando | Pular para o Bloco 7 (Fase 5) com o solver resolvendo as fases não jogadas |
-| Professora quer jogar | Entregar o `COMO-JOGAR.md` impresso e deixá-la jogar a Fase 2 ou a 3. Se travar, ela digita **?** e recebe a dica calculada pelo solver |
+| Professora quer jogar | Abrir `jogar_navegador.bat` (tudo por cliques, botão 💡 Dica) ou entregar o `COMO-JOGAR.md` impresso e deixá-la jogar a Fase 2 ou a 3. Se travar, ela digita **?** e recebe a dica calculada pelo solver |
 
 ---
 

@@ -218,7 +218,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 
 ### 19. Testes e análise de complexidade
 
-- **Onde:** `testes/` (104 testes, um arquivo por módulo, cobrindo a tabela da seção 15) e `experimentos.py` → `docs/metricas.md`.
+- **Onde:** `testes/` (111 testes, um arquivo por módulo, cobrindo a tabela da seção 15) e `experimentos.py` → `docs/metricas.md`.
 - **Como rodar:** `rodar_testes.bat` (dois cliques) ou `py -m unittest discover -s testes -t .`.
 - **Teoria × experimento:** as contagens confirmam a teoria das aulas (Bubble n(n−1)/2; Quick no pior caso n(n−1)/2; AVL com altura ≈ log₂ n). Os tempos dependem da máquina; as contagens, não.
 - **Um erro real encontrado por teste de integração:** a Fase 5 lia o histórico da Fase 2 num formato errado. Uma partida simulada do início ao fim revelou o erro; ele foi corrigido e virou o teste `test_integracao_com_o_historico_real_das_fases_2_e_3`.
@@ -226,6 +226,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 ### 20. Narrativa, modularização e interface
 
 - **Jogar sem ajuda (pedido da professora):** cada tela de fase mostra ">> O QUE FAZER AGORA", que muda conforme a situação; a tecla **?** dá uma dica; o jogo aceita a palavra da ação além do número ("guardar" ou "2"), sem diferenciar maiúsculas nem acentos. Guia de uma página em `COMO-JOGAR.md`, também exibido na opção Instruções.
+- **Jogo no navegador (`jogar_navegador.bat` → `jogo.html`):** as 5 fases, o Resolver, Como jogar e Resultados, tudo por cliques, sem internet. `interface/jogo_web.py` executa as regras reais e calcula todas as situações possíveis de cada fase (14 na triagem, 160 no mapa), o resultado de cada jogada e a dica da BFS para cada situação; a página só consulta essas tabelas, então não há uma segunda cópia das regras em JavaScript. `testes/test_jogo_web.py` refaz cada jogada das tabelas com o código Python e confere que o resultado é idêntico.
 - **Dicas calculadas pelo solver:** nas Fases 2 e 3, a dica é o primeiro passo do caminho que a BFS encontra a partir da situação atual do jogador (`jogo/dicas.py`). Seguir as dicas sempre vence a fase (`testes/test_dicas.py`); se não houver caminho (ex.: energia insuficiente), a dica manda desfazer.
 
 - **Narrativa:** `jogo/narrativa.py` é a fonte única da história (prólogo, capítulos, epílogo), usada pelo terminal e pela visualização. Cada fase tem a mensagem de abertura do enunciado e um selo; os 5 selos abrem o Cofre de Verificação.

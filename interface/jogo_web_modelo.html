@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Urna Lógica — Jogo</title>
+<style>
+  :root {
+    --parede: #2e1d11; --painel: #3a2516; --papel: #f6ead0; --papel2: #fbf3df; --tinta: #2b1d12; --tinta2: #6b5236;
+    --laranja: #d9682b; --laranja2: #a9481a; --petroleo: #1f5f5b; --petroleo2: #164844; --ambar: #ffb347;
+    --crt: #15110c; --verde: #2e7d4f; --vermelho: #b5321e; --borda: #cdb98f;
+    --titulo: "Futura", "Century Gothic", "Avenir Next", "Trebuchet MS", sans-serif;
+    --maquina: "Consolas", "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--parede); color: var(--tinta); font: 17px/1.5 "Segoe UI", system-ui, sans-serif; }
+  header.topo { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
+                background: #1d120a; color: var(--papel); padding: 10px 18px; border-bottom: 4px solid var(--laranja); }
+  header.topo .marca { font-family: var(--titulo); letter-spacing: .1em; text-transform: uppercase; font-size: 14px; font-weight: 700; }
+  .selos { display: flex; gap: 8px; margin-left: auto; }
+  .selo { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-family: var(--titulo); font-weight: 700;
+          background: #4a3a2a; color: #9c8a73; border: 2px solid #6b5236; font-size: 15px; }
+  .selo.ok { background: radial-gradient(circle at 35% 35%, #f19a5c, var(--laranja2)); color: #fff6e4; border-color: var(--ambar); box-shadow: 0 0 10px rgba(255,179,71,.5); }
+  main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+  .folha { background: var(--papel); border-radius: 8px; padding: 22px 26px; box-shadow: 0 8px 0 #1d120a; margin-bottom: 18px; }
+  h1, h2, h3 { font-family: var(--titulo); margin: 0 0 10px; }
+  h1 { font-size: 28px; } h2 { font-size: 22px; } h3 { font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta2); }
+  p { margin: 0 0 10px; }
+  .agora { background: #fff3d6; border: 3px solid var(--laranja); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 18px; }
+  .agora b { font-family: var(--titulo); letter-spacing: .06em; color: var(--laranja2); display: block; font-size: 13px; text-transform: uppercase; }
+  .msg { border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 17px; white-space: pre-line; border: 2px solid var(--tinta2); background: var(--papel2); min-height: 50px; }
+  .msg.ok { border-color: var(--verde); background: #e3f1e5; } .msg.nao { border-color: var(--vermelho); background: #f8e1da; }
+  .msg:empty { display: none; }
+  .msg.dica { border-color: var(--petroleo); background: #e0eeec; }
+  .msg.vitoria { border-color: var(--ambar); background: #fff1cf; font-size: 20px; font-weight: 600; }
+  button { font: inherit; cursor: pointer; }
+  .btn { font-family: var(--titulo); font-size: 17px; font-weight: 700; letter-spacing: .03em;
+         background: var(--laranja); color: #fff8ec; border: 0; border-bottom: 5px solid var(--laranja2);
+         border-radius: 10px; padding: 12px 18px; margin: 4px 6px 4px 0; min-height: 50px; }
+  .btn:hover { filter: brightness(1.07); } .btn:active { transform: translateY(2px); border-bottom-width: 3px; }
+  .btn.sec { background: var(--petroleo); border-bottom-color: var(--petroleo2); }
+  .btn.neutro { background: #e6d6b2; color: var(--tinta); border-bottom-color: #b9a37a; }
+  .btn.grande { font-size: 20px; padding: 16px 22px; min-width: 220px; }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .cartao { background: var(--papel2); border: 2px solid var(--borda); border-radius: 10px; padding: 14px; }
+  .cartao .btn { width: 100%; margin-top: 8px; }
+  .dois { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; }
+  @media (max-width: 820px) { .dois { grid-template-columns: 1fr; } .folha { padding: 18px 16px; } }
+  .caixa { background: var(--papel2); border: 2px dashed var(--borda); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+  .ficha { display: inline-block; font-family: var(--maquina); background: #fff; border: 2px solid var(--tinta2); border-radius: 6px;
+           padding: 6px 12px; margin: 3px; font-size: 17px; font-weight: 700; }
+  .ficha.destaque { background: var(--ambar); border-color: var(--laranja2); }
+  .vazia { color: var(--tinta2); font-style: italic; }
+  table.reg { border-collapse: collapse; width: 100%; font-family: var(--maquina); font-size: 15px; }
+  table.reg th { text-align: left; font-family: var(--titulo); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta2);
+                 border-bottom: 2px solid var(--tinta2); padding: 6px; }
+  table.reg td { padding: 5px 6px; border-bottom: 1px dotted var(--borda); }
+  table.reg tr.erro td { background: #f6c5b8; }
+  .escolha { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
+  .escolha button { font-family: var(--titulo); font-weight: 700; font-size: 16px; border-radius: 8px; padding: 10px 14px;
+                    border: 2px solid var(--tinta2); background: #fff8ec; color: var(--tinta); }
+  .escolha button.sel { background: var(--petroleo); color: #fff; border-color: var(--petroleo2); }
+  .crt { background: var(--crt); border: 8px solid #5b4632; border-radius: 12px; padding: 8px; }
+  .crt svg text { fill: var(--ambar); font-family: var(--maquina); }
+  .legenda { font-size: 14px; color: var(--tinta2); }
+  details { margin: 10px 0; } summary { cursor: pointer; font-family: var(--titulo); font-weight: 700; color: var(--petroleo); }
+  .doc { font-family: var(--maquina); background: var(--papel2); border-left: 5px solid var(--laranja); padding: 10px 14px; white-space: pre-line; font-size: 15px; }
+  .barra { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 10px; padding-top: 10px; border-top: 2px dotted var(--borda); }
+  .codigo { font-family: var(--maquina); font-size: 14px; background: #efe3c4; border-radius: 4px; padding: 1px 6px; }
+  table.metr { border-collapse: collapse; width: 100%; font-size: 15px; }
+  table.metr th, table.metr td { border-bottom: 1px dotted var(--borda); padding: 6px; text-align: right; }
+  table.metr th:first-child, table.metr td:first-child, table.metr th:nth-child(2), table.metr td:nth-child(2) { text-align: left; }
+</style>
+</head>
+<body>
+<header class="topo">
+  <span class="marca">Urna Lógica · Verídia 2042</span>
+  <button class="btn neutro" style="min-height:36px;padding:6px 12px;font-size:14px" onclick="ir('menu')">Menu</button>
+  <div class="selos" id="selos" title="Selos conquistados"></div>
+</header>
+<main id="tela"></main>
+
+<script>
+const D = /*__DADOS__*/null;
+const $ = s => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+function svgEl(tag, at, pai, txt) { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); if (txt !== undefined) e.textContent = txt; if (pai) pai.appendChild(e); return e; }
+const fichas = (l, d0) => l.length ? l.map((x, i) => `<span class="ficha${d0 && i === 0 ? " destaque" : ""}">${x}</span>`).join("") : '<span class="vazia">(vazia)</span>';
+
+/* ================= progresso (fica salvo no navegador, se possível) ================= */
+const NOVO = () => ({ selos: [false, false, false, false, false],
+  f1: { tentativas: [] }, f2: { atual: 0, hist: [], acoes: [] }, f3: { atual: 0, hist: [], trilha: ["A"] },
+  f4: { k: 0, acertos: 0, palpites: [], pares: {} }, f5: { feito: false, alg: null } });
+let P = NOVO();
+try { const s = localStorage.getItem("urna-logica"); if (s) P = Object.assign(NOVO(), JSON.parse(s)); } catch (e) {}
+function salvar() { try { localStorage.setItem("urna-logica", JSON.stringify(P)); } catch (e) {} desenharSelos(); }
+function desenharSelos() { $("#selos").innerHTML = P.selos.map((s, i) => `<span class="selo${s ? " ok" : ""}" title="Selo ${i + 1}">${s ? "✔" : i + 1}</span>`).join(""); }
+
+function ir(tela) { TELAS[tela](); window.scrollTo(0, 0); desenharSelos(); }
+const voltar = '<button class="btn neutro" onclick="ir(\'menu\')">← Voltar ao menu</button>';
+function cabecalho(n) {
+  const c = D.capitulos[n - 1], fase = D["fase" + n];
+  return `<h2>${fase.nome} ${P.selos[n - 1] ? "· ✔ selo obtido" : ""}</h2>
+    <details><summary>O que aconteceu (história)</summary><div class="doc">${fase.abertura}</div></details>
+    <p><b>Sua missão:</b> ${c.missao}</p>`;
+}
+
+/* ================= MENU ================= */
+const TELAS = {};
+TELAS.menu = () => {
+  const n = P.selos.filter(Boolean).length;
+  $("#tela").innerHTML = `<div class="folha">
+    <h1>${D.titulo}</h1>
+    ${n === 0 ? `<details open><summary>A história</summary>${D.prologo.map(p => `<p>${p}</p>`).join("")}<p class="legenda">${D.aviso}</p></details>` : ""}
+    <div class="agora"><b>O que fazer agora</b>${n === 5 ? "Os 5 selos foram reunidos. O Cofre de Verificação está aberto!" :
+      `Escolha uma fase e ganhe o selo. Você tem ${n} de 5. Comece pela fase ${P.selos.findIndex(s => !s) + 1}.`}</div>
+    <div class="grade">${D.capitulos.map(c => `<div class="cartao"><h3>Fase ${c.selo} ${P.selos[c.selo - 1] ? "✔" : ""}</h3>
+      <b>${D["fase" + c.selo].nome.replace(/Fase \d — /, "")}</b><p class="legenda">${c.missao}</p>
+      <button class="btn${P.selos[c.selo - 1] ? " sec" : ""}" onclick="ir('f${c.selo}')">${P.selos[c.selo - 1] ? "Jogar de novo" : "Jogar"}</button></div>`).join("")}</div>
+    <div class="barra">
+      <button class="btn sec grande" onclick="ir('solver')">Resolver (o computador joga)</button>
+      <button class="btn neutro grande" onclick="ir('ajuda')">Como jogar</button>
+      <button class="btn neutro grande" onclick="ir('resultados')">Resultados</button>
+      <button class="btn neutro" onclick="if(confirmarZerar())ir('menu')">Zerar progresso</button>
+    </div></div>`;
+};
+let zerarPedido = false;
+function confirmarZerar() { if (!zerarPedido) { zerarPedido = true; alertaSuave("Clique de novo em “Zerar progresso” para confirmar."); return false; }
+  zerarPedido = false; P = NOVO(); salvar(); return true; }
+function alertaSuave(t) { const d = document.createElement("div"); d.className = "msg dica"; d.textContent = t; $("#tela .folha").appendChild(d); }
+
+/* ================= FASE 1 ================= */
+let f1sel = { alg: null, crit: null };
+TELAS.f1 = () => {
+  const F = D.fase1;
+  $("#tela").innerHTML = `<div class="folha">${cabecalho(1)}
+    <div class="agora" id="f1-agora"></div>
+    <div class="caixa"><h3>Enigma</h3>${F.enigma.replace(/\n/g, " ")}</div>
+    <h3>1. Escolha o método de ordenação</h3><div class="escolha" id="f1-alg">${F.algoritmos.map(([k, n]) => `<button data-k="${k}">${n}</button>`).join("")}</div>
+    <h3>2. Escolha o critério</h3><div class="escolha" id="f1-crit">${F.criterios.map(([k, n]) => `<button data-k="${k}">${n}</button>`).join("")}</div>
+    <button class="btn grande" id="f1-ord">Ordenar o lote</button> <button class="btn sec" id="f1-dica">💡 Dica</button>
+    <div class="msg" id="f1-msg">Escolha um método e um critério e clique em Ordenar.</div>
+    <h3>Lote de registros</h3><div id="f1-tab"></div>
+    <details><summary>Comparar o trabalho dos três métodos (10, 100 e 500 registros)</summary><table class="metr"><tr><th>registros</th><th>método</th><th>comparações</th><th>movimentações</th></tr>
+      ${F.comparacao.map(l => `<tr><td>${l[0]}</td><td>${l[1]}</td><td>${l[2].toLocaleString("pt-BR")}</td><td>${l[3].toLocaleString("pt-BR")}</td></tr>`).join("")}</table>
+      <p class="legenda">O Bubble cresce com n² (n(n−1)/2 comparações); Merge e Quick, com n log n.</p></details>
+    <div class="barra">${voltar} <span class="legenda">Código: <span class="codigo">algoritmos/ordenacao.py</span> · <span class="codigo">jogo/fase1.py</span></span></div></div>`;
+  const tabela = (regs, erro) => `<table class="reg"><tr><th>#</th><th>id</th><th>zona</th><th>seção</th><th>opção</th><th>horário</th><th>situação</th></tr>
+    ${regs.map((r, i) => `<tr class="${erro >= 0 && (i === erro || i === erro + 1) ? "erro" : ""}"><td>${i}</td>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</table>`;
+  $("#f1-tab").innerHTML = tabela(F.registros, -1);
+  const agora = () => $("#f1-agora").innerHTML = "<b>O que fazer agora</b>" + (P.selos[0] ? "Lote aceito! Volte ao menu e vá para a Fase 2." :
+    !f1sel.alg ? "Escolha um método de ordenação (qualquer um serve)." : !f1sel.crit ? "Agora escolha o critério que segue a regra do enigma." : "Clique em “Ordenar o lote”.");
+  ["alg", "crit"].forEach(t => document.querySelectorAll(`#f1-${t} button`).forEach(b => {
+    if (f1sel[t] === b.dataset.k) b.classList.add("sel");
+    b.onclick = () => { f1sel[t] = b.dataset.k; document.querySelectorAll(`#f1-${t} button`).forEach(x => x.classList.toggle("sel", x === b)); agora(); }; }));
+  $("#f1-ord").onclick = () => {
+    const m = $("#f1-msg");
+    if (!f1sel.alg || !f1sel.crit) { m.className = "msg nao"; m.textContent = "Escolha primeiro o método e o critério."; return; }
+    const r = F.resultados[f1sel.alg + "|" + f1sel.crit];
+    P.f1.tentativas.push([r.algoritmo, f1sel.crit, r.comparacoes, r.aceito]);
+    if (r.aceito) P.selos[0] = true; salvar();
+    $("#f1-tab").innerHTML = tabela(r.registros, r.erro);
+    m.className = "msg " + (r.aceito ? "vitoria" : "nao");
+    m.textContent = `${r.algoritmo}: ${r.comparacoes} comparações, ${r.movimentacoes} movimentações.\n${r.mensagem}`;
+    agora();
+  };
+  $("#f1-dica").onclick = () => { const m = $("#f1-msg"); m.className = "msg dica";
+    m.textContent = "Qualquer método serve: o que decide é o CRITÉRIO. A regra pede zona primeiro, depois seção, depois horário — escolha o último critério da lista."; };
+  agora();
+};
+
+/* ================= FASE 2 ================= */
+TELAS.f2 = () => {
+  const F = D.fase2;
+  $("#tela").innerHTML = `<div class="folha">${cabecalho(2)}
+    <div class="agora" id="f2-agora"></div>
+    <div class="dois"><div>
+      <div class="caixa"><h3>Fila de entrada (só a 1ª sai)</h3><div id="f2-fila"></div></div>
+      <div class="caixa"><h3>Pilha de espera (só o topo sai)</h3><div id="f2-pilha"></div></div>
+      <div class="caixa"><h3>Arquivo</h3><div id="f2-arq"></div></div>
+    </div><div>
+      <div class="caixa"><h3>Custódia — objetivo: ${F.alvo.join(" → ")}</h3><div id="f2-cus"></div></div>
+      <div><button class="btn" data-a="aceitar">Aceitar<br><small>1ª da fila → custódia</small></button>
+        <button class="btn" data-a="guardar">Guardar<br><small>1ª da fila → pilha</small></button>
+        <button class="btn" data-a="arquivar">Arquivar<br><small>1ª da fila → arquivo</small></button>
+        <button class="btn" data-a="liberar">Liberar<br><small>topo da pilha → custódia</small></button></div>
+      <div><button class="btn sec" id="f2-dica">💡 Dica</button><button class="btn neutro" id="f2-desf">↶ Desfazer</button><button class="btn neutro" id="f2-rein">Recomeçar</button></div>
+    </div></div>
+    <div class="msg" id="f2-msg">Faça a primeira jogada.</div>
+    <details><summary>Regras completas</summary><ul>
+      <li><b>Aceitar:</b> a 1ª da fila entra na custódia, se for a próxima esperada.</li>
+      <li><b>Guardar:</b> a 1ª da fila vai para o topo da pilha, se fizer parte da custódia e precisar sair antes de quem está no topo.</li>
+      <li><b>Arquivar:</b> a 1ª da fila vai para o arquivo, se NÃO fizer parte da custódia.</li>
+      <li><b>Liberar:</b> o topo da pilha entra na custódia, se for a próxima esperada.</li>
+      <li><b>Desfazer:</b> volta à situação anterior (pilha do histórico).</li></ul>
+      ${Object.entries(F.evidencias).map(([k, v]) => `<span class="ficha">${k}</span> ${v}`).join("<br>")}</details>
+    <div class="barra">${voltar} <span class="legenda">Código: <span class="codigo">jogo/fase2.py</span> · <span class="codigo">estruturas/fila.py, pilha.py, lista_ligada.py</span></span></div></div>`;
+  const S = P.f2;
+  const desenha = () => { const e = F.estados[S.atual];
+    $("#f2-fila").innerHTML = fichas(e.fila, true);
+    $("#f2-pilha").innerHTML = e.pilha.length ? e.pilha.map((x, i) => `<div><span class="ficha${i ? "" : " destaque"}" style="min-width:90px">${x}${i ? "" : " ← topo"}</span></div>`).join("") : '<span class="vazia">(vazia)</span>';
+    $("#f2-arq").innerHTML = fichas(e.arquivo);
+    $("#f2-cus").innerHTML = e.custodia.length ? e.custodia.map(x => `<span class="ficha">${x}</span>`).join(" → ") : '<span class="vazia">(vazia)</span>';
+    $("#f2-agora").innerHTML = "<b>O que fazer agora</b>" + (e.venceu ? "Custódia completa! Volte ao menu e vá para a Fase 3." :
+      `A custódia espera <b style="display:inline">${e.esperado}</b>. A 1ª da fila é ${e.fila[0] || "—"}${e.pilha.length ? `; o topo da pilha é ${e.pilha[0]}` : ""}. Escolha a ação que leva cada evidência ao lugar certo.`);
+  };
+  document.querySelectorAll("[data-a]").forEach(b => b.onclick = () => {
+    const r = F.estados[S.atual].acoes[b.dataset.a], m = $("#f2-msg");
+    if (r.ok) { S.hist.push(S.atual); S.atual = r.destino; S.acoes.push(b.dataset.a); }
+    const venceu = F.estados[S.atual].venceu; if (venceu) P.selos[1] = true; salvar();
+    m.className = "msg " + (venceu ? "vitoria" : r.ok ? "ok" : "nao"); m.textContent = r.msg; desenha(); });
+  $("#f2-dica").onclick = () => { const m = $("#f2-msg"); m.className = "msg dica"; m.textContent = F.estados[S.atual].dica; };
+  $("#f2-desf").onclick = () => { const m = $("#f2-msg");
+    if (S.hist.length) { S.atual = S.hist.pop(); const a = S.acoes.pop(); m.className = "msg"; m.textContent = `Desfeito: ${a}. (A ação mais recente sai primeiro — como numa pilha.)`; }
+    else { m.className = "msg nao"; m.textContent = "Não há ação para desfazer."; } salvar(); desenha(); };
+  $("#f2-rein").onclick = () => { S.atual = 0; S.hist = []; S.acoes = []; salvar(); $("#f2-msg").className = "msg"; $("#f2-msg").textContent = "Fase recomeçada."; desenha(); };
+  desenha();
+};
+
+/* ================= FASE 3 ================= */
+function desenhaMapa(svg, opt) {
+  const F = D.fase3, POS = {}; F.vertices.forEach(v => POS[v.id] = v);
+  svg.innerHTML = ""; svg.setAttribute("viewBox", "-30 70 790 480"); svg.setAttribute("width", "100%");
+  const cam = new Set(), ar = new Set(); (opt.caminho || []).forEach((v, k, a) => { cam.add(v); if (k) ar.add([a[k - 1], v].sort().join()); });
+  F.arestas.forEach(([u, v]) => svgEl("line", {x1: POS[u].x, y1: POS[u].y, x2: POS[v].x, y2: POS[v].y, stroke: ar.has([u, v].sort().join()) ? "#ffb347" : "#6b5236", "stroke-width": ar.has([u, v].sort().join()) ? 7 : 4}, svg));
+  const viz = new Set(opt.vizinhos || []);
+  F.vertices.forEach(v => { const g = svgEl("g", {style: opt.clique ? "cursor:pointer" : ""}, svg);
+    let f = "#2a1d12"; if (cam.has(v.id)) f = "#a9481a"; if (viz.has(v.id)) f = "#1f5f5b"; if (v.id === opt.atual) f = "#ffb347";
+    svgEl("circle", {cx: v.x, cy: v.y, r: 30, fill: f, stroke: viz.has(v.id) ? "#fff6e4" : "#ffb347", "stroke-width": viz.has(v.id) ? 4 : 2, "stroke-dasharray": viz.has(v.id) ? "6 4" : ""}, g);
+    svgEl("text", {x: v.x, y: v.y + 9, "text-anchor": "middle", "font-size": 26, "font-weight": 700, style: v.id === opt.atual ? "fill:#15110c" : ""}, g, v.id);
+    svgEl("text", {x: v.x, y: v.y + (v.id === "G" ? -40 : 50), "text-anchor": "middle", "font-size": 15}, g, v.nome);
+    if (v.pista || v.porta) svgEl("text", {x: v.x, y: v.y + 69, "text-anchor": "middle", "font-size": 15, style: "fill:#ff8a3d"}, g, v.pista ? "🔑 pista " + v.pista : "🔒 exige " + v.porta);
+    if (opt.clique) g.onclick = () => opt.clique(v.id); });
+}
+TELAS.f3 = () => {
+  const F = D.fase3, S = P.f3;
+  $("#tela").innerHTML = `<div class="folha">${cabecalho(3)}
+    <div class="agora" id="f3-agora"></div>
+    <div class="dois"><div class="crt"><svg id="f3-mapa"></svg><p class="legenda" style="color:#d9b98a;margin:4px 8px">Círculos verdes tracejados = locais aonde você pode ir agora. Clique num deles.</p></div>
+    <div><div class="caixa"><h3>Seu estado</h3><div id="f3-estado" style="font-size:17px"></div></div>
+      <div class="caixa"><h3>Trilha</h3><div id="f3-trilha" class="codigo" style="font-size:16px"></div></div>
+      <button class="btn sec" id="f3-dica">💡 Dica</button><button class="btn neutro" id="f3-desf">↶ Desfazer</button><button class="btn neutro" id="f3-rein">Recomeçar</button>
+      <details><summary>Regras do mapa</summary><ul>
+        <li>Só é possível ir para um local vizinho (ligado por corredor).</li><li>Cada movimento gasta 1 de energia.</li>
+        <li>O Arquivo Oeste (H) só abre com a pista SEQ, que está na Unidade Oeste (E).</li>
+        <li>O Centro de Validação (F) só abre com a pista AUT, que está na Unidade Leste (D).</li>
+        <li>Objetivo: chegar ao Centro de Validação (F).</li></ul>
+        <button class="btn neutro" id="f3-curto">E o caminho mais curto?</button></details>
+    </div></div>
+    <div class="msg" id="f3-msg">Você está na Central de Auditoria (A).</div>
+    <div class="barra">${voltar} <span class="legenda">Código: <span class="codigo">jogo/fase3.py</span> · <span class="codigo">estruturas/grafo.py</span></span></div></div>`;
+  const desenha = () => { const e = F.estados[S.atual];
+    desenhaMapa($("#f3-mapa"), {atual: e.pos, vizinhos: e.venceu ? [] : F.adjacencia[e.pos], caminho: e.venceu ? S.trilha : [], clique: e.venceu ? null : clique});
+    $("#f3-estado").innerHTML = `Posição: <b>${e.pos}</b> — ${F.vertices.find(v => v.id === e.pos).nome}<br>Pistas na mochila: <b>${e.pistas.join(", ") || "nenhuma"}</b><br>Portas abertas: ${e.portas.join(", ") || "nenhuma"}<br>Energia: ${"⚡".repeat(e.energia)} (${e.energia})`;
+    $("#f3-trilha").textContent = S.trilha.join(" → ");
+    $("#f3-agora").innerHTML = "<b>O que fazer agora</b>" + e.orientacao; };
+  function clique(v) { const e = F.estados[S.atual], m = $("#f3-msg");
+    if (!F.adjacencia[e.pos].includes(v)) { m.className = "msg nao"; m.textContent = v === e.pos ? "Você já está aqui." : `Não há corredor entre ${e.pos} e ${v}. Clique num dos círculos verdes: ${F.adjacencia[e.pos].join(", ")}.`; return; }
+    const r = e.movs[v]; if (r.ok) { S.hist.push(S.atual); S.atual = r.destino; S.trilha.push(v); }
+    const venceu = F.estados[S.atual].venceu; if (venceu) P.selos[2] = true; salvar();
+    m.className = "msg " + (venceu ? "vitoria" : r.ok ? "ok" : "nao");
+    m.textContent = (r.ok ? "" : "Movimento recusado: ") + r.msg + (venceu ? `\nSelo 3 conquistado em ${S.trilha.length - 1} movimentos!` : ""); desenha(); }
+  $("#f3-dica").onclick = () => { const m = $("#f3-msg"); m.className = "msg dica"; m.textContent = F.estados[S.atual].dica; };
+  $("#f3-desf").onclick = () => { const m = $("#f3-msg"); if (S.hist.length) { S.atual = S.hist.pop(); S.trilha.pop(); m.className = "msg"; m.textContent = "Voltei um passo."; } else { m.className = "msg nao"; m.textContent = "Não há movimento para desfazer."; } salvar(); desenha(); };
+  $("#f3-rein").onclick = () => { S.atual = 0; S.hist = []; S.trilha = ["A"]; salvar(); $("#f3-msg").className = "msg"; $("#f3-msg").textContent = "De volta à Central de Auditoria."; desenha(); };
+  $("#f3-curto").onclick = () => { const m = $("#f3-msg"); m.className = "msg dica"; m.textContent = `Ignorando as portas, a BFS acha ${F.curto.join(" → ")} (${F.curto.length - 1} corredores). Mas ele chega em F sem a pista AUT — tente e veja a porta recusar!`; };
+  desenha();
+};
+
+/* ================= FASE 4 ================= */
+function desenhaAVL(svg, raiz, destaque) {
+  svg.innerHTML = ""; if (!raiz) { svg.setAttribute("viewBox", "0 0 300 50"); svg.setAttribute("width", 300); svgEl("text", {x: 10, y: 32}, svg, "(cofre vazio)"); return; }
+  const nos = []; let x = 0; (function io(n, d) { if (!n) return; io(n.e, d + 1); nos.push({n, x: x++, d}); io(n.d, d + 1); })(raiz, 0);
+  const DX = 64, DY = 70, W = nos.length * DX + 40, H = (Math.max(...nos.map(o => o.d)) + 1) * DY + 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", W); svg.style.maxWidth = "100%";
+  const P2 = new Map(); nos.forEach(o => P2.set(o.n, {x: o.x * DX + 40, y: o.d * DY + 32}));
+  nos.forEach(o => ["e", "d"].forEach(l => { if (o.n[l]) { const a = P2.get(o.n), b = P2.get(o.n[l]); svgEl("line", {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: "#6b5236", "stroke-width": 3}, svg); } }));
+  nos.forEach(o => { const p = P2.get(o.n);
+    svgEl("circle", {cx: p.x, cy: p.y, r: 21, fill: o.n.k === destaque ? "#ffb347" : "#2a1d12", stroke: "#ffb347", "stroke-width": 2}, svg);
+    svgEl("text", {x: p.x, y: p.y + 6, "text-anchor": "middle", "font-weight": 700, "font-size": 17, style: o.n.k === destaque ? "fill:#15110c" : ""}, svg, o.n.k);
+    svgEl("text", {x: p.x, y: p.y + 36, "text-anchor": "middle", "font-size": 12}, svg, `FB ${o.n.fb > 0 ? "+" : ""}${o.n.fb}`); });
+}
+TELAS.f4 = () => {
+  const F = D.fase4, S = P.f4, nomes = {nenhuma: "Não gira", RD: "Giro à direita (RD)", RE: "Giro à esquerda (RE)", RED: "Giro duplo E-D (RED)", RDE: "Giro duplo D-E (RDE)"};
+  $("#tela").innerHTML = `<div class="folha">${cabecalho(4)}
+    <div class="agora" id="f4-agora"></div>
+    <h3>Sala 1 — Lacres do cofre (árvore AVL)</h3>
+    <p>O cofre guarda os códigos numa árvore que se mantém equilibrada: FB = altura da esquerda − altura da direita, sempre entre −1 e +1. Se um nó chegar a ±2, a árvore <b>gira</b>. Antes de cada lacre, dê seu palpite.</p>
+    <div id="f4-s1"></div>
+    <div class="dois"><div class="crt"><p class="legenda" style="color:#d9b98a;margin:4px">Antes</p><svg id="f4-antes"></svg></div><div class="crt"><p class="legenda" style="color:#d9b98a;margin:4px">Depois</p><svg id="f4-depois"></svg></div></div>
+    <div class="msg" id="f4-msg"></div>
+    <h3 style="margin-top:18px">Sala 2 — O estado que parece igual</h3><p>Para o cofre, duas situações são a mesma se tiverem a mesma <b>posição, pistas e portas</b>. A energia não entra na chave: só vale explorar de novo quem tem <b>mais</b> energia.</p>
+    <div id="f4-s2"></div>
+    <details><summary>Sala 3 — Consultar um código no cofre</summary><p>Digite um número de 0 a 100: <input id="f4-cod" type="number" min="0" max="100" style="font-size:18px;width:90px"> <button class="btn sec" id="f4-buscar">Procurar</button></p><div class="msg" id="f4-res"></div></details>
+    <div class="barra"><button class="btn neutro" id="f4-rein">Recomeçar a fase</button> ${voltar} <span class="legenda">Código: <span class="codigo">estruturas/avl.py</span> · <span class="codigo">jogo/fase4.py</span></span></div></div>`;
+  const venceu = () => S.k >= F.lacres.length && F.pares.every((_, i) => S.pares[i] === true);
+  const agora = () => $("#f4-agora").innerHTML = "<b>O que fazer agora</b>" + (venceu() ? "Cofre organizado! Volte ao menu e vá para a Fase 5." :
+    S.k < F.lacres.length ? `Sala 1: dê seu palpite para o lacre ${F.lacres[S.k].codigo} (${S.k + 1} de ${F.lacres.length}).` : "Sala 2: responda os pares abaixo.");
+  const sala1 = () => {
+    if (S.k >= F.lacres.length) { $("#f4-s1").innerHTML = `<div class="msg ok">Sala 1 completa: ${S.acertos} de ${F.lacres.length} palpites certos. Vimos os quatro giros: RD, RE, RED e RDE. Altura final: ${F.altura_final}.</div>`;
+      desenhaAVL($("#f4-antes"), F.lacres[F.lacres.length - 1].antes); desenhaAVL($("#f4-depois"), F.lacres[F.lacres.length - 1].depois); return; }
+    const q = F.lacres[S.k];
+    $("#f4-s1").innerHTML = `<div class="caixa"><b>Lacre ${S.k + 1} de ${F.lacres.length}: código ${q.codigo}.</b> O que vai acontecer ao guardá-lo?
+      <div class="escolha">${F.opcoes.map(o => `<button data-v="${o}">${nomes[o]}</button>`).join("")}</div>
+      <button class="btn sec" id="f4-dica">💡 Dica</button></div>`;
+    desenhaAVL($("#f4-antes"), q.antes); desenhaAVL($("#f4-depois"), null);
+    $("#f4-dica").onclick = () => { const m = $("#f4-msg"); m.className = "msg dica"; m.textContent = "Desça comparando (menor à esquerda, maior à direita). Depois suba conferindo: se um lado ficou 2 níveis mais alto, há giro. Mesmo lado duas vezes = giro simples (RD/RE); lados trocados = giro duplo (RED/RDE). Com menos de 3 códigos, nunca gira."; };
+    document.querySelectorAll("[data-v]").forEach(b => b.onclick = () => { const certo = b.dataset.v === q.rotacao; if (certo) S.acertos++;
+      desenhaAVL($("#f4-depois"), q.depois, q.codigo);
+      const m = $("#f4-msg"); m.className = "msg " + (certo ? "ok" : "nao");
+      m.textContent = (certo ? "Certo! " : `Aconteceu: ${nomes[q.rotacao]}. `) + q.explicacao;
+      S.k++; salvar(); agora();
+      $("#f4-s1").innerHTML = S.k < F.lacres.length ? `<button class="btn grande" id="f4-prox">Próximo lacre →</button>` : "";
+      if (S.k < F.lacres.length) $("#f4-prox").onclick = () => { $("#f4-msg").className = "msg"; $("#f4-msg").textContent = ""; sala1(); };
+      else { sala1(); conferir(); } });
+  };
+  const sala2 = () => { $("#f4-s2").innerHTML = F.pares.map((p, i) => `<div class="caixa"><b>Par ${i + 1}</b> ${S.pares[i] === true ? "✔" : ""}
+      <div class="codigo" style="margin:6px 0">já visto: ${p.visto}<br>novo: ${p.novo}</div>
+      <div class="escolha"><button data-p="${i}" data-r="mesma">Mesma situação: não explorar</button><button data-p="${i}" data-r="melhor">Mesma situação, mas explorar de novo</button><button data-p="${i}" data-r="outra">Situações diferentes: explorar</button></div>
+      <div class="msg" id="par${i}" style="min-height:0">${S.pares[i] === true ? "✔ " + p.explicacao : ""}</div></div>`).join("");
+    document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { const i = +b.dataset.p, p = F.pares[i];
+      const certo = {mesma: [true, false], melhor: [true, true], outra: [false, true]}[b.dataset.r].join() === p.resposta.join();
+      S.pares[i] = certo; salvar(); const m = $("#par" + i); m.className = "msg " + (certo ? "ok" : "nao"); m.textContent = (certo ? "Certo! " : "Não é isso. ") + p.explicacao; conferir(); agora(); }); };
+  const conferir = () => { if (venceu() && !P.selos[3]) { P.selos[3] = true; salvar(); const m = $("#f4-msg"); m.className = "msg vitoria"; m.textContent = "O cofre reconheceu a memória organizada. Selo 4 conquistado!"; } };
+  $("#f4-buscar").onclick = () => { const k = Math.round(+$("#f4-cod").value), r = F.consultas[k], m = $("#f4-res");
+    if (r === undefined || $("#f4-cod").value === "") { m.className = "msg nao"; m.textContent = "Digite um número de 0 a 100."; return; }
+    m.className = "msg " + (r.achou ? "ok" : ""); m.textContent = `Caminho na árvore: ${r.caminho.join(" → ")}\n${r.achou ? "ENCONTRADO" : "NÃO está no cofre"} após ${r.comparacoes} comparação(ões). A árvore tem altura ${F.altura_final}: nunca são precisas mais de ${F.altura_final + 1}.`; };
+  $("#f4-rein").onclick = () => { P.f4 = {k: 0, acertos: 0, palpites: [], pares: {}}; salvar(); ir("f4"); };
+  sala1(); sala2(); agora();
+};
+
+/* ================= FASE 5 ================= */
+TELAS.f5 = () => {
+  const F = D.fase5;
+  const agoraTxt = P.selos.slice(0, 4).every(Boolean) ? "Você resolveu as fases 1 a 4. Escolha um método: a auditoria vai conferir as SUAS jogadas."
+    : `Ainda faltam selos (${P.selos.slice(0, 4).map((s, i) => s ? null : i + 1).filter(Boolean).join(", ")}). Pode rodar a auditoria mesmo assim: onde você não jogou, o solver resolve.`;
+  $("#tela").innerHTML = `<div class="folha">${cabecalho(5)}
+    <div class="agora"><b>O que fazer agora</b>${agoraTxt}</div>
+    <h3>Escolha o método para organizar o lote</h3>
+    <div><button class="btn" data-alg="bubble">Bubble Sort</button><button class="btn" data-alg="merge">Merge Sort</button><button class="btn" data-alg="quick">Quick Sort</button></div>
+    <div id="f5-rel"></div>
+    <div class="barra">${voltar} <span class="legenda">Código: <span class="codigo">jogo/fase5.py</span></span></div></div>`;
+  document.querySelectorAll("[data-alg]").forEach(b => b.onclick = () => relatorio(b.dataset.alg));
+  function etapa(nome, ok, origem, detalhe, checagens) {
+    return `<div class="caixa"><b>${nome}: <span style="color:${ok ? "var(--verde)" : "var(--vermelho)"}">${ok ? "CONSISTENTE" : "NÃO CONSISTENTE"}</span></b>
+      ${origem ? `<br><span class="legenda">Origem: ${origem}</span>` : ""}<br><span class="codigo">${detalhe}</span>
+      ${checagens.map(([d, o]) => `<div>${o ? "✔" : "✘"} ${d}</div>`).join("")}</div>`; }
+  function relatorio(alg) {
+    const L = F.lotes[alg], e2 = D.fase2.estados[P.f2.atual], e3 = D.fase3.estados[P.f3.atual];
+    const tri = P.selos[1] && e2.venceu ? etapa("Etapa 2 — Central de Triagem", true, "suas jogadas (cada uma aceita pelas regras)", P.f2.acoes.join(" → "), [["custódia E2 → E4 → E1 → E6, fila e pilha vazias", true]])
+      : etapa("Etapa 2 — Central de Triagem", F.triagem_solver.ok, "solver (BFS)", F.triagem_solver.detalhe, F.triagem_solver.checagens);
+    const mapa = P.selos[2] && e3.venceu ? etapa("Etapa 3 — Mapa das Seções", true, "sua trilha (cada movimento aceito pelas regras)", P.f3.trilha.join(" → "), [["chegou ao Centro de Validação com AUT, sem violar portas", true]])
+      : etapa("Etapa 3 — Mapa das Seções", F.mapa_solver.ok, "solver (BFS)", F.mapa_solver.detalhe, F.mapa_solver.checagens);
+    const ok = L.ok && F.triagem_solver.ok && F.mapa_solver.ok;
+    P.selos[4] = ok; P.f5 = {feito: true, alg}; salvar();
+    const todos = P.selos.every(Boolean);
+    $("#f5-rel").innerHTML = `<h3 style="margin-top:14px">Relatório de consistência</h3>
+      ${etapa("Etapa 1 — Lote de registros", L.ok, "", L.detalhe, L.checagens)}${tri}${mapa}
+      <details><summary>Comparação BFS × DFS em dois mapas (ordenada com Merge Sort)</summary><table class="metr"><tr><th>mapa</th><th>estratégia</th><th>ações</th><th>situações examinadas</th><th>repetidas barradas</th></tr>
+        ${F.comparacao.map(x => `<tr><td>${x.cenario.split(" — ")[1]}</td><td>${x.estrategia}</td><td>${x.acoes ?? "-"}</td><td>${x.expandidos}</td><td>${x.repetidos}</td></tr>`).join("")}</table></details>
+      <div class="msg ${ok ? "vitoria" : "nao"}">${ok ? "Trilha consistente. Selo 5 conquistado!" : "Trilha não consistente."}</div>
+      ${todos ? `<div class="folha" style="background:#2a2414;color:#fff1cf;border:3px solid var(--ambar)"><h2 style="color:var(--ambar)">🔓 Cofre de Verificação aberto</h2>${F.epilogo.map(p => `<p>${p}</p>`).join("")}</div>`
+        : `<p>Para abrir o Cofre de Verificação, conquiste também o(s) selo(s): ${P.selos.map((s, i) => s ? null : i + 1).filter(Boolean).join(", ")}.</p>`}`;
+  }
+};
+
+/* ================= SOLVER ================= */
+let solv = {prob: "mapa", alg: "BFS"};
+TELAS.solver = () => {
+  $("#tela").innerHTML = `<div class="folha"><h2>Resolver — o computador joga</h2>
+    <p>O solver usa <b>as mesmas regras</b> do jogador. Cada situação do jogo é um vértice; cada ação válida, uma aresta. A <b>BFS</b> explora por camadas (fila); a <b>DFS</b>, em profundidade (pilha). A árvore AVL lembra as situações já vistas.</p>
+    <h3>Desafio</h3><div class="escolha" id="sv-p"><button data-k="triagem">Fase 2 — Triagem</button><button data-k="mapa">Fase 3 — Mapa</button></div>
+    <h3>Estratégia</h3><div class="escolha" id="sv-a"><button data-k="BFS">BFS (fila)</button><button data-k="DFS (recursiva)">DFS recursiva</button><button data-k="DFS (pilha)">DFS com pilha</button></div>
+    <div id="sv-res"></div><div class="barra">${voltar} <span class="legenda">Código: <span class="codigo">algoritmos/solver.py</span></span></div></div>`;
+  ["p", "a"].forEach(t => document.querySelectorAll(`#sv-${t} button`).forEach(b => { b.classList.toggle("sel", b.dataset.k === solv[t === "p" ? "prob" : "alg"]);
+    b.onclick = () => { solv[t === "p" ? "prob" : "alg"] = b.dataset.k; TELAS.solver(); }; }));
+  const r = D.solver[solv.prob][solv.alg], todos = D.solver[solv.prob];
+  $("#sv-res").innerHTML = `<div class="caixa"><b>${r.encontrou ? `Solução com ${r.acoes} ações` : "Sem solução"}</b>
+      <ol start="0" class="codigo" style="background:none">${r.caminho.map(([a, e]) => `<li><b>${a}</b> — ${e}</li>`).join("")}</ol></div>
+    <table class="metr"><tr><th>estratégia</th><th></th><th>ações</th><th>examinadas</th><th>repetidas barradas (AVL)</th><th>fronteira máx.</th><th>tempo (ms)</th></tr>
+      ${Object.entries(todos).map(([n, x]) => `<tr style="${n === solv.alg ? "font-weight:700" : ""}"><td>${n}</td><td></td><td>${x.acoes}</td><td>${x.expandidos}</td><td>${x.repetidos}</td><td>${x.fronteira}</td><td>${x.tempo_ms}</td></tr>`).join("")}</table>
+    <p class="legenda">A BFS garante o menor número de ações porque cada ação custa 1. A DFS não tem essa garantia.</p>
+    <details><summary>Árvore de busca (cada caixa é uma situação examinada; em laranja, o caminho da solução)</summary><div class="crt" style="overflow-x:auto"><svg id="sv-arv"></svg></div></details>`;
+  const a = r.arvore, svg = $("#sv-arv"), DX = solv.prob === "mapa" ? 136 : 250, DY = 70, M = DX / 2 + 10;
+  const W = (Math.max(...a.nos.map(n => n.x)) + 1) * DX + M, H = (Math.max(...a.nos.map(n => n.y)) + 1) * DY + 40;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", W); const Q = {}; a.nos.forEach(n => Q[n.id] = {x: n.x * DX + M, y: n.y * DY + 28, n});
+  a.arestas.forEach(([p, f]) => svgEl("line", {x1: Q[p].x, y1: Q[p].y, x2: Q[f].x, y2: Q[f].y, stroke: Q[p].n.caminho && Q[f].n.caminho ? "#d9682b" : "#6b5236", "stroke-width": 2}, svg));
+  a.nos.forEach(n => { const p = Q[n.id]; svgEl("rect", {x: p.x - DX / 2 + 6, y: p.y - 13, width: DX - 12, height: 26, rx: 5, fill: n.caminho ? "#d9682b" : "#2a1d12", stroke: "#ffb347"}, svg);
+    svgEl("text", {x: p.x, y: p.y + 5, "text-anchor": "middle", "font-size": 12, style: n.caminho ? "fill:#15110c;font-weight:700" : ""}, svg, n.rotulo); });
+};
+
+/* ================= AJUDA e RESULTADOS ================= */
+TELAS.ajuda = () => {
+  $("#tela").innerHTML = `<div class="folha"><h2>Como jogar</h2>
+    <p><b>Tudo é clicável.</b> Em cada fase há uma faixa laranja <b>“O que fazer agora”</b> e um botão <b>💡 Dica</b>. Jogadas erradas são recusadas com explicação e não estragam nada. <b>Desfazer</b> volta um passo.</p>
+    <p><b>Objetivo:</b> ganhar os 5 selos (no alto da tela) e abrir o Cofre de Verificação.</p>
+    <table class="metr"><tr><th>Fase</th><th>Como vencer</th></tr>
+      <tr><td>1. Arquivo Embaralhado</td><td>Qualquer método + o critério “zona, seção, horário”</td></tr>
+      <tr><td>2. Central de Triagem</td><td>Montar a custódia E2 → E4 → E1 → E6 (Guardar, Aceitar, Arquivar, Aceitar, Liberar, Arquivar, Aceitar)</td></tr>
+      <tr><td>3. Mapa das Seções</td><td>Pegar SEQ em E e AUT em D antes de entrar em F (A → C → E → C → B → H → D → F)</td></tr>
+      <tr><td>4. Cofre dos Estados</td><td>Dar palpite nos 9 lacres e acertar os 4 pares</td></tr>
+      <tr><td>5. Auditoria Final</td><td>Escolher um método e ler o relatório</td></tr></table>
+    <p class="legenda" style="margin-top:12px">Como esta página funciona: o Python executou as regras reais do jogo e calculou todas as situações possíveis de cada fase, o resultado de cada jogada e a dica do solver (BFS) para cada situação. A página só consulta essas tabelas: as regras estão no código em <span class="codigo">jogo/</span>, não aqui. O progresso fica guardado neste navegador.</p>
+    ${voltar}</div>`;
+};
+TELAS.resultados = () => {
+  $("#tela").innerHTML = `<div class="folha"><h2>Resultados</h2>
+    <div class="caixa"><h3>Fase 1 — tentativas</h3>${P.f1.tentativas.length ? P.f1.tentativas.map(t => `${t[0]} por ${t[1]}: ${t[2]} comparações → ${t[3] ? "ACEITO" : "recusado"}`).join("<br>") : "(nenhuma)"}</div>
+    <div class="caixa"><h3>Fase 2 — ações</h3>${P.f2.acoes.join(" → ") || "(nenhuma)"}</div>
+    <div class="caixa"><h3>Fase 3 — trilha</h3>${P.f3.trilha.join(" → ")} (energia restante: ${D.fase3.estados[P.f3.atual].energia})</div>
+    <div class="caixa"><h3>Fase 4 — cofre</h3>${P.f4.k}/${D.fase4.lacres.length} lacres, ${P.f4.acertos} palpites certos; ${Object.values(P.f4.pares).filter(x => x === true).length}/${D.fase4.pares.length} pares certos</div>
+    <div class="caixa"><h3>Fase 5 — auditoria</h3>${P.f5.feito ? (P.selos[4] ? "consistente" : "não consistente") : "não executada"}</div>
+    ${voltar}</div>`;
+};
+
+desenharSelos(); ir("menu");
+</script>
+</body>
+</html>

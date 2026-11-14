@@ -1,8 +1,10 @@
 # Como jogar — Urna Lógica (5 minutos)
 
-**Abrir:** dois cliques em `jogar.bat` (Windows). Não precisa de internet.
+**Abrir:** dois cliques em **`jogar_navegador.bat`** — o jogo abre no navegador e tudo é clicável (recomendado). Quem prefere o terminal usa `jogar.bat`. Nenhum dos dois precisa de internet.
 
-**Regra de ouro:** digite o número (ou a palavra) da opção e tecle **Enter**.
+**No navegador:** cada fase tem a faixa laranja **O que fazer agora**, o botão **💡 Dica**, **Desfazer** e **Recomeçar**. O progresso fica guardado no navegador.
+
+**No terminal:** digite o número (ou a palavra) da opção e tecle **Enter**.
 Em toda fase aparece a linha **>> O QUE FAZER AGORA**. Se travar, digite **?** (ou a palavra *dica*) para receber uma dica.
 Nada quebra o jogo: uma jogada errada é recusada com explicação e não muda nada.
 
@@ -28,4 +30,4 @@ Nada quebra o jogo: uma jogada errada é recusada com explicação e não muda n
 - **4 Resultados:** o que você já fez em cada fase.
 - **5 Visualização:** abre no navegador a apresentação animada da investigação.
 
-**Para conferir o código:** `rodar_testes.bat` roda os 97+ testes automáticos (deve terminar em `OK`). O código está organizado em `estruturas/` (lista, pilha, fila, AVL, grafo), `algoritmos/` (ordenações, BFS, DFS, solver), `jogo/` (regras das fases) e `interface/` (telas). Cada função traz no comentário o pseudocódigo da aula correspondente.
+**Para conferir o código:** `rodar_testes.bat` roda os 111 testes automáticos (deve terminar em `OK`). O código está organizado em `estruturas/` (lista, pilha, fila, AVL, grafo), `algoritmos/` (ordenações, BFS, DFS, solver), `jogo/` (regras das fases) e `interface/` (telas). Cada função traz no comentário o pseudocódigo da aula correspondente.

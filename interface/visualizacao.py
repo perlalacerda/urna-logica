@@ -73,7 +73,8 @@ def dados_busca():
     return {"mapa": mapa, "estrategias": estrategias}
 
 
-def layout_arvore_busca(r):
+def layout_arvore_busca(r, rotulo=None):
+    rotulo = rotulo or rotulo_curto
     """Posiciona a árvore de busca: x pela ordem das folhas, y pela profundidade."""
     if not r.ordem:
         return {"nos": [], "arestas": []}
@@ -93,7 +94,7 @@ def layout_arvore_busca(r):
             x = (xs[0] + xs[-1]) / 2
             for f in lista:
                 arestas.append([id(e), id(f)])
-        nos[id(e)] = {"id": id(e), "x": x, "y": prof, "rotulo": rotulo_curto(e),
+        nos[id(e)] = {"id": id(e), "x": x, "y": prof, "rotulo": rotulo(e),
                       "caminho": e in no_caminho}
         return x
 

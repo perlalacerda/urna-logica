@@ -91,8 +91,8 @@ class JogoTerminal:
             titulo("MENU INICIAL")
             print("  " + self.barra_de_selos())
             print("\n  1. Jogar\n  2. Resolver (solver automático)\n  3. Instruções\n  4. Resultados"
-                  "\n  5. Visualização animada (abre no navegador)\n  0. Sair")
-            op = ler_opcao(["1", "2", "3", "4", "5", "0"], apelidos={
+                  "\n  5. Visualização animada (abre no navegador)\n  6. Jogar no navegador (com cliques)\n  0. Sair")
+            op = ler_opcao(["1", "2", "3", "4", "5", "6", "0"], apelidos={"navegador": "6",
                 "jogar": "1", "resolver": "2", "instrucoes": "3", "ajuda": "3", "resultados": "4",
                 "visualizacao": "5", "sair": "0"})
             if op == "1":
@@ -105,6 +105,8 @@ class JogoTerminal:
                 self.resultados()
             elif op == "5":
                 self.abrir_visualizacao()
+            elif op == "6":
+                self.abrir_jogo_web()
             else:
                 print("\nAté a próxima auditoria!")
                 return
@@ -507,6 +509,21 @@ class JogoTerminal:
         import webbrowser
         from interface.visualizacao import gerar_html
         print("\n  Gerando a visualização (executando os algoritmos)...")
+        caminho = gerar_html()
+        print(f"  Arquivo: {caminho}")
+        try:
+            webbrowser.open(pathlib.Path(caminho).as_uri())
+            print("  Aberto no navegador. Se não abrir, dê dois cliques no arquivo acima.")
+        except Exception:
+            print("  Não consegui abrir o navegador; dê dois cliques no arquivo acima.")
+        pausa()
+
+    def abrir_jogo_web(self):
+        """Gera jogo.html (regras calculadas por este mesmo código) e abre no navegador."""
+        import pathlib
+        import webbrowser
+        from interface.jogo_web import gerar_html
+        print("\n  Gerando o jogo para o navegador (calculando todas as jogadas pelas regras)...")
         caminho = gerar_html()
         print(f"  Arquivo: {caminho}")
         try:

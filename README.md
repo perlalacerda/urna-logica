@@ -13,7 +13,9 @@ Jogo de lógica e investigação com dados **inteiramente fictícios**. Verídia
 
 ## Como executar
 
-**Jogar (Windows):** dê dois cliques em `jogar.bat`.
+**Jogar no navegador (recomendado):** dê dois cliques em `jogar_navegador.bat`. Tudo é clicável e funciona sem internet. A página é gerada por `interface/jogo_web.py`: o Python calcula, com as regras reais do jogo, todas as situações de cada fase e o resultado de cada jogada; a página só consulta essas tabelas (`testes/test_jogo_web.py` confere).
+
+**Jogar no terminal:** dê dois cliques em `jogar.bat`.
 
 **Visualização animada (Windows):** dê dois cliques em `visualizar.bat` (ou opção 5 do menu). Abre `visualizacao.html` no navegador, sem internet.
 
