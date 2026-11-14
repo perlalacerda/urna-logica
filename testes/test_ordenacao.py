@@ -154,5 +154,32 @@ class TestRegistros(unittest.TestCase):
         self.assertTrue(all(r == resultados[0] for r in resultados))
 
 
+class TestChaveMontada(unittest.TestCase):
+    """Fase 1 no navegador: a jogadora monta a chave composta com as peças."""
+
+    def test_so_a_chave_da_regra_e_aceita(self):
+        from itertools import permutations
+        from jogo.fase1 import Fase1
+        from jogo.registros import CAMPOS
+        aceitas = [c for n in range(1, 5) for c in permutations(CAMPOS, n)
+                   if Fase1().ordenar("merge", c)["aceito"]]
+        self.assertEqual(aceitas, [("zona", "secao", "horario"), ("zona", "secao", "horario", "id")])
+
+    def test_chave_invalida_recusada(self):
+        from jogo.fase1 import Fase1
+        f = Fase1()
+        antes = [r.id_registro for r in f.registros]
+        for ruim in ([], ["zona", "zona"], ["cor"]):
+            self.assertFalse(f.ordenar("merge", ruim)["ok"])
+        self.assertEqual([r.id_registro for r in f.registros], antes)      # nada mudou
+
+    def test_desempate_por_id_entra_no_fim(self):
+        from jogo.registros import chave_composta, descrever_chave
+        from jogo.fase1 import Fase1
+        r = Fase1().registros[0]
+        self.assertEqual(chave_composta(["zona"])(r), (r.zona, r.id_registro))
+        self.assertEqual(descrever_chave(["zona", "secao"]), "zona, depois seção (desempate por identificador)")
+
+
 if __name__ == "__main__":
     unittest.main()

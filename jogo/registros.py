@@ -59,6 +59,35 @@ DESCRICAO_CRITERIOS = {
     "auditoria": "zona, depois seção, depois horário (desempate por identificador)",
 }
 
+# ------------------------------------------------------------ chave montada pelo jogador
+# No jogo do navegador, a jogadora MONTA a chave composta escolhendo a ordem
+# destas peças. É o conceito de chave composta (tupla comparada campo a campo),
+# jogado: (zona, seção, horário) compara primeiro a zona; só se empatar,
+# a seção; só se empatar de novo, o horário.
+CAMPOS = {
+    "zona": lambda r: r.zona,
+    "secao": lambda r: r.secao,
+    "horario": lambda r: r.timestamp,
+    "id": lambda r: r.id_registro,
+}
+NOMES_CAMPOS = {"zona": "zona", "secao": "seção", "horario": "horário", "id": "identificador"}
+
+
+def chave_composta(campos):
+    """
+    Chave = tupla com os campos na ordem escolhida. O identificador entra no fim
+    como desempate (se ainda não estiver), como nos critérios fixos.
+    """
+    campos = list(campos)
+    if not campos or any(c not in CAMPOS for c in campos) or len(set(campos)) != len(campos):
+        raise ValueError(f"Chave inválida: {campos}")
+    usados = campos + ([] if "id" in campos else ["id"])
+    return lambda r: tuple(CAMPOS[c](r) for c in usados)
+
+
+def descrever_chave(campos):
+    return ", depois ".join(NOMES_CAMPOS[c] for c in campos) + ("" if "id" in campos else " (desempate por identificador)")
+
 
 # ------------------------------------------------------------ geração
 def gerar_registros(n, seed, zonas=3, secoes_por_zona=4):

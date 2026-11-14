@@ -19,7 +19,7 @@ a ordem da auditoria foi violada.
 
 from algoritmos.ordenacao import ordenar, primeiro_fora_de_ordem, ALGORITMOS
 from jogo.registros import (CRITERIOS, DESCRICAO_CRITERIOS, gerar_registros,
-                            embaralhar, validar_ids_unicos)
+                            embaralhar, validar_ids_unicos, chave_composta, descrever_chave)
 
 CHAVE_AUDITORIA = CRITERIOS["auditoria"]
 
@@ -54,11 +54,21 @@ class Fase1:
         """
         if algoritmo not in ALGORITMOS:
             return {"ok": False, "mensagem": f"Algoritmo desconhecido: {algoritmo}."}
-        if criterio not in CRITERIOS:
+        # critério = nome fixo ("auditoria") ou chave montada pela jogadora (lista de campos)
+        if isinstance(criterio, (list, tuple)):
+            try:
+                chave = chave_composta(criterio)
+            except ValueError as erro:
+                return {"ok": False, "mensagem": str(erro)}
+            descricao = descrever_chave(criterio)
+            criterio = tuple(criterio)
+        elif criterio in CRITERIOS:
+            chave, descricao = CRITERIOS[criterio], DESCRICAO_CRITERIOS[criterio]
+        else:
             return {"ok": False, "mensagem": f"Critério desconhecido: {criterio}."}
 
         quantidade_antes = len(self.registros)
-        contador = ordenar(self.registros, algoritmo, CRITERIOS[criterio])
+        contador = ordenar(self.registros, algoritmo, chave)
         assert len(self.registros) == quantidade_antes      # nenhum registro perdido
 
         erro = primeiro_fora_de_ordem(self.registros, CHAVE_AUDITORIA)
@@ -71,7 +81,7 @@ class Fase1:
             mensagem = (f"Lote RECUSADO. Primeiro ponto fora da ordem da auditoria: "
                         f"posições {erro} e {erro + 1}.\n"
                         f"  {a.linha()}\n  {b.linha()}\n"
-                        f"Dica: você ordenou por '{DESCRICAO_CRITERIOS[criterio]}'. "
+                        f"Dica: você ordenou por '{descricao}'. "
                         f"A auditoria exige zona, depois seção, depois horário.")
         self.tentativas.append((algoritmo, criterio, contador, aceito))
         return {"ok": True, "aceito": aceito, "contador": contador,

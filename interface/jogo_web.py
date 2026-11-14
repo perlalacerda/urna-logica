@@ -32,7 +32,7 @@ from jogo.fase5 import Fase5
 from jogo.mapa_custos import (FaseMapaCustos, construir_mapa_custos, comparar as comparar_custos,
                               dijkstra_grafo_puro, avaliar_chegada, PESOS, ENERGIA_CUSTOS)
 from jogo.dicas import dica_mapa_custos, orientacao_mapa_custos
-from jogo.registros import CRITERIOS, DESCRICAO_CRITERIOS
+from jogo.registros import CRITERIOS, DESCRICAO_CRITERIOS, CAMPOS, NOMES_CAMPOS, chave_composta
 from interface.visualizacao import POSICOES, arvore_para_dict, layout_arvore_busca
 
 ROTULO_ACAO = {"aceitar": "Aceitar", "guardar": "Guardar", "arquivar": "Arquivar", "liberar": "Liberar"}
@@ -54,11 +54,48 @@ def dados_fase1():
                 "erro": res["posicao_erro"], "mensagem": res["mensagem"],
                 "algoritmo": c.algoritmo, "comparacoes": c.comparacoes, "movimentacoes": c.movimentacoes}
     comparacao = [[n, a, comp, mov] for n, a, comp, mov, _ in base.comparar_algoritmos()]
+    chaves = dados_chaves_fase1(base)
     return {"nome": Fase1.NOME, "abertura": Fase1.ABERTURA, "enigma": Fase1.ENIGMA,
             "registros": [reg(r) for r in base.registros],
             "criterios": [[c, DESCRICAO_CRITERIOS[c]] for c in ("id", "zona", "horario", "auditoria")],
             "algoritmos": [["bubble", "Bubble Sort"], ["merge", "Merge Sort"], ["quick", "Quick Sort"]],
-            "resultados": resultados, "comparacao": comparacao}
+            "resultados": resultados, "comparacao": comparacao, "chaves": chaves,
+            "campos": [[c, NOMES_CAMPOS[c]] for c in CAMPOS]}
+
+
+def dados_chaves_fase1(base):
+    """
+    Para cada chave que a jogadora pode montar (1 a 4 peças, sem repetir) e cada
+    método: o resultado de Fase1.ordenar e os quadros da animação.
+    Cada quadro é a ordem das fichas, escrita como uma letra por ficha
+    (posição da ficha no lote embaralhado, em base 36) — só os quadros em que o
+    vetor é uma permutação completa, como na visualização.
+    """
+    from itertools import permutations
+    from interface.visualizacao import VetorRastreado
+    pos = {r.id_registro: i for i, r in enumerate(base.registros)}
+    letra = "0123456789abcdefghijklmnopqrstuvwxyz"
+    res = {}
+    for n in range(1, len(CAMPOS) + 1):
+        for campos in permutations(CAMPOS, n):
+            for alg in ALGORITMOS:
+                f = Fase1()
+                r = f.ordenar(alg, campos)
+                g = Fase1()
+                A = VetorRastreado(list(g.registros))
+                ALGORITMOS[alg](A, chave_composta(campos))
+                quadros = []
+                for foto in A.fotos:
+                    ids = [x.id_registro for x in foto["v"]]
+                    if len(set(ids)) == len(ids):
+                        q = "".join(letra[pos[i]] for i in ids)
+                        if not quadros or quadros[-1] != q:
+                            quadros.append(q)
+                c = r["contador"]
+                res[f"{alg}|{'>'.join(campos)}"] = {
+                    "aceito": r["aceito"], "erro": r["posicao_erro"], "mensagem": r["mensagem"],
+                    "comparacoes": c.comparacoes, "movimentacoes": c.movimentacoes, "quadros": quadros}
+    return res
 
 
 # ============================================================ FASE 2
@@ -94,7 +131,8 @@ def dados_fase2():
                         "arquivo": f.arquivo, "venceu": f.venceu(), "acoes": acoes,
                         "dica": dica, "esperado": esperado})
     return {"nome": Fase2.NOME, "abertura": Fase2.ABERTURA, "alvo": list(Fase2().alvo),
-            "evidencias": EVIDENCIAS, "estados": estados}
+            "evidencias": EVIDENCIAS, "estados": estados,
+            "minimo": bfs(ProblemaTriagem()).numero_acoes()}     # 3 estrelas = o mínimo da BFS
 
 
 # ============================================================ FASE 3
@@ -153,7 +191,7 @@ def dados_fase3():
             "vertices": [{"id": v, "nome": LOCAIS[v], "x": POSICOES[v][0], "y": POSICOES[v][1],
                           "pista": PISTAS.get(v), "porta": PORTAS.get(v)} for v in G.vertices()],
             "arestas": [list(a) for a in ARESTAS], "adjacencia": {v: G.vizinhos(v) for v in G.vertices()},
-            "curto": curto}
+            "curto": curto, "minimo": bfs(ProblemaMapa()).numero_acoes()}     # 3 estrelas = o mínimo da BFS
 
 
 # ============================================================ DESAFIO EXTRA: MAPA COM CUSTOS (aula 11)
@@ -223,7 +261,8 @@ def dados_fase4():
         achou, caminho, comps = f.consultar(k)
         consultas[k] = {"achou": achou, "caminho": caminho, "comparacoes": comps}
     from jogo.fase3 import rotulo
-    pares = [{"visto": rotulo(a), "novo": rotulo(b), "resposta": list(resposta_correta(a, b)),
+    sit = lambda e: {"pos": e[0], "local": LOCAIS[e[0]], "pistas": list(e[1]), "portas": list(e[2]), "energia": e[3]}
+    pares = [{"visto": rotulo(a), "novo": rotulo(b), "a": sit(a), "b": sit(b), "resposta": list(resposta_correta(a, b)),
               "explicacao": explicar(a, b)} for a, b in PARES_ESTADOS]
     return {"nome": Fase4.NOME, "abertura": Fase4.ABERTURA, "lacres": lacres, "opcoes": list(OPCOES_ROTACAO),
             "pares": pares, "consultas": consultas, "altura_final": f.avl.altura()}

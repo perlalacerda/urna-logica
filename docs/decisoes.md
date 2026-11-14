@@ -74,6 +74,8 @@ O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e 
 - **Heap e Dijkstra:** heap de mínimo próprio, adaptado do heap de máximo da aula 08 (comparações invertidas), com `diminuir_chave` para o relaxamento. O `dijkstra()` literal da aula roda no grafo puro; o `dijkstra_estados()` roda no grafo implícito de estados, com Q começando só com o estado inicial e S guardado na AVL. A energia sai do vértice porque energia restante = energia inicial − d. O guloso ingênuo proíbe voltar a um estado já visitado (senão andaria em círculo) e desempata pela ordem alfabética dos vizinhos. [Aula 08] [Aula 11] [Equipe]
 - **Tecla da tabela no desafio extra:** T, e não C, porque C é um local do mapa (mesmo problema que levou a dica da Fase 3 a usar ? em vez de D). [Equipe]
 
+- **Jogo no navegador fácil e divertido (pedido da professora, adotado em 14.11.2026):** tela inicial curta, cartão de instruções por fase, carimbo, animações e estrelas. As estrelas são só apresentação: as regras e os mínimos (BFS 7, Dijkstra 11) continuam vindo do Python. Na Fase 1 do navegador, a jogadora monta a chave composta com peças em vez de escolher um critério pronto, porque o 4.º critério repetia o texto do enigma e entregava a resposta. O terminal mantém os critérios fixos. [Equipe]
+
 ## Pendências com a professora
 
 1. Quick Sort: `p..q` do slide × `p..q-1`.

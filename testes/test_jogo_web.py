@@ -11,6 +11,8 @@ import re
 import tempfile
 import unittest
 
+from algoritmos.solver import bfs
+
 from interface.jogo_web import gerar_dados, gerar_html
 from jogo.fase1 import Fase1
 from jogo.fase2 import Fase2
@@ -73,6 +75,31 @@ class TestJogoWeb(unittest.TestCase):
             i = E[i]["movs"][v]["destino"]
             trilha.append(v)
         self.assertEqual(trilha, ["A", "C", "E", "C", "B", "H", "D", "F"])
+
+    def test_fase1_chaves_montadas_iguais_ao_python(self):
+        """Cada chave que a jogadora pode montar: aceite e ordem final iguais aos do Python."""
+        from jogo.fase1 import Fase1
+        C, base = self.D["fase1"]["chaves"], Fase1().registros
+        self.assertEqual(len(C), 64 * 3)                   # 4 + 12 + 24 + 24 chaves × 3 métodos
+        aceitas = sorted({k.split("|")[1] for k, r in C.items() if r["aceito"]})
+        self.assertEqual(aceitas, ["zona>secao>horario", "zona>secao>horario>id"])
+        for k, r in C.items():
+            alg, campos = k.split("|")
+            f = Fase1()
+            esperado = f.ordenar(alg, campos.split(">"))
+            self.assertEqual((r["aceito"], r["erro"], r["mensagem"]),
+                             (esperado["aceito"], esperado["posicao_erro"], esperado["mensagem"]))
+            final = [base[int(c, 36)].id_registro for c in r["quadros"][-1]]
+            self.assertEqual(final, [x.id_registro for x in f.registros])   # o último quadro É o resultado
+            for q in r["quadros"]:
+                self.assertEqual(sorted(q), sorted("0123456789ab"))        # nenhum quadro duplica ficha
+
+    def test_minimos_das_estrelas_vem_da_bfs(self):
+        from jogo.fase2 import ProblemaTriagem
+        from jogo.fase3 import ProblemaMapa
+        self.assertEqual(self.D["fase2"]["minimo"], bfs(ProblemaTriagem()).numero_acoes())
+        self.assertEqual(self.D["fase3"]["minimo"], bfs(ProblemaMapa()).numero_acoes())
+        self.assertEqual((self.D["fase2"]["minimo"], self.D["fase3"]["minimo"]), (7, 7))
 
     def test_mapa_custos_cada_movimento_igual_ao_python(self):
         from jogo.mapa_custos import construir_mapa_custos, ENERGIA_CUSTOS

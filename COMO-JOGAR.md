@@ -2,7 +2,9 @@
 
 **Abrir:** dois cliques em **`jogar_navegador.bat`** — o jogo abre no navegador e tudo é clicável (recomendado). Quem prefere o terminal usa `jogar.bat`. Nenhum dos dois precisa de internet.
 
-**No navegador:** cada fase tem a faixa laranja **O que fazer agora**, o botão **💡 Dica**, **Desfazer** e **Recomeçar**. O progresso fica guardado no navegador.
+**No navegador:** a primeira tela tem só três linhas e o botão **▶ Começar**. Cada fase abre com um cartão **Como jogar em 10 segundos** (o botão **❔ Como jogar** o mostra de novo) e tem a faixa laranja **O que fazer agora**, o botão **💡 Dica**, **Desfazer** e **Recomeçar**. Ao vencer, cai um carimbo com o selo e de 1 a 3 **estrelas**: três estrelas = jogar como o computador (o mínimo de ações que a BFS acha nas Fases 2 e 3; a menor energia do Dijkstra no desafio extra). O progresso fica guardado no navegador. O som do carimbo começa desligado (botão 🔇 no topo).
+
+**Fase 1 no navegador:** em vez de escolher um critério pronto, monte a chave clicando nas peças **zona → seção → horário**, escolha um método e veja as fichas se moverem.
 
 **No terminal:** digite o número (ou a palavra) da opção e tecle **Enter**.
 Em toda fase aparece a linha **>> O QUE FAZER AGORA**. Se travar, digite **?** (ou a palavra *dica*) para receber uma dica.
@@ -32,4 +34,4 @@ Nada quebra o jogo: uma jogada errada é recusada com explicação e não muda n
 - **4 Resultados:** o que você já fez em cada fase.
 - **5 Visualização:** abre no navegador a apresentação animada da investigação.
 
-**Para conferir o código:** `rodar_testes.bat` roda os 133 testes automáticos (deve terminar em `OK`). O código está organizado em `estruturas/` (lista, pilha, fila, AVL, heap, grafo), `algoritmos/` (ordenações, BFS, DFS, solver, Dijkstra), `jogo/` (regras das fases) e `interface/` (telas). Cada função traz no comentário o pseudocódigo da aula correspondente.
+**Para conferir o código:** `rodar_testes.bat` roda os 138 testes automáticos (deve terminar em `OK`). O código está organizado em `estruturas/` (lista, pilha, fila, AVL, heap, grafo), `algoritmos/` (ordenações, BFS, DFS, solver, Dijkstra), `jogo/` (regras das fases) e `interface/` (telas). Cada função traz no comentário o pseudocódigo da aula correspondente.
