@@ -106,20 +106,10 @@
                 background: #1d120a; border: 3px solid var(--laranja); border-radius: 30px; padding: 6px 12px; color: var(--papel); font-family: var(--maquina); }
   body:not(.modo-slides) .nav-rodape { display: none; }
   .nav-rodape button { background: var(--laranja); color: #fff6e4; border: 0; border-radius: 20px; padding: 6px 14px; font-family: var(--titulo); cursor: pointer; }
-  /* caderno do grêmio: folha pautada (fio condutor lúdico) */
-  .gremio { display: flex; gap: 12px; align-items: flex-start; margin: 12px 0; padding: 12px 16px 12px 52px; border-radius: 8px;
-            background: #fffef6 repeating-linear-gradient(#fffef6 0 26px, #c9dcef 26px 27px); border: 2px solid #9fb9d6;
-            position: relative; font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive; font-size: 16px; line-height: 27px; color: #1d2f4f; }
-  .gremio::before { content: ""; position: absolute; left: 40px; top: 0; bottom: 0; width: 2px; background: #e58b8b; }
-  .gremio .cab { font-family: var(--titulo); text-transform: uppercase; letter-spacing: .08em; font-size: 12px; color: #2f5d9a; display: block; }
-  .gremio .kids { flex: 0 0 auto; }
   table.glos { border-collapse: collapse; width: 100%; font-size: 15px; }
   table.glos th { font-family: var(--titulo); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; text-align: left; color: var(--tinta2); border-bottom: 2px solid var(--tinta2); padding: 6px; }
   table.glos td { border-bottom: 1px dotted #cdb98f; padding: 6px; vertical-align: top; }
   table.glos td:first-child { font-family: var(--titulo); font-weight: 700; text-transform: uppercase; font-size: 13px; letter-spacing: .04em; color: var(--laranja2); white-space: nowrap; }
-  table.glos td:last-child { font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive; color: #1d2f4f; font-size: 14px; }
-  .formato { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 820px) { .formato { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body class="modo-slides">
@@ -196,19 +186,6 @@ function cracha(nome, funcao, icone, tam = 74) {  // crachá genérico, sem retr
     <rect x="6" y="56" width="58" height="10" fill="#d9682b"/>
     <text x="35" y="64" font-size="7" text-anchor="middle" fill="#fff6e4" font-family="sans-serif" font-weight="700">${funcao}</text></svg>`;
 }
-function criancas(tam = 70) {   // Bia e Davi: personagens originais da comissão do grêmio
-  return `<svg width="${tam * 1.6}" height="${tam}" viewBox="0 0 112 70" role="img" aria-label="Bia e Davi">
-    <circle cx="30" cy="22" r="13" fill="#c98e62" stroke="#1d2f4f" stroke-width="2"/>
-    <path d="M16 22 q0 -17 14 -17 q14 0 14 17 q-4 -8 -14 -9 q-10 1 -14 9z" fill="#2b1d12"/><circle cx="45" cy="16" r="5" fill="#2b1d12"/>
-    <circle cx="25" cy="23" r="1.8" fill="#1d2f4f"/><circle cx="35" cy="23" r="1.8" fill="#1d2f4f"/><path d="M25 28 q5 4 10 0" stroke="#1d2f4f" stroke-width="2" fill="none"/>
-    <path d="M12 70 q2 -26 18 -26 q16 0 18 26z" fill="#2f5d9a" stroke="#1d2f4f" stroke-width="2"/><path d="M24 46 l6 6 l6 -6" fill="#fff" stroke="#1d2f4f"/>
-    <circle cx="80" cy="22" r="13" fill="#f0c8a0" stroke="#1d2f4f" stroke-width="2"/>
-    <path d="M67 18 q2 -13 13 -13 q11 0 13 13 q-6 -6 -13 -6 q-7 0 -13 6z" fill="#7a4a24"/>
-    <circle cx="75" cy="23" r="1.8" fill="#1d2f4f"/><circle cx="85" cy="23" r="1.8" fill="#1d2f4f"/><path d="M75 28 q5 4 10 0" stroke="#1d2f4f" stroke-width="2" fill="none"/>
-    <path d="M62 70 q2 -26 18 -26 q16 0 18 26z" fill="#2f5d9a" stroke="#1d2f4f" stroke-width="2"/><path d="M74 46 l6 6 l6 -6" fill="#fff" stroke="#1d2f4f"/>
-    <rect x="88" y="50" width="12" height="16" rx="2" fill="#f4e7c9" stroke="#1d2f4f"/><path d="M90 55 h8 M90 59 h8" stroke="#2f5d9a"/></svg>`;
-}
-const gremio = txt => `<div class="gremio"><div class="kids">${criancas(54)}</div><div><span class="cab">📒 Enquanto isso, na eleição do grêmio…</span>${txt}</div></div>`;
 const falaAud = txt => `<div class="fala"><div class="quem">${missPearl()}</div><div class="balao"><b class="nome">Miss Pearl · Analista de Integridade de Dados da CIV</b>${txt}</div></div>`;
 const falaApura = (txt, humor = "normal", id = "") => `<div class="fala"><div class="quem" ${id ? `id="${id}-rosto"` : ""}>${apura(humor)}</div><div class="balao"><b class="nome">APURA-42 · computador da CIV</b><span ${id ? `id="${id}"` : ""}>${txt}</span></div></div>`;
 function apuraReage(id, txt, humor) { $("#" + id).innerHTML = txt; $("#" + id + "-rosto").innerHTML = apura(humor); }
@@ -259,23 +236,23 @@ S.push({ html: `
 
 /* --- GLOSSÁRIO --- */
 const GLOS = [
-  ["Auditoria", "Conferir, com regras claras, se um resultado está correto, refazendo o caminho que levou até ele.", "A comissão do grêmio reconta as cédulas na frente de todos."],
-  ["Trilha de auditoria", "O registro de todos os passos, do voto ao resultado, que permite voltar até a origem.", "O caderno onde se anota cada etapa: urna lacrada, aberta, contada."],
-  ["Registro", "Uma ficha com os dados de um voto processado: identificador, zona, seção, opção, horário e situação.", "Cada cédula do grêmio, com a turma e a sala onde foi depositada."],
-  ["Zona e seção", "A seção é o local onde fica uma urna; a zona reúne várias seções.", "A sala onde ficou a urna (seção) e o andar da escola (zona)."],
-  ["Evidência", "Um documento que prova que uma etapa aconteceu: lacre, boletim, assinatura.", "A foto da urna lacrada; a ata assinada pela comissão."],
-  ["Cadeia de custódia", "A ordem documentada de quem guardou cada evidência, sem buracos.", "O livro de protocolo: “entreguei o envelope para a Bia às 10h”."],
-  ["Lacre", "Uma fita ou selo que mostra se algo foi aberto. Lacre inteiro: ninguém mexeu.", "A fita assinada colada na tampa da urna do grêmio."],
-  ["Selo de auditoria", "No jogo, a prova de que uma etapa foi verificada. São cinco.", "O visto da direção em cada etapa da eleição."],
-  ["Cofre de Verificação", "Onde ficam as provas finais. Só abre com os cinco selos.", "O armário da secretaria onde a ata final é guardada."],
-  ["Consistente", "Quando tudo bate com as regras, sem contradição.", "A soma das urnas é igual ao total da ata."],
-  ["Apuração", "A contagem e a conferência final dos votos.", "A leitura da ata no pátio."],
+  ["Auditoria", "Conferir, com regras claras, se um resultado está correto, refazendo o caminho que levou até ele."],
+  ["Trilha de auditoria", "O registro de todos os passos, do voto ao resultado, que permite voltar até a origem."],
+  ["Registro", "Uma ficha com os dados de um voto processado: identificador, zona, seção, opção, horário e situação."],
+  ["Zona e seção", "A seção é o local onde fica uma urna; a zona reúne várias seções."],
+  ["Evidência", "Um documento que prova que uma etapa aconteceu: lacre, boletim, assinatura."],
+  ["Cadeia de custódia", "A ordem documentada de quem guardou cada evidência, sem buracos."],
+  ["Lacre", "Uma fita ou selo que mostra se algo foi aberto. Lacre inteiro: ninguém mexeu."],
+  ["Selo de auditoria", "No jogo, a prova de que uma etapa foi verificada. São cinco."],
+  ["Cofre de Verificação", "Onde ficam as provas finais. Só abre com os cinco selos."],
+  ["Consistente", "Quando tudo bate com as regras, sem contradição."],
+  ["Apuração", "A contagem e a conferência final dos votos."],
 ];
 S.push({ html: `
   <div class="rotulo">Antes de começar · glossário</div><h2>Palavras que vamos usar</h2>
-  ${falaAud("Antes de contar a investigação, combino com vocês o significado de algumas palavras. Na coluna da direita, o mesmo termo na eleição do <b>grêmio da escola</b>.")}
-  <table class="glos"><tr><th>Palavra</th><th>O que significa</th><th>Na eleição do grêmio</th></tr>
-  ${GLOS.map(g => `<tr><td>${g[0]}</td><td>${g[1]}</td><td>${g[2]}</td></tr>`).join("")}</table>` });
+  ${falaAud("Antes de contar a investigação, combino com vocês o significado de algumas palavras.")}
+  <table class="glos"><tr><th>Palavra</th><th>O que significa</th></tr>
+  ${GLOS.map(g => `<tr><td>${g[0]}</td><td>${g[1]}</td></tr>`).join("")}</table>` });
 
 /* --- O QUE ACONTECEU --- */
 S.push({ html: `
@@ -302,15 +279,6 @@ S.push({ html: `
   </div>
   ${falaApura("E eu, APURA-42, sou o computador da equipe. Eu só sigo regras: quem decide o que verificar são as pessoas.", "feliz")}` });
 
-/* --- DUAS HISTÓRIAS, UM CAMINHO --- */
-S.push({ html: `
-  <div class="rotulo">Parte 1 · Como vou contar</div><h2>Duas histórias, um mesmo caminho</h2>
-  <div class="formato">
-    <div class="caixa"><h3>1. O lado técnico</h3>${missPearl(70)}<p>Primeiro, eu explico <b>como a CIV fez</b>, com os nomes certos: registro, fila, pilha, grafo, busca, árvore. É a parte que a banca avalia.</p></div>
-    <div class="caixa"><h3>2. A mesma coisa, na escola</h3>${criancas(70)}<p>Depois, a <b>Bia</b> e o <b>Davi</b>, da comissão eleitoral do <b>grêmio</b> da Escola de Verídia, vivem a mesma ideia: cédulas misturadas, fila da cantina, planta da escola, fichário da secretaria.</p></div>
-  </div>
-  ${gremio(`Oi! Somos a Bia e o Davi. Na nossa escola também teve eleição — a do grêmio. E também deu confusão: a urna caiu, as cédulas se misturaram e o envelope passou por muitas mãos. A gente vai mostrar como resolveu cada problema. Spoiler: é igualzinho ao que a CIV fez!`)}` });
-
 /* --- A TRILHA DE UM VOTO --- */
 S.push({ html: `
   <div class="rotulo">Parte 1 · O que é uma trilha de auditoria</div><h2>De onde veio este número?</h2>
@@ -322,8 +290,7 @@ S.push({ html: `
     <div class="caixa"><h3>Em Verídia (dados fictícios)</h3>
       <svg viewBox="0 0 420 300" width="100%" id="trilha-veridia"></svg>
       <span class="legenda">Cada registro do jogo carrega <b>zona</b>, <b>seção</b> e <b>identificador</b>. São as "etiquetas" que permitem refazer o caminho de volta.</span></div>
-  </div>
-  ${gremio(`Na eleição do grêmio, cada etapa também fica anotada: urna da sala → envelope lacrado → secretaria → ata final. Se a ata disser <b>120 votos para a Chapa Azul</b>, a Bia e o Davi conseguem voltar, anotação por anotação, até a urna de onde cada voto saiu. Sem as anotações, ninguém conseguiria conferir.`)}`,
+  </div>`,
   montar() {
     const caixas = (svg, itens, cor) => { itens.forEach((t, i) => { const y = 14 + i * 70;
       svgEl("rect", {x: 90, y, width: 240, height: 46, rx: 8, fill: "#fff8e8", stroke: cor, "stroke-width": 3}, svg);
@@ -360,7 +327,6 @@ S.push({ html: `
   <div class="rotulo">Anexo 1 · como pensamos</div><h2>Ordenar por mais de um critério</h2>
 
   ${falaAud("A auditoria pede: primeiro <b>zona</b>; empatou, olha a <b>seção</b>; empatou de novo, olha o <b>horário</b>. Chamamos isso de <b>chave composta</b>. E se tudo empatar? Usamos o identificador, que nunca se repete.")}
-  ${gremio(`A urna do grêmio caiu e as cédulas se misturaram. Para recontar, a Bia e o Davi separam primeiro por <b>turma</b> (9º A, 9º B…); dentro da turma, pela <b>sala</b> onde ela votou; se ainda empatar, pelo <b>horário</b> anotado. É como a lista de chamada: só se olha o número quando a turma é igual.`)}
   <div class="caixa"><h3>Sua vez: quem vem primeiro na ordem da auditoria?</h3>
     <p>Os dois registros abaixo têm o <b>mesmo horário</b>, mas zonas diferentes.</p>
     ${tabelaReg(L.par.map(r => r.id))}
@@ -396,7 +362,6 @@ S.push({ html: `
     <div class="caixa"><h3>Merge Sort</h3>Divide o monte ao meio até sobrar 1 ficha; depois intercala dois montinhos já ordenados.</div>
     <div class="caixa"><h3>Quick Sort</h3>Escolhe um pivô: as menores vão para um lado, as maiores para o outro. Repete em cada lado.</div>
   </div>
-  ${gremio(`Na hora da foto do grêmio, os candidatos precisam ficar em ordem de altura. <b>Bubble:</b> cada um compara com o vizinho e troca se for mais alto; repetem até ninguém trocar. <b>Merge:</b> metade se organiza de um lado, metade do outro, e depois as duas filas se juntam comparando quem está na frente. <b>Quick:</b> o fotógrafo escolhe um aluno como “juiz”; os mais baixos vão para a esquerda dele, os mais altos para a direita, e repete em cada grupo.`)}
   <div class="controles"><select id="o-alg"></select><span id="o-ctl" class="controles"></span></div>
   <div class="crt"><div class="tit" id="o-tit"></div><div id="o-tab"></div></div>`,
   montar() {
@@ -428,7 +393,7 @@ S.push({ html: `
   ${tecnica(`Implementação literal das aulas 02 e 04 em <code>algoritmos/ordenacao.py</code>. Chave composta: <code>(zona, secao, timestamp, id_registro)</code>. Bubble: n(n−1)/2 comparações, Θ(n²). Merge: Θ(n log n). Quick: Θ(n log n) médio, Θ(n²) no pior caso (entrada ordenada: 499.500 comparações com n=1.000). O id desempata porque o Merge da aula e o Quick não são estáveis (<code>test_estabilidade</code>). O slide 31 (<code>quickSort(p,q)</code>) entra em laço infinito com pivô máximo; usamos <code>p..q−1</code> (<code>test_quick_versao_literal_do_slide_nao_termina</code>). Seed fixa 2042 + Fisher–Yates próprio.`)}` });
 
 S[S.length - 1].montar = () => {
-  const svg = $("#o-barras"), dados = ["Bubble", "Merge", "Quick"].map(a => [a, L.comparacao.find(c => c.n === 500 && c.alg.startsWith(a)).comp]);
+  const svg = $("#o-barras"), dados = ["Bubble", "Merge"].map(a => [a, L.comparacao.find(c => c.n === 500 && c.alg.startsWith(a)).comp]);
   const max = Math.max(...dados.map(d => d[1]));
   dados.forEach(([a, v], i) => { const y = 12 + i * 44, w = Math.max(4, v / max * 520);
     svgEl("text", {x: 0, y: y + 22, "font-size": 16, "font-weight": 700, style: "fill:#2b1d12"}, svg, a);
@@ -444,7 +409,9 @@ S.push({ html: `
     <div><div class="doc">${cap(2).abertura}</div>
       ${falaAud("Seis evidências chegaram, nesta ordem: <b>E1, E2, E3, E4, E5, E6</b>, e a custódia precisa ficar <b>E2 → E4 → E1 → E6</b>. Usamos três estruturas: a <b>fila</b> (o primeiro a entrar é o primeiro a sair — FIFO), a <b>pilha</b> (o último a entrar é o primeiro a sair — LIFO; serve também para <b>desfazer</b>) e a <b>lista ligada</b> (cada item aponta para o próximo).")}</div>
     <div>
-      ${gremio(`Na cantina da escola: a <b>fila</b> só atende quem chegou primeiro. As <b>bandejas</b> ficam empilhadas: só se pega a de cima — e, se você errar, devolve a última que pegou (é o “desfazer”). E o envelope com as cédulas passa de mão em mão: no <b>livro de protocolo</b>, cada pessoa escreve para quem entregou. Seguindo as anotações, uma levando à outra, chega-se ao fim — isso é uma <b>lista ligada</b>.`)}
+      <div class="caixa"><h3>Fila (FIFO)</h3><div class="linha"><span class="legenda">sai ←</span><span class="ficha destaque">E1</span><span class="ficha">E2</span><span class="ficha">E3</span><span class="legenda">← entra</span></div></div>
+      <div class="caixa"><h3>Pilha (LIFO)</h3><div class="pilha"><span class="legenda">entra e sai pelo topo ↕</span><span class="ficha destaque" style="width:70px">topo</span><span class="ficha" style="width:70px">…</span><span class="ficha" style="width:70px">base</span></div></div>
+      <div class="caixa"><h3>Lista ligada</h3><div class="linha"><span class="legenda">cabeça</span><span class="seta">→</span><span class="ficha">E2</span><span class="seta">→</span><span class="ficha">E4</span><span class="seta">→</span><span class="ficha">E1</span><span class="seta">→</span><span class="legenda">NULL</span></div></div>
 
 
     </div>
@@ -539,7 +506,6 @@ S.push({ html: `
   <div class="dois">
     <div><div class="doc">${cap(3).abertura}</div>
       ${falaAud("Representamos o mapa como um <b>grafo</b>: cada local é um <b>vértice</b> e cada conexão é uma <b>aresta</b>. Guardamos, para cada local, a lista dos seus vizinhos.")}
-      ${gremio(`A planta da escola é um grafo: cada sala é um ponto e cada corredor que liga duas salas é uma linha. E algumas portas só abrem com a chave certa — que está guardada em outra sala.`)}
       <div class="caixa"><h3>Regras do mapa (item 7.5)</h3>
         🔒 O <b>Arquivo Oeste (H)</b> só abre com a pista de sequência (<b>SEQ</b>), guardada na Unidade Oeste (E).<br>
         🔒 O <b>Centro de Validação (F)</b> só abre com a pista de autenticação (<b>AUT</b>), guardada na Unidade Leste (D).<br>
@@ -554,8 +520,7 @@ S.push({ html: `
   <div><button class="btn" data-r="0">A → C → G → F (3 trechos)</button><button class="btn" data-r="1">A → B → H → D → F (4 trechos)</button>
     <button class="btn" data-r="2">A → C → E → C → B → H → D → F (7 trechos)</button></div>
   ${falaApura("Cuidado com as portas trancadas…", "pensando", "r-fala")}
-  ${falaAud("Por isso o computador não guarda só a posição: guarda o <b>estado</b> = posição + pistas coletadas + portas abertas + energia. Dois estados no mesmo lugar são diferentes se as pistas forem diferentes.")}
-  ${gremio(`O Davi passou duas vezes pelo pátio: na primeira, sem a chave do laboratório; na segunda, com a chave no bolso. Mesmo lugar, situações diferentes — na segunda vez ele pode abrir portas que antes não abria.`)}`,
+  ${falaAud("Por isso o computador não guarda só a posição: guarda o <b>estado</b> = posição + pistas coletadas + portas abertas + energia. Dois estados no mesmo lugar são diferentes se as pistas forem diferentes.")}`,
   montar() {
     const resp = ["A rota A → C → G → F é a mais <b>curta</b>, mas chega em F <b>sem a pista AUT</b>: a porta não abre! O caminho mais curto pode não ser válido.",
       "Boa tentativa! Mas a porta do Arquivo Oeste (H) exige a pista SEQ, que está em E. Sem passar por E, H não abre.",
@@ -597,7 +562,6 @@ S.push({ html: `
     <div class="caixa"><h3>Busca em largura (BFS)</h3>Examina primeiro tudo o que está a 1 passo, depois a 2 passos… Usa uma <b>fila</b>. Encontra o caminho com <b>menos passos</b>.</div>
     <div class="caixa"><h3>Busca em profundidade (DFS)</h3>Segue um caminho até o fim antes de voltar e tentar outro. Usa uma <b>pilha</b>. Pode achar um caminho mais longo.</div>
   </div>
-  ${gremio(`Um recado da comissão se espalha pela escola: primeiro chega às salas vizinhas da secretaria, depois às vizinhas delas — camada por camada (BFS). Já o inspetor confere um corredor inteiro até o fim, e só depois volta para entrar no próximo (DFS).`)}
   <div class="controles"><select id="b-est"></select><span id="b-ctl" class="controles"></span></div>
   <div class="dois">
     <div class="crt"><div class="tit">Exploração</div><svg id="b-mapa"></svg></div>
@@ -621,7 +585,6 @@ S.push({ html: `
 S.push({ html: `
   <div class="rotulo">Anexo 3 · o que a máquina fez</div><h2>A onda: camada por camada</h2>
   ${falaAud("A busca em largura parte da Central de Auditoria (A) e marca a <b>distância</b> de cada local: camada 1 para os vizinhos, camada 2 para os vizinhos dos vizinhos… A <b>fila</b> garante essa ordem.")}
-  ${gremio(`É como o recado da comissão no recreio: quem está a 1 corredor da secretaria fica sabendo primeiro; depois quem está a 2 corredores; depois a 3.`)}
   <div class="controles"><span id="w-ctl" class="controles"></span></div>
   <div class="dois">
     <div class="crt"><div class="tit">Busca em largura no mapa (só os corredores, sem as portas)</div><svg id="w-mapa"></svg></div>
@@ -643,7 +606,6 @@ S.push({ html: `
 S.push({ html: `
   <div class="rotulo">Anexo 3 · como voltamos</div><h2>Voltando pelo caminho: o “de onde vim”</h2>
   ${falaAud("Quando o APURA-42 chega a uma situação nova, ele anota <b>de onde veio</b> — na aula, isso se chama <b>π (pai)</b>. Ao encontrar o Centro de Validação, ele <b>volta seguindo essas anotações</b>, do fim para o começo, e depois lê a lista ao contrário.")}
-  ${gremio(`O Davi teve de levar o envelope da urna até a secretaria, passando por várias salas. Em cada porta ele colou um post-it: <b>“vim da sala tal”</b> — como as migalhas de pão de João e Maria. Quando a Bia perguntou “por onde esse envelope passou?”, bastou começar na secretaria e seguir os post-its de volta.`)}
   <div class="controles"><span id="j-ctl" class="controles"></span></div>
   <div class="dois">
     <div class="crt"><div class="tit">Voltando pelos post-its 📝</div><svg id="j-mapa"></svg></div>
@@ -707,7 +669,6 @@ S.push({ html: `
       ${falaAud("O computador precisa responder milhares de vezes: <b>\"já estive nesta situação?\"</b>. Procurar numa lista comprida demora. Então guardamos as situações numa <b>árvore</b> que se mantém equilibrada.")}</div>
     <div>
       ${falaAud("A AVL é uma árvore de busca: em cada ficha, perguntamos <b>“é menor ou maior?”</b> e descartamos metade. Se um lado fica 2 níveis mais alto (fator de balanceamento +2 ou −2), uma <b>rotação</b> reequilibra.")}
-      ${gremio(`O fichário da secretaria guarda as fichas em ordem: para achar uma, a secretária pergunta “vem antes ou depois desta?” e metade das gavetas fica de fora. Quando um lado do fichário fica muito mais cheio, ela reorganiza as gavetas para tudo continuar rápido de achar.`)}
     </div>
   </div>` });
 
@@ -740,7 +701,6 @@ S.push({ html: `
 S.push({ html: `
   <div class="rotulo">Anexo 4 · sua vez</div><h2>O estado que parece igual (enigma 8.2)</h2>
   ${falaAud("Para não investigar a mesma situação duas vezes, o cofre precisa saber quando duas situações são <b>de fato</b> iguais. Mesmo lugar basta? Veja os pares.")}
-  ${gremio(`É a pergunta que a Bia faz no caderno: “o Davi já esteve no pátio <b>com a chave</b>?”. Estar no pátio sem a chave conta como outra situação. Mas estar no pátio com a chave e <b>menos tempo de intervalo</b> do que da outra vez não traz nada de novo.`)}
   <div id="pares"></div>
   ${tecnica(`Chave na AVL = (posição, pistas, portas). A energia fica como valor, com regra de dominância: repetido com energia menor ou igual não é expandido; com mais energia, substitui. As respostas abaixo são calculadas por <code>chave_estado()</code> e pela regra do solver (<code>jogo/fase4.py</code>). Teste <code>test_estados_repetidos_nao_sao_expandidos</code>.`)}`,
   montar() {
@@ -758,7 +718,6 @@ S.push({ html: `
   <div class="rotulo">Anexo 5 · ${cap(5).fase} · selo 5</div><h2>A auditoria final</h2>
   <div class="doc">${cap(5).abertura}</div>
   ${falaAud("Por fim, juntamos tudo e pedimos ao computador para <b>refazer cada etapa</b>, conferindo cada regra. Nada foi aceito \"porque sim\".")}
-  ${gremio(`No fim, a comissão do grêmio recontou tudo no pátio, diante da escola inteira: as cédulas por turma, o livro de protocolo e o caminho do envelope até a secretaria. Ninguém precisou “acreditar”: todo mundo viu cada passo.`)}
   <div class="caixa">${A.etapas.map(e => `<p><b>${e.nome}:</b> ${e.ok ? '<span class="carimbo verde" style="font-size:13px">consistente</span>' : '<span class="carimbo">não consistente</span>'}<br>
     <span class="legenda">${e.origem ? e.origem + " · " : ""}${e.detalhe}</span><br>${e.checagens.map(([d, ok]) => `${ok ? "✔" : "✘"} ${d}`).join("<br>")}</p>`).join("")}</div>
   ${tecnica(`<code>jogo/fase5.py</code>: lote ordenado e conferido (sem perdas nem duplicatas); triagem e mapa encontrados pela BFS ou reexecutados a partir das jogadas do jogador com as mesmas regras; trilhas inválidas (ex.: A-C-G-F) são recusadas (<code>test_trilha_invalida_e_recusada</code>).`)}` });
@@ -781,7 +740,6 @@ S.push({ html: `
     <div class="doc">${D.narrativa.epilogo.join("\n\n")}</div>
   </div>
   ${falaAud("Cidadãs e cidadãos: <b>não precisamos confiar em ninguém</b> para chegar a essa conclusão. As regras estão escritas, os dados são claros e qualquer pessoa pode refazer cada passo. É isso que torna uma auditoria confiável.")}
-  ${gremio(`E na escola? A Bia e o Davi leram a ata no pátio. A Chapa eleita assumiu o grêmio — e quem perdeu pôde conferir cada passo. É assim que uma eleição ganha confiança.`)}
   ${falaApura("E vocês viram por dentro: fila, pilha, lista ligada, grafos, buscas em largura e profundidade, árvores que se equilibram. Até a próxima auditoria!", "feliz")}
   ${tecnica(`Código, testes (95, <code>rodar_testes.bat</code>), métricas e documentação no repositório. Uso de IAG registrado em <code>docs/registro-iag.md</code>, com validação humana.`)}` });
 
