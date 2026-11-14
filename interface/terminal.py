@@ -4,8 +4,10 @@ fica aqui. As regras moram em jogo/ (separação exigida na seção 12).
 """
 
 import textwrap
+import unicodedata
 
 from jogo import narrativa
+from jogo import dicas
 from jogo.fase1 import Fase1
 from jogo.fase2 import Fase2, EVIDENCIAS, proximo_esperado, ProblemaTriagem, rotulo_triagem
 from jogo.fase3 import Fase3, ProblemaMapa, LOCAIS, PISTAS, PORTAS, NOMES_PISTAS, rotulo as rotulo_mapa
@@ -24,16 +26,35 @@ def titulo(texto):
     print(LINHA)
 
 
-def ler_opcao(validas, mensagem="Escolha uma opção: "):
-    """Lê até receber uma das opções válidas. Nunca quebra com entrada inválida."""
+def _sem_acento(texto):
+    return "".join(c for c in unicodedata.normalize("NFD", texto) if unicodedata.category(c) != "Mn")
+
+
+def ler_opcao(validas, mensagem="Escolha uma opção: ", apelidos=None):
+    """
+    Lê até receber uma das opções válidas. Nunca quebra com entrada inválida.
+    'apelidos' permite digitar a palavra no lugar do número
+    (ex.: {"aceitar": "1", "voltar": "0"}). Maiúsculas e acentos são ignorados.
+    """
+    apelidos = {_sem_acento(k): v for k, v in (apelidos or {}).items()}
     while True:
         try:
-            valor = input(mensagem).strip().lower()
+            valor = _sem_acento(input(mensagem).strip().lower())
         except EOFError:
             return "0"
+        valor = apelidos.get(valor, valor)
         if valor in validas:
             return valor
-        print(f"  Opção inválida. Digite uma destas: {', '.join(validas)}")
+        print(f"  Não entendi \"{valor}\". Digite uma destas opções: {', '.join(validas)}")
+
+
+def orientar(texto):
+    """Linha fixa 'o que fazer agora', mostrada em toda tela de fase."""
+    print("\n  >> O QUE FAZER AGORA: " + textwrap.fill(texto, 66, subsequent_indent="     ").lstrip())
+
+
+def dica(texto):
+    print("\n  [DICA] " + textwrap.fill(texto, 66, subsequent_indent="         ").lstrip())
 
 
 def pausa():
@@ -71,7 +92,9 @@ class JogoTerminal:
             print("  " + self.barra_de_selos())
             print("\n  1. Jogar\n  2. Resolver (solver automático)\n  3. Instruções\n  4. Resultados"
                   "\n  5. Visualização animada (abre no navegador)\n  0. Sair")
-            op = ler_opcao(["1", "2", "3", "4", "5", "0"])
+            op = ler_opcao(["1", "2", "3", "4", "5", "0"], apelidos={
+                "jogar": "1", "resolver": "2", "instrucoes": "3", "ajuda": "3", "resultados": "4",
+                "visualizacao": "5", "sair": "0"})
             if op == "1":
                 self.menu_jogar()
             elif op == "2":
@@ -167,9 +190,14 @@ class JogoTerminal:
         print(f.ABERTURA)
         while True:
             self.mostrar_lote()
+            orientar(dicas.orientacao_fase1(f))
             print("\n  1. Ver o enigma\n  2. Ordenar o lote\n  3. Comparar os 3 algoritmos (10, 100, 500 registros)"
-                  "\n  4. Reiniciar a fase\n  0. Voltar")
-            op = ler_opcao(["1", "2", "3", "4", "0"])
+                  "\n  4. Reiniciar a fase\n  ?. Dica\n  0. Voltar")
+            op = ler_opcao(["1", "2", "3", "4", "?", "0"], apelidos={
+                "enigma": "1", "ordenar": "2", "comparar": "3", "reiniciar": "4", "dica": "?", "ajuda": "?", "voltar": "0"})
+            if op == "?":
+                dica(dicas.dica_fase1(f))
+                continue
             if op == "1":
                 print("\n" + f.ENIGMA)
                 pausa()
@@ -237,9 +265,16 @@ class JogoTerminal:
                 print("\n  Selo 2 conquistado! A trilha de evidências está organizada.")
                 pausa()
                 return
+            orientar(dicas.orientacao_fase2(f))
             print("\n  1. aceitar  2. guardar  3. arquivar  4. liberar  5. desfazer"
-                  "\n  6. reiniciar a fase  7. ver regras  0. voltar")
-            op = ler_opcao(["1", "2", "3", "4", "5", "6", "7", "0"])
+                  "\n  6. reiniciar a fase  7. ver regras  ?. dica  0. voltar"
+                  "\n  (pode digitar o número ou a palavra, ex.: 2 ou guardar)")
+            op = ler_opcao(["1", "2", "3", "4", "5", "6", "7", "?", "0"], apelidos={
+                "aceitar": "1", "guardar": "2", "arquivar": "3", "liberar": "4", "desfazer": "5",
+                "reiniciar": "6", "regras": "7", "dica": "?", "ajuda": "?", "voltar": "0"})
+            if op == "?":
+                dica(dicas.dica_fase2(f))
+                continue
             if op in mapa:
                 ok, msg = f.executar(mapa[op])
                 print("\n  " + ("OK: " if ok else "") + msg.replace("\n", "\n  "))
@@ -292,10 +327,17 @@ class JogoTerminal:
                 pausa()
                 return
             vizinhos = f.G.vizinhos(f.estado[0])
-            print(f"\n  Digite a letra do destino ({', '.join(vizinhos)}), ou:")
-            print("  U = desfazer   R = reiniciar   P = ver regras   M = menor caminho ignorando as portas   0 = voltar")
-            op = ler_opcao([v.lower() for v in f.G.vertices()] + ["u", "r", "p", "m", "0"],
-                           "Sua jogada: ")
+            orientar(dicas.orientacao_fase3(f))
+            print("\n  Vizinhos de onde você está: " +
+                  ", ".join(f"{v} ({LOCAIS[v]})" for v in vizinhos))
+            print("  Digite a LETRA do local para ir até ele, ou:")
+            print("  U = desfazer   R = reiniciar   P = regras   M = menor caminho sem portas   ? = dica   0 = voltar")
+            op = ler_opcao([v.lower() for v in f.G.vertices()] + ["u", "r", "p", "m", "?", "0"],
+                           "Sua jogada: ", apelidos={"desfazer": "u", "reiniciar": "r", "regras": "p",
+                                                     "dica": "?", "ajuda": "?", "voltar": "0"})
+            if op == "?":
+                dica(dicas.dica_fase3(f))
+                continue
             if op == "0":
                 return
             if op == "u":
@@ -326,7 +368,8 @@ class JogoTerminal:
             print(f"  2. Sala 2 — O estado que parece igual         [{sala2}]")
             print("  3. Sala 3 — Consulta ao cofre (busca)")
             print("  4. Reiniciar a fase\n  0. Voltar")
-            op = ler_opcao(["1", "2", "3", "4", "0"])
+            orientar(dicas.orientacao_fase4(f))
+            op = ler_opcao(["1", "2", "3", "4", "0"], apelidos={"reiniciar": "4", "voltar": "0"})
             if op == "1":
                 self.sala1()
             elif op == "2":
@@ -357,8 +400,12 @@ class JogoTerminal:
             print(f"\n  Próximo lacre: {codigo}. O que vai acontecer ao inseri-lo?")
             for i, o in enumerate(OPCOES_ROTACAO, 1):
                 print(f"   {i}. {o}")
-            print("   0. sair da sala (o progresso fica guardado)")
-            op = ler_opcao(["1", "2", "3", "4", "5", "0"])
+            print("   ?. dica    0. sair da sala (o progresso fica guardado)")
+            op = ler_opcao(["1", "2", "3", "4", "5", "?", "0"], apelidos={
+                "nenhuma": "1", "rd": "2", "re": "3", "red": "4", "rde": "5", "dica": "?", "ajuda": "?", "sair": "0"})
+            if op == "?":
+                dica(dicas.dica_fase4_sala1())
+                continue
             if op == "0":
                 return
             r = f.inserir_proximo(OPCOES_ROTACAO[int(op) - 1])
@@ -382,10 +429,15 @@ class JogoTerminal:
             if f.respostas_sala2.get(i):
                 continue
             print(f"\n  Par {i + 1}:\n  {descrever_par(par)}")
-            print("  a) Os dois devem ter a MESMA chave na AVL?  (s/n)")
-            mesma = ler_opcao(["s", "n"], "  Resposta: ") == "s"
-            print("  b) O solver deve EXPLORAR o estado novo?    (s/n)")
-            explorar = ler_opcao(["s", "n"], "  Resposta: ") == "s"
+            print("  a) Os dois devem ter a MESMA chave na AVL?  (s = sim, n = não, ? = dica)")
+            sn = {"sim": "s", "nao": "n", "dica": "?", "ajuda": "?"}
+            r = ler_opcao(["s", "n", "?"], "  Resposta: ", apelidos=sn)
+            if r == "?":
+                dica(dicas.dica_fase4_sala2())
+                r = ler_opcao(["s", "n"], "  Resposta: ", apelidos=sn)
+            mesma = r == "s"
+            print("  b) O solver deve EXPLORAR o estado novo?    (s = sim, n = não)")
+            explorar = ler_opcao(["s", "n"], "  Resposta: ", apelidos=sn) == "s"
             ok, explicacao, _ = f.responder_par(i, mesma, explorar)
             print("  " + ("CORRETO. " if ok else "Não é isso. ") + explicacao)
         if f.sala2_completa():
@@ -416,6 +468,7 @@ class JogoTerminal:
         f = self.fase5
         titulo(f.NOME)
         print(f.ABERTURA)
+        orientar(dicas.orientacao_fase5(self.selos()))
         print("\n  Etapa 1 — escolha o algoritmo para organizar o lote (seed 2042):")
         print("  1. Bubble Sort   2. Merge Sort   3. Quick Sort")
         alg = {"1": "bubble", "2": "merge", "3": "quick"}[ler_opcao(["1", "2", "3"])]
@@ -464,16 +517,24 @@ class JogoTerminal:
         pausa()
 
     def instrucoes(self):
-        titulo("INSTRUÇÕES")
-        print("  - Escolha as opções digitando o número e teclando Enter.")
-        print("  - Cada fase tem um objetivo, regras e um selo. Junte 5 selos.")
-        print("  - Jogadas inválidas são recusadas com explicação e não alteram nada.")
-        print("  - Você pode reiniciar uma fase sem reiniciar o jogo.")
-        print("  - Nas Fases 2 e 3 é possível desfazer ações (pilha do histórico).")
-        print("  - Em 'Resolver', o computador resolve as Fases 2 e 3 com BFS ou DFS.")
-        print("  - Na Fase 4 você prevê as rotações da árvore AVL e decide quando dois")
-        print("    estados são o mesmo. Na Fase 5 o sistema confere tudo e emite o relatório.")
-        print(f"  - Os dados são gerados com seed fixa ({self.seed}): a partida é reproduzível.")
+        """Mostra o guia de uma página (COMO-JOGAR.md), sem a formatação Markdown."""
+        import os
+        import re
+        titulo("COMO JOGAR")
+        caminho = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "COMO-JOGAR.md")
+        try:
+            with open(caminho, encoding="utf-8") as arq:
+                texto = arq.read()
+        except OSError:
+            texto = "Digite o número da opção e tecle Enter. Em cada fase, D mostra uma dica."
+        for linha in texto.splitlines():
+            linha = re.sub(r"[*`#]", "", linha).rstrip()
+            if linha.startswith("|---"):
+                continue
+            if linha.startswith("|"):
+                cel = [c.strip() for c in linha.strip("|").split("|")]
+                linha = " · ".join(cel)
+            print(textwrap.fill(linha, 72, initial_indent="  ", subsequent_indent="    ") if linha else "")
         pausa()
 
     def resultados(self):

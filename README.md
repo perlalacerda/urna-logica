@@ -4,6 +4,8 @@ Exercício Programa da disciplina Estruturas de Dados e Análise de Algoritmos �
 
 Jogo de lógica e investigação com dados **inteiramente fictícios**. Verídia, seus locais, registros e códigos não correspondem a nenhuma eleição real.
 
+**Primeira vez? Leia [COMO-JOGAR.md](COMO-JOGAR.md)** — uma página com as teclas e o caminho de cada fase.
+
 ## Requisitos
 
 - Python 3.10 ou superior (testado em 3.14, Windows).
