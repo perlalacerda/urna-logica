@@ -76,6 +76,8 @@ O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e 
 
 - **Jogo no navegador fácil e divertido (pedido da professora, adotado em 14.11.2026):** tela inicial curta, cartão de instruções por fase, carimbo, animações e estrelas. As estrelas são só apresentação: as regras e os mínimos (BFS 7, Dijkstra 11) continuam vindo do Python. Na Fase 1 do navegador, a jogadora monta a chave composta com peças em vez de escolher um critério pronto, porque o 4.º critério repetia o texto do enigma e entregava a resposta. O terminal mantém os critérios fixos. [Equipe]
 
+- **Modo aluno 9.º ano (15.11.2026):** a jogabilidade foi revista a partir da avaliação da Perla jogando como a professora (termos sem tradução, Fase 3 sem entender como jogar, Fase 4 longa demais, Fase 5 sem explicar a escolha do método, falta de "próxima fase"). Os termos do jogo ganharam nomes lúdicos (esteira, pilha de espera, cofre de custódia, arquivo morto) e cada um leva ao conceito da aula. Os nomes do código (aceitar, guardar, arquivar, liberar) continuam nas regras completas, para a banca ligar tela e código. A tradução do custo usa "1 segundo por comparação" como ilustração, não como medida real. [Equipe]
+
 ## Pendências com a professora
 
 1. Quick Sort: `p..q` do slide × `p..q-1`.
