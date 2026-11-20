@@ -14,12 +14,12 @@
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
-  body { background: var(--parede); color: var(--tinta); font: 18px/1.55 "Segoe UI", system-ui, sans-serif; }
+  body { background: var(--parede); color: var(--tinta); font: 20px/1.55 "Segoe UI", system-ui, sans-serif; }
   header.topo { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
                 background: #1d120a; color: var(--papel); padding: 10px 18px; border-bottom: 4px solid var(--laranja); }
   header.topo .marca { font-family: var(--titulo); letter-spacing: .1em; text-transform: uppercase; font-size: 14px; font-weight: 700; }
   .selos { display: flex; gap: 8px; margin-left: auto; }
-  header.topo .faixa { flex-basis: 100%; font-size: 15px; color: #f3ead6; border-top: 1px solid #4a3a2a; padding-top: 6px; }
+  header.topo .faixa { flex-basis: 100%; font-size: 17px; color: #f3ead6; border-top: 1px solid #4a3a2a; padding-top: 6px; }
   header.topo .faixa b { color: var(--ambar); }
   .pearl .av svg { display: block; }
   .historia { text-align: left; max-width: 820px; margin: 0 auto; }
@@ -34,6 +34,20 @@
      background: var(--laranja); color: #fff6e4; font: 700 15px var(--titulo); }
   .passos-capa { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 14px; font-size: 14px; color: var(--tinta2); }
   .passos-capa span { padding: 3px 12px; border-radius: 12px; background: #efe3c4; } .passos-capa span.ativo { background: var(--laranja); color: #fff6e4; }
+  .cena { display: flex; gap: 22px; align-items: center; justify-content: center; max-width: 900px; margin: 10px auto 0; text-align: left; min-height: 260px; }
+  .cena .ator { flex: none; text-align: center; font: 700 16px var(--titulo); color: var(--tinta2); } .cena .ator svg { display: block; margin: 0 auto 4px; }
+  .balao-cena { position: relative; background: #fffaf0; border: 3px solid var(--tinta2); border-radius: 18px; padding: 18px 22px; font-size: 23px; line-height: 1.5; box-shadow: 0 6px 0 #d8c59c; }
+  .balao-cena::before { content: ""; position: absolute; left: -16px; top: 50%; margin-top: -12px; border: 12px solid transparent; border-right: 16px solid var(--tinta2); border-left: 0; }
+  .tit-cena { font: 800 18px var(--titulo); letter-spacing: .06em; text-transform: uppercase; color: var(--laranja2); margin-bottom: 6px; }
+  .selos-capa { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 12px; font-size: 15px; text-align: center; line-height: 1.25; }
+  .selos-capa .disco { display: grid; place-items: center; width: 52px; height: 52px; margin: 0 auto 4px; border-radius: 50%; font-size: 26px;
+     background: radial-gradient(circle at 35% 35%, #f19a5c, var(--laranja2)); border: 3px solid #7a3510; }
+  .nav-cena { display: flex; gap: 14px; align-items: center; justify-content: center; margin-top: 22px; }
+  .nav-cena .pontos { display: flex; gap: 8px; } .nav-cena .pontos i { width: 12px; height: 12px; border-radius: 50%; background: #d8c59c; } .nav-cena .pontos i.on { background: var(--laranja); }
+  .dicas-capa { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; max-width: 980px; margin: 16px auto; text-align: left; }
+  .dicas-capa > div { background: #fbf3df; border: 3px solid var(--borda); border-radius: 14px; padding: 14px 16px; font-size: 18px; }
+  .dicas-capa .ic { display: block; font-size: 38px; } .dicas-capa b { display: block; font: 800 20px var(--titulo); margin: 4px 0; }
+  @media (max-width: 700px) { .cena { flex-direction: column; } .balao-cena::before { display: none; } .selos-capa { grid-template-columns: repeat(3, 1fr); } }
   .comojogar { text-align: left; max-width: 720px; margin: 0 auto 16px; font-size: 19px; } .comojogar li { margin: 8px 0; }
   .gloss .camada-t.eleicao { color: var(--petroleo2); }
   .selo { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-family: var(--titulo); font-weight: 700;
@@ -42,9 +56,9 @@
   main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
   .folha { background: var(--papel); border-radius: 8px; padding: 22px 26px; box-shadow: 0 8px 0 #1d120a; margin-bottom: 18px; }
   h1, h2, h3 { font-family: var(--titulo); margin: 0 0 10px; }
-  h1 { font-size: 28px; } h2 { font-size: 22px; } h3 { font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta2); }
+  h1 { font-size: 28px; } h2 { font-size: 22px; } h3 { font-size: 17px; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta2); }
   p { margin: 0 0 10px; }
-  .agora { background: #fff3d6; border: 3px solid var(--laranja); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 18px; }
+  .agora { background: #fff3d6; border: 3px solid var(--laranja); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 20px; }
   .agora b { font-family: var(--titulo); letter-spacing: .06em; color: var(--laranja2); display: block; font-size: 13px; text-transform: uppercase; }
   .msg { border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 18px; white-space: pre-line; border: 2px solid var(--tinta2); background: var(--papel2); min-height: 50px; }
   .msg.ok { border-color: var(--verde); background: #e3f1e5; } .msg.nao { border-color: var(--vermelho); background: #f8e1da; }
@@ -52,7 +66,7 @@
   .msg.dica { border-color: var(--petroleo); background: #e0eeec; }
   .msg.vitoria { border-color: var(--ambar); background: #fff1cf; font-size: 20px; font-weight: 600; }
   button { font: inherit; cursor: pointer; }
-  .btn { font-family: var(--titulo); font-size: 17px; font-weight: 700; letter-spacing: .03em;
+  .btn { font-family: var(--titulo); font-size: 18px; font-weight: 700; letter-spacing: .03em;
          background: var(--laranja); color: #fff8ec; border: 0; border-bottom: 5px solid var(--laranja2);
          border-radius: 10px; padding: 12px 18px; margin: 4px 6px 4px 0; min-height: 50px; }
   .btn:hover { filter: brightness(1.07); } .btn:active { transform: translateY(2px); border-bottom-width: 3px; }
@@ -70,23 +84,23 @@
            padding: 6px 12px; margin: 3px; font-size: 17px; font-weight: 700; }
   .ficha.destaque { background: var(--ambar); border-color: var(--laranja2); }
   .vazia { color: var(--tinta2); font-style: italic; }
-  table.reg { border-collapse: collapse; width: 100%; font-family: var(--maquina); font-size: 15px; }
+  table.reg { border-collapse: collapse; width: 100%; font-family: var(--maquina); font-size: 16px; }
   table.reg th { text-align: left; font-family: var(--titulo); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta2);
                  border-bottom: 2px solid var(--tinta2); padding: 6px; }
   table.reg td { padding: 5px 6px; border-bottom: 1px dotted var(--borda); }
   table.reg tr.erro td { background: #f6c5b8; }
   .escolha { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
-  .escolha button { font-family: var(--titulo); font-weight: 700; font-size: 16px; border-radius: 8px; padding: 10px 14px;
+  .escolha button { font-family: var(--titulo); font-weight: 700; font-size: 18px; border-radius: 8px; padding: 10px 14px;
                     border: 2px solid var(--tinta2); background: #fff8ec; color: var(--tinta); }
   .escolha button.sel { background: var(--petroleo); color: #fff; border-color: var(--petroleo2); }
   .crt { background: var(--crt); border: 8px solid #5b4632; border-radius: 12px; padding: 8px; }
   .crt svg text { fill: var(--ambar); font-family: var(--maquina); }
-  .legenda { font-size: 15px; color: var(--tinta2); }
+  .legenda { font-size: 16px; color: var(--tinta2); }
   details { margin: 10px 0; } summary { cursor: pointer; font-family: var(--titulo); font-weight: 700; color: var(--petroleo); }
   .doc { font-family: var(--maquina); background: var(--papel2); border-left: 5px solid var(--laranja); padding: 10px 14px; white-space: pre-line; font-size: 15px; }
   .barra { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 10px; padding-top: 10px; border-top: 2px dotted var(--borda); }
   .codigo { font-family: var(--maquina); font-size: 14px; background: #efe3c4; border-radius: 4px; padding: 1px 6px; }
-  table.metr { border-collapse: collapse; width: 100%; font-size: 15px; }
+  table.metr { border-collapse: collapse; width: 100%; font-size: 16px; }
   table.metr th, table.metr td { border-bottom: 1px dotted var(--borda); padding: 6px; text-align: right; }
   table.metr th:first-child, table.metr td:first-child, table.metr th:nth-child(2), table.metr td:nth-child(2) { text-align: left; }
   /* ---------- abertura, tutorial, carimbo, estrelas ---------- */
@@ -106,13 +120,13 @@
   .est-cartao { color: #e0a21b; font-size: 20px; letter-spacing: 2px; } .est-cartao .vazia-est { color: #cdb98f; }
   .som { margin-left: 8px; background: none; border: 2px solid #6b5236; color: var(--papel); border-radius: 8px; padding: 4px 10px; font-size: 14px; }
   /* ---------- Fase 1: chave e lote animado ---------- */
-  .pecas button { font-size: 18px; padding: 12px 18px; }
+  .pecas button { font-size: 20px; padding: 12px 18px; }
   .pecas button:disabled { opacity: .35; }
   .slot { display: inline-flex; align-items: center; justify-content: center; min-width: 120px; height: 52px; border: 3px dashed var(--borda); border-radius: 10px;
           margin: 4px; font-family: var(--titulo); font-weight: 700; font-size: 17px; color: var(--tinta2); background: #fffaf0; }
   .slot.cheio { border-style: solid; border-color: var(--petroleo); background: var(--petroleo); color: #fff; cursor: pointer; }
   .slot .n { font-size: 12px; opacity: .7; margin-right: 6px; }
-  .lote { position: relative; font-family: var(--maquina); font-size: 15px; }
+  .lote { position: relative; font-family: var(--maquina); font-size: 16px; }
   .lote .linha { position: absolute; left: 0; right: 0; height: 32px; display: grid; grid-template-columns: 40px 1.2fr 1fr 1fr 1fr 1.4fr 1.6fr;
                  align-items: center; padding: 0 6px; border-bottom: 1px dotted var(--borda); transition: top .22s ease, background .3s; background: var(--papel); }
   .lote .linha.mexeu { background: #ffe0a8; } .lote .linha.erro { background: #f6c5b8; }
@@ -120,18 +134,23 @@
   .placar { scroll-margin-top: 84px; font-family: var(--maquina); font-size: 18px; background: var(--crt); color: var(--ambar); border-radius: 8px; padding: 8px 14px; display: inline-block; margin: 6px 0; }
   .ficha { transition: transform .35s ease; }
   /* ---------- modo aluno: narradora, termos, para decidir ---------- */
-  .pearl { display: flex; gap: 12px; align-items: flex-start; background: #1f3d3b; color: #f3ead6; border-radius: 12px; padding: 12px 16px; margin: 10px 0; font-size: 17px; }
+  .pearl { display: flex; gap: 12px; align-items: flex-start; background: #1f3d3b; color: #f3ead6; border-radius: 12px; padding: 12px 16px; margin: 10px 0; font-size: 20px; }
   .pearl .av { font-size: 40px; line-height: 1; } .pearl .quem { display: block; color: var(--ambar); font-family: var(--titulo); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
-  .termo { display: inline-block; font: 600 15px var(--titulo); background: #e0eeec; color: var(--petroleo2); border: 2px solid var(--petroleo); border-radius: 999px;
+  .termo { display: inline-block; font: 600 16px var(--titulo); background: #e0eeec; color: var(--petroleo2); border: 2px solid var(--petroleo); border-radius: 999px;
            padding: 1px 10px; margin: 2px 3px; cursor: pointer; white-space: nowrap; vertical-align: middle; }
   .termo:hover { background: var(--petroleo); color: #fff; }
-  .portras { background: #f1e7cf; border: 2px dashed var(--petroleo); border-radius: 10px; padding: 8px 12px; margin: 10px 0; font-size: 15px; }
+  .portras { background: #f1e7cf; border: 2px dashed var(--petroleo); border-radius: 10px; padding: 8px 12px; margin: 10px 0; font-size: 16px; }
   .portras > b { font-family: var(--titulo); color: var(--petroleo2); margin-right: 6px; }
   .decidir { background: #eef6f4; border-left: 6px solid var(--petroleo); border-radius: 8px; padding: 10px 14px; margin: 10px 0; font-size: 16px; }
   .decidir .rot { font-family: var(--titulo); color: var(--petroleo2); display: block; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
   .metodos { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin: 8px 0 12px; }
   .metodo { text-align: left; background: #fff8ec; border: 3px solid var(--borda); border-radius: 12px; padding: 12px 14px; font: inherit; color: var(--tinta); cursor: pointer; }
-  .metodo .tit { font: 800 18px var(--titulo); display: block; margin-bottom: 4px; } .metodo .legenda { display: block; margin-top: 6px; }
+  .passo { display: flex; gap: 12px; align-items: flex-start; margin: 16px 0 6px; font-size: 20px; }
+  .passo .num { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--laranja); color: #fff6e4; font: 800 19px var(--titulo); }
+  .passo b { font-family: var(--titulo); }
+  .missao-fase { font-size: 20px; } .linha-tips { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+  .linha-tips details.tip[open] { flex-basis: 100%; }
+  .metodo .tit { font: 800 20px var(--titulo); display: block; margin-bottom: 4px; } .metodo .legenda { display: block; margin-top: 6px; }
   .metodo.sel { border-color: var(--petroleo); background: #dff0ed; box-shadow: 0 0 0 3px var(--petroleo) inset; }
   .metodo:disabled { opacity: .5; cursor: default; }
   .camada { font-size: 13px; color: var(--tinta2); font-weight: 400; text-transform: none; letter-spacing: 0; }
@@ -141,7 +160,7 @@
   .gloss h3 { margin-top: 12px; } .gloss .camada-t { font: 700 12px var(--titulo); letter-spacing: .06em; text-transform: uppercase; color: var(--laranja2); margin-top: 8px; display: block; }
   /* ---------- perfis: cada um com cor e ícone ---------- */
   :root { --c-estudante: #d9682b; --c-colega: #1f5f5b; --c-professora: #a8741a; }
-  .perfil { border-left: 8px solid var(--cor); background: color-mix(in srgb, var(--cor) 9%, #fffaf0); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 18px; }
+  .perfil { border-left: 8px solid var(--cor); background: color-mix(in srgb, var(--cor) 9%, #fffaf0); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 19px; }
   .perfil > .cab { font: 800 15px var(--titulo); letter-spacing: .05em; text-transform: uppercase; color: var(--cor); display: block; margin-bottom: 4px; }
   .perfil ol, .perfil ul { margin: 4px 0 4px 0; padding-left: 24px; } .perfil li { margin: 3px 0; }
   details.perfil > summary { font: 800 15px var(--titulo); letter-spacing: .05em; text-transform: uppercase; color: var(--cor); }
@@ -151,7 +170,7 @@
   .cartao-perfil .ic { font-size: 42px; } .cartao-perfil b { display: block; font: 800 20px var(--titulo); color: var(--cor); margin: 4px 0; }
   .som.perfil-btn { border-color: var(--cor, #6b5236); }
   details.tip { display: inline-block; vertical-align: top; margin: 2px 0; }
-  details.tip > summary { display: inline-block; cursor: pointer; font: 700 15px var(--titulo); color: var(--petroleo2); border: 2px dashed var(--petroleo); border-radius: 999px; padding: 2px 12px; list-style: none; }
+  details.tip > summary { display: inline-block; cursor: pointer; font: 700 16px var(--titulo); color: var(--petroleo2); border: 2px dashed var(--petroleo); border-radius: 999px; padding: 2px 12px; list-style: none; }
   details.tip > summary::-webkit-details-marker { display: none; }
   details.tip[open] { display: block; } details.tip > div { background: #eef6f4; border-left: 5px solid var(--petroleo); border-radius: 8px; padding: 10px 14px; margin-top: 6px; font-size: 17px; }
   /* ---------- ver o código ---------- */
@@ -221,12 +240,12 @@ function carimbo(titulo, estrelas, linha, de) {
    Cada termo tem três camadas: o que é NO JOGO (lúdico), o que lembra NA ELEIÇÃO de verdade
    (sem dados reais) e o CONCEITO DA AULA (a matemática e o algoritmo por trás). */
 const GLOSS = {
-  vetor: ["🗂️", "Lote de fichas (vetor)", "Uma fileira de gavetas numeradas 0, 1, 2… Dá para abrir qualquer gaveta direto pelo número.",
-    "Cada ficha é o registro de uma seção: zona, seção, voto, horário e situação.", "Vetor: posições seguidas na memória, acessadas pelo índice em tempo constante, O(1). Aulas 02 e 03."],
-  chave: ["🧩", "Chave de ordenação (chave composta)", "A regra do desempate: compara a 1ª peça; se empatar, a 2ª; se empatar de novo, a 3ª. É como a ordem do dicionário, que olha a 1ª letra, depois a 2ª…",
-    "A auditoria arruma por zona eleitoral, depois por seção (a sala de votação) e depois pelo horário, para achar qualquer registro rápido.", "Chave composta = tupla comparada campo a campo (ordem lexicográfica). Código: jogo/registros.py → chave_composta."],
-  comparacao: ["⚖️", "Comparação", "O computador olha duas fichas e decide qual vem antes. Cada comparação gasta um tiquinho de tempo e de energia.",
-    "Com milhões de registros, escolher o método errado transforma minutos em horas de computador — e de eletricidade — na apuração.",
+  vetor: ["🗂️", "Lote de fichas (vetor)", "As 12 fichas da Fase 1 ficam numa fileira de gavetas numeradas 0, 1, 2… O computador abre qualquer gaveta direto pelo número, sem passar pelas outras.",
+    "", "Vetor: posições seguidas na memória, acessadas pelo índice em tempo constante, O(1). Aulas 02 e 03."],
+  chave: ["🧩", "Chave de ordenação (chave composta)", "A regra de arrumação que você monta na Fase 1: compara primeiro a zona; se empatar, a seção; se empatar de novo, o horário. Cada peça só desempata a anterior.",
+    "", "Chave composta = tupla comparada campo a campo (ordem lexicográfica). Código: jogo/registros.py → chave_composta."],
+  comparacao: ["⚖️", "Comparação", "Cada vez que o computador olha duas fichas para decidir qual vem antes, soma 1 comparação no placar. Mais comparações = mais tempo e mais energia de computador.",
+    "",
     "Mede-se o custo de um algoritmo contando operações em função de n (quantas fichas): análise assintótica, aulas 03 e 04. n² cresce muito mais rápido que n log n: com 500 fichas, 124 750 comparações contra cerca de 4 500."],
   bubble: ["🫧", "Bubble Sort (método da bolha)", "Compara vizinhos e troca os que estão fora de ordem; repete até não sobrar troca. As fichas grandes “sobem” como bolhas. Fácil, mas lento com muitas fichas.<br><b>Exemplo:</b> 3 1 2 → compara 3 e 1, troca → 1 3 2 → compara 3 e 2, troca → <b>1 2 3</b>.",
     "", "Faz n(n−1)/2 comparações: O(n²). Aula 02 (versões iterativa e recursiva)."],
@@ -234,41 +253,43 @@ const GLOSS = {
     "", "Dividir e conquistar: T(n) = 2·T(n/2) + n, o que dá O(n log n). Aula 04."],
   quick: ["⚡", "Quick Sort (o pivô)", "Escolhe uma ficha como pivô e separa: menores de um lado, maiores do outro; repete em cada lado. Costuma ser o mais rápido.<br><b>Exemplo:</b> 4 1 3 2 com pivô 2 → menores: [1]; maiores: [4 3] → arruma cada lado → <b>1 2 3 4</b>.",
     "", "Partição de Lomuto com o último elemento como pivô. Caso médio O(n log n); pior caso O(n²), com o vetor já ordenado. Aula 04."],
-  fila: ["📥", "Esteira de chegada (fila)", "As provas chegam uma atrás da outra; só a da frente pode sair — como a fila da cantina.",
-    "Os documentos chegam à central na ordem em que foram enviados.", "Fila = FIFO (primeiro a entrar, primeiro a sair). Inserir no fim e remover do início: O(1). Aula 06. É também a estrutura da BFS."],
-  pilha: ["🥞", "Pilha de espera (pilha)", "Uma pilha de pratos: o último que você põe em cima é o primeiro que sai.",
-    "Documentos separados para conferir depois: o último guardado é o primeiro que se pega.", "Pilha = LIFO (último a entrar, primeiro a sair). Empilhar e desempilhar no topo: O(1). Aula 06. O botão Desfazer e a DFS usam pilha."],
-  lista: ["🔐", "Cofre de custódia (lista ligada)", "Uma corrente de elos: cada prova fica presa à anterior, na ordem certa. Se um elo sai da ordem, a corrente não vale.",
-    "A cadeia de custódia registra em que ordem cada prova foi guardada; se ela quebra, a prova perde valor.", "Lista ligada: cada nó guarda o dado e um ponteiro para o próximo. Inserir no fim com ponteiro para o último: O(1); procurar: O(n). Aula 06."],
-  arquivo: ["🗑️", "Arquivo morto", "Onde vão as cópias de teste e os rascunhos: não fazem parte da corrente de provas.", "Papéis que não são prova oficial.", "No código, a ação “arquivar” tira a evidência da fila sem colocá-la na custódia (jogo/fase2.py)."],
-  grafo: ["🗺️", "Mapa (grafo)", "Locais (bolinhas) ligados por corredores (linhas). Só dá para ir de um local a outro se houver corredor entre eles.",
-    "As seções, centrais e arquivos por onde passa a trilha da apuração.", "Grafo G = (V, E): vértices = locais, arestas = corredores. Guardado como lista de adjacência (cada local tem a lista dos vizinhos). Aula 09."],
-  estado: ["📸", "Situação (estado)", "Uma “foto” do jogo: onde você está, quais pistas tem, quais portas abriu e quanta energia sobra.",
-    "Dois auditores na mesma sala não estão na mesma situação se só um tem a chave do arquivo.", "Estado = (posição, pistas, portas, energia). Cada ação gera um estado novo; o conjunto forma um grafo implícito (enunciado, item 7.3)."],
-  bfs: ["🌊", "BFS (busca em largura)", "Explora em ondas: primeiro tudo que está a 1 passo, depois tudo a 2 passos… Por isso acha o caminho com MENOS passos.",
-    "Procurar um documento sala por sala, das mais próximas para as mais distantes.", "Usa uma fila. Tempo O(V + E). Acha o menor número de arestas — não o menor custo, se os corredores tiverem pesos diferentes. Aula 09."],
-  dfs: ["🧶", "DFS (busca em profundidade)", "Vai fundo por um caminho até não dar mais; aí volta e tenta outro — como um labirinto com a mão na parede.",
-    "Seguir uma pista até o fim antes de abrir a próxima.", "Usa pilha (ou recursão). Tempo O(V + E). Não garante o caminho mais curto. Aula 09."],
-  energia: ["⚡", "Energia (custo)", "Cada passo gasta energia. Se acabar, você não anda mais.", "O tempo e os recursos que uma equipe gasta para ir de um lugar a outro.", "É o custo do caminho. No desafio extra, cada corredor tem um peso w(u, v) diferente."],
-  arvore: ["🌳", "Árvore do cofre (árvore AVL)", "Cada código entra descendo: menor vai para a esquerda, maior para a direita. Para achar um código, você descarta metade da árvore a cada passo.",
-    "Como procurar uma palavra no dicionário: abre no meio e vai para a metade certa.", "Árvore binária de busca balanceada (AVL). Buscar e inserir: O(log n). Aulas 07 e 08."],
-  giro: ["🔄", "Giro da árvore (rotação)", "Se um lado da árvore fica 2 andares mais alto que o outro, ela gira para voltar a se equilibrar — assim nunca vira uma fila comprida e lenta.",
-    "Reorganizar as gavetas de um arquivo para nenhuma ficar lotada.", "Fator de balanceamento FB = altura da esquerda − altura da direita. Com FB = ±2: RD, RE, RED ou RDE. Aula 08."],
-  guloso: ["🍬", "Escolha gulosa", "Pega o que parece melhor AGORA, sem pensar no depois. Às vezes funciona; às vezes leva a um beco sem saída.",
-    "Pegar sempre a fila menor do mercado — e descobrir que ela é a mais lenta.", "Algoritmo guloso: escolhe o melhor candidato da vez e nunca volta atrás. O troco de 19 com moedas {2, 3, 6} falha. Aula 11."],
-  dijkstra: ["🧭", "Dijkstra", "Sempre continua pelo lugar que, até agora, saiu mais barato desde o começo. Assim acha o caminho que gasta MENOS energia.",
-    "Planejar a rota da equipe pelo menor gasto total, não pelo menor número de paradas.", "Guloso com fila de prioridade (heap); exige pesos ≥ 0. Tempo O((V + E) log V). Aula 11."]
+  fila: ["📥", "Esteira de chegada (fila)", "A esteira da Fase 2: as provas chegam uma atrás da outra e só a da frente pode sair. Quem chegou primeiro sai primeiro.",
+    "", "Fila = FIFO (primeiro a entrar, primeiro a sair). Inserir no fim e remover do início: O(1). Aula 06. É também a estrutura da BFS."],
+  pilha: ["🥞", "Pilha de espera (pilha)", "A pilha de espera da Fase 2: a prova que você guarda por último fica em cima e é a primeira a sair. O botão Desfazer funciona igual: desfaz primeiro a jogada mais recente.",
+    "", "Pilha = LIFO (último a entrar, primeiro a sair). Empilhar e desempilhar no topo: O(1). Aula 06. O botão Desfazer e a DFS usam pilha."],
+  lista: ["🔐", "Cofre de custódia (lista ligada)", "O cofre de custódia da Fase 2: cada prova fica presa à anterior, como elos de uma corrente, na ordem E2 → E4 → E1 → E6. Se um elo entra fora da vez, a corrente não vale.",
+    "", "Lista ligada: cada nó guarda o dado e um ponteiro para o próximo. Inserir no fim com ponteiro para o último: O(1); procurar: O(n). Aula 06."],
+  arquivo: ["🗑️", "Arquivo morto", "Na Fase 2, as cópias que não são prova oficial vão para o arquivo morto: elas não entram na corrente do cofre.",
+    "", "No código, a ação “arquivar” tira a evidência da fila sem colocá-la na custódia (jogo/fase2.py)."],
+  grafo: ["🗺️", "Mapa (grafo)", "O mapa da Fase 3: locais (bolinhas) ligados por corredores (linhas). Você só anda de um local a outro se houver corredor entre eles.",
+    "", "Grafo G = (V, E): vértices = locais, arestas = corredores. Guardado como lista de adjacência (cada local tem a lista dos vizinhos). Aula 09."],
+  estado: ["📸", "Situação (estado)", "A “foto” da sua situação na Fase 3: onde você está, quais pistas tem, quais portas abriu e quanta energia sobra. Mesmo local com pistas diferentes = situação diferente.",
+    "", "Estado = (posição, pistas, portas, energia). Cada ação gera um estado novo; o conjunto forma um grafo implícito (enunciado, item 7.3)."],
+  bfs: ["🌊", "BFS (busca em largura)", "É assim que a 💡 Dica da Fase 3 acha o caminho: explora o mapa em ondas — primeiro tudo a 1 passo de você, depois tudo a 2 passos… Por isso acha o caminho com MENOS passos.",
+    "", "Usa uma fila. Tempo O(V + E). Acha o menor número de arestas — não o menor custo, se os corredores tiverem pesos diferentes. Aula 09."],
+  dfs: ["🧶", "DFS (busca em profundidade)", "Outro jeito de explorar o mapa (no menu Resolver): segue um caminho até não dar mais, volta e tenta outro. Acha uma saída, mas nem sempre a mais curta.",
+    "", "Usa pilha (ou recursão). Tempo O(V + E). Não garante o caminho mais curto. Aula 09."],
+  energia: ["⚡", "Energia (custo)", "Cada passo no mapa gasta energia ⚡. Se acabar, você não anda mais. No desafio extra, cada corredor gasta uma quantidade diferente.",
+    "", "É o custo do caminho. No desafio extra, cada corredor tem um peso w(u, v) diferente."],
+  arvore: ["🌳", "Árvore do cofre (árvore AVL)", "O cofre da Fase 4: cada código entra descendo — menor vai para a esquerda, maior para a direita. Para achar um código, cada pergunta descarta metade da árvore.",
+    "", "Árvore binária de busca balanceada (AVL). Buscar e inserir: O(log n). Aulas 07 e 08."],
+  giro: ["🔄", "Giro da árvore (rotação)", "Na Fase 4, quando um lado da árvore fica 2 andares mais alto que o outro, ela gira para se equilibrar. Assim a busca continua rápida.",
+    "", "Fator de balanceamento FB = altura da esquerda − altura da direita. Com FB = ±2: RD, RE, RED ou RDE. Aula 08."],
+  guloso: ["🍬", "Escolha gulosa", "No desafio extra: escolher sempre o corredor mais barato da vez, sem pensar no depois. Parece esperto, mas neste mapa leva a um beco e trava.",
+    "", "Algoritmo guloso: escolhe o melhor candidato da vez e nunca volta atrás. O troco de 19 com moedas {2, 3, 6} falha. Aula 11."],
+  dijkstra: ["🧭", "Dijkstra", "No desafio extra: o computador sempre continua pelo local que, até agora, saiu mais barato desde o começo. Assim acha a rota que gasta MENOS energia.",
+    "", "Guloso com fila de prioridade (heap); exige pesos ≥ 0. Tempo O((V + E) log V). Aula 11."]
 };
 const termo = (k, txt) => `<span class="termo" onclick="explicar('${k}')" title="O que é isto?">${txt || GLOSS[k][1].replace(/ \(.*\)$/, "")} ❔</span>`;
 function blocoTermo(k) { const [ic, nome, jogo, eleicao, aula] = GLOSS[k];
-  return `<h3>${ic} ${nome}</h3><span class="camada-t">${eleicao ? "No jogo" : "Como funciona"}</span><div>${jogo}</div>${eleicao ? `<span class="camada-t eleicao">Na eleição</span><div>${eleicao}</div>` : ""}
+  return `<h3>${ic} ${nome}</h3><span class="camada-t">No jogo</span><div>${jogo}</div>${eleicao ? `<span class="camada-t eleicao">Na eleição</span><div>${eleicao}</div>` : ""}
     <details><summary>🔬 O conceito da aula (para quem quer ir fundo)</summary><div>${aula}</div></details>`; }
 function janela(html) { const v = document.createElement("div"); v.className = "veu";
   v.innerHTML = `<div class="tut gloss">${html}<button class="btn" style="margin-top:12px">Fechar</button></div>`;
   document.body.appendChild(v); v.querySelector(".btn:last-child").onclick = () => v.remove(); v.onclick = e => { if (e.target === v) v.remove(); }; }
 function explicar(k) { janela(`<div class="rotulo">O que é isto?</div>${blocoTermo(k)}`); }
 function abrirDicionario() { janela(`<div class="rotulo">Dicionário do jogo</div><h2>📖 As palavras do jogo</h2>
-  <p class="legenda">Cada palavra tem três camadas: o que ela é no jogo, com o que se parece numa eleição e o conceito de matemática e computação por trás.</p>
+  <p class="legenda">Cada palavra explica o que ela é <b>no jogo</b>. Para quem quer ir fundo, o conceito da aula fica logo abaixo, recolhido.</p>
   ${Object.keys(GLOSS).map(blocoTermo).join("")}`); }
 // Personagens originais, desenhados em SVG (o mesmo código visual da Audiência Pública).
 function apura(humor = "normal", tam = 92) {
@@ -482,38 +503,44 @@ function cabecalho(n) {
       <h2 style="margin:0">${fase.nome} ${P.selos[n - 1] ? "· ✔ selo" : ""} ${pintaEstrelas(P.estrelas["f" + n])}</h2><span>${botaoCodigo("f" + n)}${botaoComoJogar("f" + n)}</span></div>
     ${pearl(`<b>Problema: ${PROBLEMA[n][0].toLowerCase()}.</b> ${PROBLEMA[n][1]}`)}
     ${blocosPerfis("f" + n)}
-    <p><b>🎯 Sua missão:</b> ${c.missao}</p>
+    <p class="missao-fase"><b>🎯 Sua missão:</b> ajudar a Miss Pearl a ${c.missao.charAt(0).toLowerCase() + c.missao.slice(1)}</p>
     ${porTras(BASTIDOR[n])}
-    ${dicaClique("A história desta fase", NARRA[n])}
-    <details><summary>O texto original do enunciado</summary><div class="doc">${fase.abertura}</div></details>`;
+    <div class="linha-tips">${dicaClique("A história desta fase", NARRA[n])}${dicaClique("O texto original do enunciado", `<div class="doc">${fase.abertura}</div>`)}</div>`;
 }
 
 /* ================= MENU ================= */
 const TELAS = {};
-let capaPasso = 1;
-const PROBLEMAS_CAPA = [["🗂️", "Arquivo embaralhado", "as fichas das seções chegaram fora de ordem."], ["📦", "Provas fora de ordem", "as provas precisam entrar no cofre numa ordem exata."],
-  ["🗺️", "Trilha partida", "o caminho entre as seções se partiu e há portas trancadas."], ["🔐", "Computador andando em círculos", "ele esquece onde já esteve e repete trabalho."],
-  ["🧾", "Conferência final", "refazer tudo e provar que cada passo obedeceu às regras."]];
+let capaPasso = 1, cena = 0;
+// A história contada em cenas curtas: um personagem fala, um clique avança (sem rolar a tela).
+const PROBLEMAS_CAPA = [["🗂️", "Arquivo embaralhado"], ["📦", "Provas fora de ordem"], ["🗺️", "Trilha partida"], ["🔐", "Computador em círculos"], ["🧾", "Conferência final"]];
+const CENAS = [
+  ["pearl", "📍 Verídia, 2042", "Olá! Eu sou a <b>Miss Pearl</b>, auditora-chefe da CIV. A cidade de Verídia acaba de votar para prefeito e vereadores."],
+  ["pearl", "⚠️ Deu problema", "No fim da apuração, uma falha atingiu o sistema de auditoria. Nada indica que algum voto foi alterado — mas os dados ficaram <b>fora de ordem</b> e a trilha entre os locais de votação <b>se partiu</b>."],
+  ["pearl", "😟 Por que isso importa", "Sem conseguir conferir, ninguém tem como mostrar que o resultado está certo. Uma eleição precisa ser <b>verificável</b>: qualquer pessoa deve poder refazer o caminho e chegar ao mesmo lugar."],
+  ["apura", "🏛️ Quem vai investigar", "E eu sou o <b>APURA-42</b>, o computador da CIV, a Comissão Independente de Verificação. A CIV não torce por candidato nenhum: só confere se a apuração pode ser reconstruída <b>seguindo as regras</b>. Eu faço as contas!"],
+  ["pearl", "🎯 A sua missão", "Preciso da <b>sua ajuda</b>. Dividi o trabalho em <b>5 problemas</b>. Cada um que você resolver vale um <b>selo</b>; com os 5 selos, o Cofre de Verificação abre e a apuração está provada."]];
+function cenaHTML() {
+  const [quem, tit, fala] = CENAS[cena], ult = cena === CENAS.length - 1;
+  return `<div class="cena"><div class="ator">${quem === "pearl" ? missPearl(150) : apura(cena === 3 ? "feliz" : "normal", 130)}
+      <b>${quem === "pearl" ? "Miss Pearl" : "APURA-42"}</b></div>
+    <div class="balao-cena"><div class="tit-cena">${tit}</div><div>${fala}</div>
+      ${ult ? `<div class="selos-capa">${PROBLEMAS_CAPA.map(([ic, t], k) => `<div><span class="disco">${ic}</span><b>${k + 1}</b> ${t}</div>`).join("")}</div>` : ""}</div></div>
+    <div class="nav-cena"><button class="btn neutro" id="cn-ant" ${cena ? "" : "disabled"}>◀</button>
+      <span class="pontos">${CENAS.map((_, k) => `<i class="${k === cena ? "on" : ""}"></i>`).join("")}</span>
+      <button class="btn grande" id="cn-prox">${ult ? "Aceito a missão ▶" : "Continuar ▶"}</button></div>
+    <p class="legenda" style="margin-top:10px">${D.aviso}</p>`;
+}
 TELAS.capa = () => {
   const passos = `<div class="passos-capa">${["1. A história", "2. Quem joga", "3. Como jogar"].map((t, i) => `<span class="${capaPasso === i + 1 ? "ativo" : ""}">${t}</span>`).join("")}</div>`;
   if (capaPasso === 1) {
-    $("#tela").innerHTML = `<div class="folha capa">${passos}<h1>${D.titulo}</h1>
-    <div class="historia">
-      <div class="elenco"><figure>${missPearl(96)}<figcaption><b>Miss Pearl</b><br>auditora-chefe da CIV</figcaption></figure>
-        <figure>${apura("normal", 82)}<figcaption><b>APURA-42</b><br>o computador da CIV</figcaption></figure></div>
-      <div class="bloco"><b>📍 Onde estamos</b>Verídia, 2042. A cidade acaba de votar para prefeito e vereadores.</div>
-      <div class="bloco"><b>⚠️ O que deu errado</b>No fim da apuração, uma falha atingiu o sistema de auditoria. Nada indica que algum voto foi alterado — mas os dados ficaram <b>fora de ordem</b>, ligações entre os locais de votação se partiram e parte da trilha não pode mais ser consultada.</div>
-      <div class="bloco"><b>😟 Por que isso importa para quem votou</b>Sem conseguir conferir, ninguém tem como mostrar que o resultado está certo. Uma eleição precisa ser verificável: qualquer pessoa deve poder refazer o caminho e chegar ao mesmo lugar.</div>
-      <div class="bloco civ"><b>🏛️ Quem vai investigar</b>A <b>CIV</b> (Comissão Independente de Verificação) não torce por candidato nenhum: só confere se a apuração pode ser reconstruída seguindo as regras. Quem lidera é a <b>Miss Pearl</b>, auditora-chefe. O <b>APURA-42</b> faz as contas. E <b>você</b> é a pessoa analista convocada para ajudar.</div>
-      <div class="bloco civ"><b>🧭 Como a auditoria vai funcionar</b>A Miss Pearl dividiu o trabalho em <b>5 problemas</b>. Cada problema resolvido vale um <b>selo</b>; com os 5 selos, o Cofre de Verificação abre.
-        <ol class="problemas">${PROBLEMAS_CAPA.map(([ic, t, d]) => `<li><span>${ic} <b>${t}</b>: ${d}</span></li>`).join("")}</ol></div>
-    </div>
-    <button class="btn grande" id="cp-ok">Entendi o problema ▶</button>
-    <p class="legenda">${D.aviso}</p></div>`;
-    $("#cp-ok").onclick = () => { capaPasso = 2; TELAS.capa(); window.scrollTo(0, 0); };
+    $("#tela").innerHTML = `<div class="folha capa">${passos}<h1>${D.titulo}</h1><div id="cena">${cenaHTML()}</div></div>`;
+    const liga = () => {
+      $("#cn-ant").onclick = () => { cena--; $("#cena").innerHTML = cenaHTML(); liga(); };
+      $("#cn-prox").onclick = () => { if (cena < CENAS.length - 1) { cena++; $("#cena").innerHTML = cenaHTML(); liga(); } else { cena = 0; capaPasso = 2; TELAS.capa(); window.scrollTo(0, 0); } }; };
+    liga();
   } else if (capaPasso === 2) {
     $("#tela").innerHTML = `<div class="folha capa">${passos}<h2>Quem está jogando?</h2>
-    <p style="max-width:720px;margin:0 auto">O jogo e os problemas são os mesmos para todo mundo. O perfil só decide <b>o que aparece em destaque</b> em cada fase. Dá para trocar a qualquer momento no botão 👤 do topo.</p>
+    <p style="max-width:760px;margin:0 auto">Os problemas são os mesmos para todo mundo. O perfil só decide <b>o que aparece em destaque</b> em cada fase. Dá para trocar a qualquer momento no botão 👤 do topo.</p>
     <div class="cartoes-perfil">${Object.entries(PERFIS).map(([k, [ic, nome, frase, cor]]) => `<button class="cartao-perfil" style="--cor:${cor}" data-perfil="${k}"><span class="ic">${ic}</span><b>${nome}</b>${frase}</button>`).join("")}</div>
     <button class="btn neutro" id="cp-tudo">👀 Ver tudo</button> <button class="btn neutro" id="cp-volta">◀ Voltar à história</button></div>`;
     const escolhe = k => { P.perfil = k; salvar(); marcarPerfil(); capaPasso = 3; TELAS.capa(); window.scrollTo(0, 0); };
@@ -521,14 +548,11 @@ TELAS.capa = () => {
     $("#cp-tudo").onclick = () => escolhe("tudo");
     $("#cp-volta").onclick = () => { capaPasso = 1; TELAS.capa(); };
   } else {
+    const DICAS = [["👆", "Tudo é clique", "Botões, peças e locais do mapa. Não precisa digitar nada."], ["🟧", "Siga o quadro laranja", "“O que fazer agora” diz qual é o próximo clique."],
+      ["💡", "Travou? Dica", "Palavra estranha? Clique nela (as que têm ❔) ou abra o 📖 Dicionário."], ["🏅", "Ganhe o selo", "Resolveu, ganhou. Menos jogadas = mais estrelas ⭐."]];
     $("#tela").innerHTML = `<div class="folha capa">${passos}<h2>Como jogar</h2>
-    <ol class="comojogar">
-      <li>Cada fase é <b>um dos 5 problemas</b>. A faixa no topo da tela sempre mostra o problema e a sua missão.</li>
-      <li>Não precisa digitar nada: <b>tudo se faz clicando</b> em botões, peças e locais do mapa.</li>
-      <li>Siga o quadro laranja <b>“O que fazer agora”</b>: ele diz qual é o próximo clique.</li>
-      <li>Travou? Clique em <b>💡 Dica</b>. Palavra estranha? Clique nela (as que têm ❔) ou abra o <b>📖 Dicionário</b>.</li>
-      <li>Resolveu? Você ganha o <b>selo</b> e um botão leva à próxima fase. Menos jogadas = mais estrelas ⭐.</li>
-    </ol>
+    <div class="dicas-capa">${DICAS.map(([ic, t, d]) => `<div><span class="ic">${ic}</span><b>${t}</b>${d}</div>`).join("")}</div>
+    <p>A faixa no topo da tela sempre mostra <b>o problema</b> e <b>a sua missão</b> da fase.</p>
     <button class="btn grande" id="cp-f1">▶ Começar pela Fase 1</button> <button class="btn neutro" id="cp-menu">Ver todas as fases</button></div>`;
     $("#cp-f1").onclick = () => { P.capa = true; salvar(); capaPasso = 1; ir("f1"); };
     $("#cp-menu").onclick = () => { P.capa = true; salvar(); capaPasso = 1; ir("menu"); };
@@ -569,15 +593,17 @@ TELAS.f1 = () => {
   let tentativas = 0, animando = false;
   $("#tela").innerHTML = `<div class="folha">${cabecalho(1)}
     <div class="agora" id="f1-agora"></div>
-    <div class="caixa"><h3>A regra da auditoria</h3>${F.enigma.replace(/\n/g, " ")}</div>
-    <h3>1. Monte a regra de arrumação ${termo("chave", "o que é uma chave?")}</h3>
-    <p style="margin:0">Clique nas peças <b>na ordem em que a regra compara</b>: a 1ª peça decide primeiro; a 2ª só desempata.</p>
+    <div class="caixa"><h3>A regra da auditoria</h3>${F.enigma.replace(/\n/g, " ")}
+      ${dicaClique("Por que essa ordem? Não é regra aleatória", "Os números de seção <b>se repetem em zonas diferentes</b>: neste lote há uma seção 001 na zona 02 e outra na zona 03. Ordenar só pela seção misturaria salas de lugares diferentes — por isso a <b>zona vem primeiro</b>. Dentro de cada seção, o <b>horário</b> mostra a sequência do que aconteceu naquela urna. Assim a auditoria confere uma sala de cada vez, do começo ao fim, e percebe na hora se falta ou sobra um registro.")}</div>
+    <div class="passo"><span class="num">1</span><div><b>Monte a regra de arrumação</b> ${termo("chave", "o que é uma chave?")}
+      <div class="legenda">Clique nas peças na ordem em que a regra compara: a 1ª decide; a 2ª só desempata.</div></div></div>
     <div id="f1-slots"></div>
     <div class="escolha pecas" id="f1-pecas">${F.campos.map(([k, n]) => `<button data-c="${k}">${n}</button>`).join("")}<button class="neutro" id="f1-limpa" style="background:#e6d6b2">↺ limpar</button></div>
     ${dicaClique("Como funciona a chave?", "Como no dicionário: primeiro a 1ª letra, depois a 2ª… Se ainda empatar, o número da ficha (identificador) desempata no fim.")}
-    <h3>2. Escolha um jeito de arrumar</h3>
-    <div class="decidir"><b class="rot">Para decidir</b>Os três chegam à <b>mesma ordem</b>. O que muda é o <b>trabalho</b>: quantas vezes o computador compara duas fichas ${termo("comparacao", "comparação")}. Com 12 fichas, tanto faz; com milhares, a diferença vira horas.</div>
+    <div class="passo"><span class="num">2</span><div><b>Escolha um jeito de arrumar</b>
+      ${dicaClique("Qual escolher?", `Os três chegam à <b>mesma ordem</b>. O que muda é o <b>trabalho</b>: quantas vezes o computador compara duas fichas ${termo("comparacao", "comparação")}. Com 12 fichas, tanto faz; com milhares, a diferença vira horas.`)}</div></div>
     <div id="f1-alg">${cartoesMetodos(f1sel.alg)}</div>
+    <div class="passo"><span class="num">3</span><div><b>Ordene e veja a auditoria conferir</b></div></div>
     <button class="btn grande" id="f1-ord">▶ Ordenar o lote</button> <button class="btn sec" id="f1-dica">💡 Dica</button>
     <div><span class="placar" id="f1-placar">comparações 0 · movimentações 0</span> <span id="f1-trad"></span></div>
     <div class="msg" id="f1-msg">Monte a chave, escolha um método e clique em Ordenar.</div>
