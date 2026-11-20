@@ -11,7 +11,7 @@ Linguagem: **Python 3** (só biblioteca padrão). O jogo também roda **no naveg
 | **Ver onde cada algoritmo está no código** | [`checklist-entrega.md`](checklist-entrega.md) — conteúdo → aula e slide → arquivo:**linha** → teste |
 | **Ler o relatório técnico** | [`relatorio-tecnico.pdf`](relatorio-tecnico.pdf) (estrutura da seção 16.1 do enunciado) |
 | **Ver as respostas de cada fase** | [`../COMO-JOGAR.md`](../COMO-JOGAR.md) (contém o gabarito) |
-| **Ver o uso de IA** | [`registro-iag.md`](registro-iag.md) (seção 14.4) |
+| **Ver o uso de IA** | Declaração na tela **Resultados** do jogo; o registro detalhado (seção 14.4) acompanha a entrega à professora |
 
 ## Onde está o essencial
 
@@ -58,6 +58,5 @@ As **regras** do jogo existem uma vez só, em `jogo/`. O jogador, o solver, os t
 | [`guia-codigo-conceitos.md`](guia-codigo-conceitos.md) | Guia de estudo: cada conceito, o código, a complexidade e o teste |
 | [`decisoes.md`](decisoes.md) | Decisões de projeto e pendências |
 | [`metricas.md`](metricas.md) | Métricas medidas (gerado por `experimentos.py`) |
-| [`registro-iag.md`](registro-iag.md) | Registro do uso de IA generativa |
 | [`roteiro-apresentacao.md`](roteiro-apresentacao.md) | Roteiro da demonstração em sala |
 | [`prints/`](prints/) | Telas do jogo |

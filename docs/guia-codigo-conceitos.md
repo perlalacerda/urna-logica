@@ -2,7 +2,7 @@
 
 Este guia liga cada conceito da disciplina ao lugar exato onde ele aparece no jogo e no código. Serve para estudar, apresentar e responder perguntas.
 
-Todo o conteúdo é elaboração da equipe (com apoio de IAG, registrado em `docs/registro-iag.md`), a partir do enunciado do EP e das aulas da Profa. Lucy Mari Tabuti. Os números citados vêm de `docs/metricas.md` (gerado por `experimentos.py`) e dos testes em `testes/`.
+Todo o conteúdo é elaboração da equipe (com apoio de IAG, registrado no relatório de uso de IA entregue à parte), a partir do enunciado do EP e das aulas da Profa. Lucy Mari Tabuti. Os números citados vêm de `docs/metricas.md` (gerado por `experimentos.py`) e dos testes em `testes/`.
 
 **Como usar cada cartão**
 

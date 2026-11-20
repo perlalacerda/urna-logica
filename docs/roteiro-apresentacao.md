@@ -161,7 +161,7 @@ Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 
 
 ## Bloco 9 ★ — Uso de IAG (30 s)
 
-> "Usei IA generativa como programador assistente. Tudo está registrado em `docs/registro-iag.md`: o que foi pedido, o que foi aproveitado e como validei. A validação foi por testes, pela comparação com os slides e por jogar o jogo. Dois exemplos de curadoria: a correção do Quick Sort do slide e o erro de integração da Fase 5."
+> "Usei IA generativa como programador assistente. Tudo está registrado no relatório de uso de IA: o que foi pedido, o que foi aproveitado e como validei. A validação foi por testes, pela comparação com os slides e por jogar o jogo. Dois exemplos de curadoria: a correção do Quick Sort do slide e o erro de integração da Fase 5."
 
 **Atenção:** a coluna "Como foi validado" do registro precisa ser preenchida **pelo aluno**, com o que ele mesmo conferiu.
 

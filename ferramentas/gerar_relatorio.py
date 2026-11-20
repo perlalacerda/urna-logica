@@ -226,7 +226,7 @@ O(|V|²). Inserir e extrair do heap custa O(log n); numa lista não ordenada, ex
 
     S.append(("9. Uso de IAG e curadoria humana", """
 <p>O código, os testes e a documentação foram produzidos com o apoio do Claude (Anthropic). O registro completo, com o objetivo de cada pedido, o que foi
-aproveitado, o que foi alterado e como foi validado, está em <code>docs/registro-iag.md</code> (seção 14.4 do enunciado).</p>
+aproveitado, o que foi alterado e como foi validado, acompanha a entrega à professora (seção 14.4 do enunciado).</p>
 <p>A curadoria humana definiu o que o jogo precisava ser e recusou o que não servia:</p>
 <ul>
 <li><b>Fidelidade às aulas:</b> o pseudocódigo de cada slide foi transcrito antes do código (transcrição mantida fora do repositório público, por respeito ao material da professora), e cada função foi

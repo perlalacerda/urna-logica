@@ -68,4 +68,3 @@ Cada função traz, em comentário, o pseudocódigo da aula correspondente, com 
 
 - `docs/decisoes.md` — escolhas de projeto e pendências.
 - `docs/metricas.md` — métricas de ordenação, busca e AVL (gerado por `experimentos.py`).
-- `docs/registro-iag.md` — registro de uso de IA generativa (seção 14.4).
