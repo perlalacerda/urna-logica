@@ -1,0 +1,13 @@
+# Roda os testes automáticos a cada envio ao GitHub (aba "Actions" do repositório).
+name: testes
+on: [push, pull_request]
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Testes (só biblioteca padrão, nada para instalar)
+        run: python -m unittest discover -s testes -t . -v

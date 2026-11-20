@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Urna Lógica — Verídia 2042</title>
+<meta name="description" content="EP de Estruturas de Dados e Análise de Algoritmos (IPT, 2026): jogo de lógica sobre uma eleição fictícia.">
+<style>
+  :root { --fundo: #2e1d11; --papel: #f6ead0; --tinta: #2b1d12; --tinta2: #6b5236; --laranja: #d9682b; --laranja2: #a9481a; --petroleo: #1f5f5b; --petroleo2: #164844; --ambar: #ffb347; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fundo); color: var(--tinta); font: 17px/1.5 "Segoe UI", system-ui, sans-serif; }
+  header { background: #1d120a; color: var(--papel); padding: 12px 18px; border-bottom: 4px solid var(--laranja); font: 700 14px "Trebuchet MS", sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+  main { max-width: 980px; margin: 0 auto; padding: 22px 16px 50px; }
+  .folha { background: var(--papel); border-radius: 10px; padding: 26px 28px; box-shadow: 0 8px 0 #1d120a; }
+  h1 { font: 800 30px "Trebuchet MS", sans-serif; margin: 0 0 6px; } h2 { font: 700 18px "Trebuchet MS", sans-serif; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta2); margin: 26px 0 10px; }
+  p { margin: 0 0 10px; } .legenda { font-size: 14px; color: var(--tinta2); }
+  .grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  a.cartao { display: block; text-decoration: none; color: var(--tinta); background: #fbf3df; border: 2px solid #cdb98f; border-radius: 12px; padding: 16px; }
+  a.cartao:hover { border-color: var(--laranja); }
+  a.cartao b { display: block; font: 800 19px "Trebuchet MS", sans-serif; margin-bottom: 4px; } a.cartao .ic { font-size: 30px; }
+  a.principal { background: var(--laranja); color: #fff8ec; border-color: var(--laranja2); }
+  a.principal .legenda { color: #ffe9cf; }
+  code { background: #efe3c4; border-radius: 4px; padding: 1px 6px; font-size: 14px; }
+  footer { color: #d9b98a; font-size: 13px; text-align: center; margin-top: 18px; }
+</style>
+</head>
+<body>
+<header>Urna Lógica · Verídia 2042</header>
+<main><div class="folha">
+  <h1>🗳️ Urna Lógica — O Enigma da Eleição de Verídia</h1>
+  <p>Exercício Programa de <b>Estruturas de Dados e Análise de Algoritmos</b> — IPT, Mestrado Profissional em Computação Aplicada, 2026.
+     Jogo de lógica em que cada fase usa uma estrutura de dados ou um algoritmo da disciplina para reconstruir a apuração de uma eleição <b>fictícia</b>.</p>
+
+  <h2>Jogar</h2>
+  <div class="grade">
+    <a class="cartao principal" href="jogo.html"><span class="ic">▶</span><b>Jogar no navegador</b><span class="legenda">5 fases, solver e desafio extra. Tudo por cliques, nada para instalar.</span></a>
+    <a class="cartao" href="visualizacao.html"><span class="ic">🎬</span><b>Audiência Pública da CIV</b><span class="legenda">Apresentação animada da investigação, com os algoritmos rodando.</span></a>
+  </div>
+
+  <h2>Para quem avalia</h2>
+  <div class="grade">
+    <a class="cartao" href="https://github.com/perlalacerda/urna-logica/blob/main/docs/COMECE-AQUI.md"><span class="ic">🧭</span><b>Comece aqui</b><span class="legenda">Rota de avaliação em 10 minutos e onde está o essencial.</span></a>
+    <a class="cartao" href="https://github.com/perlalacerda/urna-logica/blob/main/docs/checklist-entrega.md"><span class="ic">🔎</span><b>Matriz de inspeção</b><span class="legenda">Conteúdo → aula e slide → arquivo:linha → teste.</span></a>
+    <a class="cartao" href="docs/relatorio-tecnico.pdf"><span class="ic">📄</span><b>Relatório técnico (PDF)</b><span class="legenda">Estrutura da seção 16.1 do enunciado.</span></a>
+    <a class="cartao" href="https://github.com/perlalacerda/urna-logica"><span class="ic">💻</span><b>Código-fonte</b><span class="legenda">Python 3, só biblioteca padrão. Testes: <code>python -m unittest discover -s testes -t .</code></span></a>
+  </div>
+
+  <h2>Rodar no próprio computador, sem internet</h2>
+  <p>Baixe o código (botão verde <b>Code → Download ZIP</b> no GitHub), descompacte e dê dois cliques em <code>jogo.html</code>. No Windows, <code>jogar_navegador.bat</code> faz o mesmo; <code>rodar_testes.bat</code> roda os testes.</p>
+  <p class="legenda">Verídia, seus locais, registros e códigos são inteiramente fictícios. Nenhum nome, partido, número ou resultado de eleição real.</p>
+</div>
+<footer>IPT · Mestrado Profissional em Computação Aplicada · Estruturas de Dados e Análise de Algoritmos · 2026</footer>
+</main>
+</body>
+</html>

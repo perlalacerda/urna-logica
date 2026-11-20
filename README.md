@@ -4,7 +4,11 @@ Exercício Programa da disciplina Estruturas de Dados e Análise de Algoritmos �
 
 Jogo de lógica e investigação com dados **inteiramente fictícios**. Verídia, seus locais, registros e códigos não correspondem a nenhuma eleição real.
 
-**Primeira vez? Leia [COMO-JOGAR.md](COMO-JOGAR.md)** — uma página com as teclas e o caminho de cada fase.
+**Jogar online, sem instalar nada:** <https://perlalacerda.github.io/urna-logica/>
+
+**Vai avaliar? Comece por [docs/COMECE-AQUI.md](docs/COMECE-AQUI.md)** — rota de 10 minutos, [matriz de inspeção](docs/checklist-entrega.md) (conteúdo → aula → arquivo:linha → teste) e [relatório técnico em PDF](docs/relatorio-tecnico.pdf).
+
+**Primeira vez jogando? Leia [COMO-JOGAR.md](COMO-JOGAR.md)** — uma página com as teclas e o caminho de cada fase.
 
 ## Requisitos
 
@@ -46,12 +50,18 @@ algoritmos/   Bubble, Merge e Quick Sort; BFS e DFS da aula 09; solver no espaç
 jogo/         regras e dados do jogo (registros, fases, mapa)
 interface/    telas do terminal (sem regras do jogo)
 testes/       um arquivo de testes por módulo (seção 15 do enunciado)
+ferramentas/  geradores da matriz de inspeção, do relatório técnico e dos prints
 docs/         notas das aulas, decisões de projeto, registro de uso de IAG
 ```
 
 Cada função traz, em comentário, o pseudocódigo da aula correspondente, com a numeração das linhas. Assim é possível conferir o código lado a lado com o slide.
 
 ## Documentos
+
+- `docs/COMECE-AQUI.md` — **guia para quem avalia** (rota de 10 minutos, onde está o essencial, perguntas prováveis).
+- `docs/checklist-entrega.md` — **matriz de inspeção**, gerada pelo código: `py ferramentas/gerar_checklist.py`.
+- `docs/relatorio-tecnico.pdf` — **relatório técnico** (seção 16.1), com métricas medidas na geração: `py ferramentas/gerar_relatorio.py`.
+- `docs/prints/` — telas do jogo: `py ferramentas/gerar_prints.py`.
 
 - `docs/guia-codigo-conceitos.md` — **guia de estudo**: cada conceito da disciplina ligado ao jogo, ao código, à complexidade e ao teste que o comprova (inclui os bônus).
 - `docs/roteiro-apresentacao.md` — **roteiro da demonstração** em sala (20 min), com falas, sequência de jogadas e plano B.
