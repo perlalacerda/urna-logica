@@ -229,7 +229,7 @@ O(|V|²). Inserir e extrair do heap custa O(log n); numa lista não ordenada, ex
 aproveitado, o que foi alterado e como foi validado, está em <code>docs/registro-iag.md</code> (seção 14.4 do enunciado).</p>
 <p>A curadoria humana definiu o que o jogo precisava ser e recusou o que não servia:</p>
 <ul>
-<li><b>Fidelidade às aulas:</b> o pseudocódigo de cada slide foi transcrito antes do código (<code>docs/notas-das-aulas.md</code>), e cada função foi
+<li><b>Fidelidade às aulas:</b> o pseudocódigo de cada slide foi transcrito antes do código (transcrição mantida fora do repositório público, por respeito ao material da professora), e cada função foi
 conferida contra ele; os exemplos dos slides viraram testes. Essa conferência encontrou a divergência do Quick Sort (6.1).</li>
 <li><b>Decisões de projeto</b> registradas com a origem (enunciado, aula ou equipe) em <code>docs/decisoes.md</code>: chave de estado com dominância de energia,
 ação "arquivar" na Fase 2, variante com custos sem alterar a Fase 3 original.</li>

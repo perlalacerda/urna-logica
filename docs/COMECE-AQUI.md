@@ -56,7 +56,6 @@ As **regras** do jogo existem uma vez só, em `jogo/`. O jogador, o solver, os t
 | [`checklist-entrega.md`](checklist-entrega.md) | Matriz de inspeção (gerada pelo código) |
 | [`relatorio-tecnico.pdf`](relatorio-tecnico.pdf) | Relatório técnico (seção 16.1) |
 | [`guia-codigo-conceitos.md`](guia-codigo-conceitos.md) | Guia de estudo: cada conceito, o código, a complexidade e o teste |
-| [`notas-das-aulas.md`](notas-das-aulas.md) | Pseudocódigo das aulas usado como referência |
 | [`decisoes.md`](decisoes.md) | Decisões de projeto e pendências |
 | [`metricas.md`](metricas.md) | Métricas medidas (gerado por `experimentos.py`) |
 | [`registro-iag.md`](registro-iag.md) | Registro do uso de IA generativa |

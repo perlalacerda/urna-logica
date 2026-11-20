@@ -32,7 +32,7 @@ def main():
         for nome, tela, acoes in TELAS:
             pg = b.new_page(viewport={"width": 1366, "height": 860}, device_scale_factor=1)
             pg.goto(URL)
-            pg.evaluate(f"P.capa = {'false' if tela == 'capa' else 'true'}; P.tut = {{f1:1,f2:1,f3:1,f4:1,f5:1,custos:1}}; ir('{tela}')")
+            pg.evaluate(f"P.perfil = 'tudo'; P.capa = {'false' if tela == 'capa' else 'true'}; P.tut = {{f1:1,f2:1,f3:1,f4:1,f5:1,custos:1}}; ir('{tela}')")
             for a in acoes:
                 pg.click(a)
                 pg.wait_for_timeout(250)

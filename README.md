@@ -66,7 +66,6 @@ Cada função traz, em comentário, o pseudocódigo da aula correspondente, com 
 - `docs/guia-codigo-conceitos.md` — **guia de estudo**: cada conceito da disciplina ligado ao jogo, ao código, à complexidade e ao teste que o comprova (inclui os bônus).
 - `docs/roteiro-apresentacao.md` — **roteiro da demonstração** em sala (20 min), com falas, sequência de jogadas e plano B.
 
-- `docs/notas-das-aulas.md` — pseudocódigo das aulas usado como referência.
 - `docs/decisoes.md` — escolhas de projeto e pendências.
 - `docs/metricas.md` — métricas de ordenação, busca e AVL (gerado por `experimentos.py`).
 - `docs/registro-iag.md` — registro de uso de IA generativa (seção 14.4).

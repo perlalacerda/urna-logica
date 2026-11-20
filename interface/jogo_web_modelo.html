@@ -14,7 +14,7 @@
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
-  body { background: var(--parede); color: var(--tinta); font: 17px/1.5 "Segoe UI", system-ui, sans-serif; }
+  body { background: var(--parede); color: var(--tinta); font: 18px/1.55 "Segoe UI", system-ui, sans-serif; }
   header.topo { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
                 background: #1d120a; color: var(--papel); padding: 10px 18px; border-bottom: 4px solid var(--laranja); }
   header.topo .marca { font-family: var(--titulo); letter-spacing: .1em; text-transform: uppercase; font-size: 14px; font-weight: 700; }
@@ -29,7 +29,7 @@
   p { margin: 0 0 10px; }
   .agora { background: #fff3d6; border: 3px solid var(--laranja); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 18px; }
   .agora b { font-family: var(--titulo); letter-spacing: .06em; color: var(--laranja2); display: block; font-size: 13px; text-transform: uppercase; }
-  .msg { border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 17px; white-space: pre-line; border: 2px solid var(--tinta2); background: var(--papel2); min-height: 50px; }
+  .msg { border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 18px; white-space: pre-line; border: 2px solid var(--tinta2); background: var(--papel2); min-height: 50px; }
   .msg.ok { border-color: var(--verde); background: #e3f1e5; } .msg.nao { border-color: var(--vermelho); background: #f8e1da; }
   .msg:empty { display: none; }
   .msg.dica { border-color: var(--petroleo); background: #e0eeec; }
@@ -64,7 +64,7 @@
   .escolha button.sel { background: var(--petroleo); color: #fff; border-color: var(--petroleo2); }
   .crt { background: var(--crt); border: 8px solid #5b4632; border-radius: 12px; padding: 8px; }
   .crt svg text { fill: var(--ambar); font-family: var(--maquina); }
-  .legenda { font-size: 14px; color: var(--tinta2); }
+  .legenda { font-size: 15px; color: var(--tinta2); }
   details { margin: 10px 0; } summary { cursor: pointer; font-family: var(--titulo); font-weight: 700; color: var(--petroleo); }
   .doc { font-family: var(--maquina); background: var(--papel2); border-left: 5px solid var(--laranja); padding: 10px 14px; white-space: pre-line; font-size: 15px; }
   .barra { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 10px; padding-top: 10px; border-top: 2px dotted var(--borda); }
@@ -105,7 +105,7 @@
   /* ---------- modo aluno: narradora, termos, para decidir ---------- */
   .pearl { display: flex; gap: 12px; align-items: flex-start; background: #1f3d3b; color: #f3ead6; border-radius: 12px; padding: 12px 16px; margin: 10px 0; font-size: 17px; }
   .pearl .av { font-size: 40px; line-height: 1; } .pearl .quem { display: block; color: var(--ambar); font-family: var(--titulo); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
-  .termo { display: inline-block; font: 600 14px var(--titulo); background: #e0eeec; color: var(--petroleo2); border: 2px solid var(--petroleo); border-radius: 999px;
+  .termo { display: inline-block; font: 600 15px var(--titulo); background: #e0eeec; color: var(--petroleo2); border: 2px solid var(--petroleo); border-radius: 999px;
            padding: 1px 10px; margin: 2px 3px; cursor: pointer; white-space: nowrap; vertical-align: middle; }
   .termo:hover { background: var(--petroleo); color: #fff; }
   .portras { background: #f1e7cf; border: 2px dashed var(--petroleo); border-radius: 10px; padding: 8px 12px; margin: 10px 0; font-size: 15px; }
@@ -122,6 +122,21 @@
   .abas { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; } .abas button { font: 700 16px var(--titulo); border: 2px solid var(--tinta2); border-radius: 8px 8px 0 0; padding: 8px 16px; background: #efe3c4; color: var(--tinta); }
   .abas button.sel { background: var(--petroleo); color: #fff; border-color: var(--petroleo2); } .abas button:disabled { opacity: .45; }
   .gloss h3 { margin-top: 12px; } .gloss .camada-t { font: 700 12px var(--titulo); letter-spacing: .06em; text-transform: uppercase; color: var(--laranja2); margin-top: 8px; display: block; }
+  /* ---------- perfis: cada um com cor e ícone ---------- */
+  :root { --c-estudante: #d9682b; --c-colega: #1f5f5b; --c-professora: #a8741a; }
+  .perfil { border-left: 8px solid var(--cor); background: color-mix(in srgb, var(--cor) 9%, #fffaf0); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 18px; }
+  .perfil > .cab { font: 800 15px var(--titulo); letter-spacing: .05em; text-transform: uppercase; color: var(--cor); display: block; margin-bottom: 4px; }
+  .perfil ol, .perfil ul { margin: 4px 0 4px 0; padding-left: 24px; } .perfil li { margin: 3px 0; }
+  details.perfil > summary { font: 800 15px var(--titulo); letter-spacing: .05em; text-transform: uppercase; color: var(--cor); }
+  .cartoes-perfil { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin: 18px auto; max-width: 900px; }
+  .cartao-perfil { text-align: left; border: 3px solid var(--cor); border-radius: 14px; background: color-mix(in srgb, var(--cor) 8%, #fffaf0); padding: 16px; font: inherit; color: var(--tinta); cursor: pointer; }
+  .cartao-perfil:hover { box-shadow: 0 0 0 4px color-mix(in srgb, var(--cor) 35%, transparent); }
+  .cartao-perfil .ic { font-size: 42px; } .cartao-perfil b { display: block; font: 800 20px var(--titulo); color: var(--cor); margin: 4px 0; }
+  .som.perfil-btn { border-color: var(--cor, #6b5236); }
+  details.tip { display: inline-block; vertical-align: top; margin: 2px 0; }
+  details.tip > summary { display: inline-block; cursor: pointer; font: 700 15px var(--titulo); color: var(--petroleo2); border: 2px dashed var(--petroleo); border-radius: 999px; padding: 2px 12px; list-style: none; }
+  details.tip > summary::-webkit-details-marker { display: none; }
+  details.tip[open] { display: block; } details.tip > div { background: #eef6f4; border-left: 5px solid var(--petroleo); border-radius: 8px; padding: 10px 14px; margin-top: 6px; font-size: 17px; }
   /* ---------- ver o código ---------- */
   pre.cod { background: #15110c; color: #f3ead6; font: 13px/1.45 var(--maquina); padding: 12px 14px; border-radius: 8px; overflow: auto; max-height: 52vh; white-space: pre; margin: 6px 0 14px; }
   .tut.larga { max-width: 980px; }
@@ -136,6 +151,7 @@
   <span class="marca">Urna Lógica · Verídia 2042</span>
   <button class="btn neutro" style="min-height:36px;padding:6px 12px;font-size:14px" onclick="ir('menu')">Menu</button>
   <div class="selos" id="selos" title="Selos conquistados"></div>
+  <button class="som perfil-btn" id="perfil-btn" onclick="escolherPerfil()" title="Trocar o perfil de quem joga">👤 Perfil</button>
   <button class="som" onclick="abrirDicionario()" title="O que significa cada palavra do jogo">📖 Dicionário</button>
   <button class="som" id="som" onclick="P.som=!P.som;salvar();marcarSom()" title="Som do carimbo">🔇 som</button>
 </header>
@@ -264,6 +280,93 @@ function tutorial(chave, sempre) {
     <p class="legenda">Travou? O botão 💡 Dica mostra o próximo passo.</p></div>`;
   document.body.appendChild(v); $("#tut-ok").onclick = () => v.remove(); v.onclick = e => { if (e.target === v) v.remove(); };
 }
+/* ================= PERFIS DE QUEM JOGA =================
+   A pergunta "quem está jogando?" decide qual bloco aparece aberto em cada fase.
+   Cada perfil tem cor e ícone próprios; em "Ver tudo", os três aparecem recolhidos. */
+const PERFIS = {
+  estudante: ["🎒", "Estudante", "Quero entender pra que serve isso", "var(--c-estudante)"],
+  colega: ["🔧", "Colega avaliador", "Quero validar o código e a auditoria", "var(--c-colega)"],
+  professora: ["🎓", "Professora", "Quero ver as conexões com as aulas", "var(--c-professora)"]};
+const dicaClique = (titulo, html) => `<details class="tip"><summary>ⓘ ${titulo}</summary><div>${html}</div></details>`;
+// Textos por fase. Estudante: onde se usa na vida e o problema de verdade numa auditoria (analogias, sem dados reais).
+const PERFIL_TXT = {
+  f1: {vida: "📇 <b>Agenda de contatos:</b> o celular mostra os nomes em ordem — primeiro pela 1ª letra; se empatar, pela 2ª. Isso é uma <b>chave composta</b>, igual à regra desta fase. É por estar em ordem que você acha a “Maria” sem ler a lista inteira.",
+    auditoria: "Uma apuração tem milhares de seções e muitos registros. Em ordem por zona e seção, quem audita confere uma seção de cada vez e percebe na hora se falta ou sobra um registro. O método de ordenação importa: com muitos registros, o lento pode transformar minutos em horas.",
+    validar: () => { const k = m => D.fase1.chaves[m + "|zona>secao>horario"].comparacoes; return [
+      "Monte só a peça <b>horário</b> e ordene: o lote deve ser <b>recusado</b>, com a 1ª posição fora de ordem em vermelho.",
+      "Monte <b>zona → seção → horário</b>: aceito com qualquer método.",
+      `Compare o trabalho com 12 fichas: Bubble ${k("bubble")}, Merge ${k("merge")}, Quick ${k("quick")} comparações.`]; },
+    testes: ["test_criterio_errado_recusa_e_aponta_erro", "test_so_a_chave_da_regra_e_aceita", "test_tres_algoritmos_concordam"],
+    aulas: ["<b>Aula 02</b> (slides 10, 15 e 20–22): Bubble iterativo e recursivo, Merge → os três jeitos de arrumar.",
+      "<b>Aula 04</b> (slides 31–37): Quick Sort com Lomuto → terceiro método (usamos <code>p..q−1</code>; ver o teste do slide).",
+      "<b>Aulas 03 e 04</b>: contar operações → o placar e a tabela de 500 fichas (n² × n log n).",
+      "<b>Chave composta</b> → o enigma desta fase: montar a regra peça por peça."]},
+  f2: {vida: "🍽️ <b>Fila da cantina:</b> quem chega primeiro é atendido primeiro — é a <b>fila</b> (a esteira). A <b>pilha</b> de bandejas: a última que você põe em cima é a primeira que sai. E o <b>Ctrl+Z</b> desfaz a última coisa que você fez: também é uma pilha.",
+    auditoria: "Toda prova precisa de <b>cadeia de custódia</b>: o registro da ordem em que cada documento foi recebido e guardado. Se a ordem se perde, ninguém consegue provar que a prova não foi trocada no caminho — e ela deixa de valer.",
+    validar: () => ["Com E1 na frente, clique <b>Pôr no cofre</b>: recusado (o cofre espera E2) e nada muda.",
+      "Guarde E1 na pilha e tente <b>Guardar</b> outra: a regra recusa quem ficaria por cima de alguém que precisa sair antes.",
+      "Faça duas jogadas e clique <b>Desfazer</b> duas vezes: volta a mais recente primeiro (o histórico é uma pilha)."],
+    testes: ["test_jogada_invalida_nao_altera_estado", "test_desfazer_lifo", "test_solver_resolve_fase2"],
+    aulas: ["<b>Aula 06</b> — fila (FIFO) → a esteira de chegada.", "<b>Aula 06</b> — pilha (LIFO) → a pilha de espera e o botão Desfazer.",
+      "<b>Aula 06</b> (slides 18–24) — lista ligada com cabeça → o cofre de custódia, com ponteiro para o último (inserir no fim em O(1))."]},
+  f3: {vida: "🗺️ <b>Waze e GPS:</b> aplicativos de rota tratam a cidade como um mapa de pontos ligados por ruas — um <b>grafo</b> — e procuram um caminho. Rua bloqueada é como a porta trancada daqui: o caminho mais curto no desenho nem sempre é permitido.",
+    auditoria: "Para refazer a trilha de um documento, é preciso passar pelos lugares na ordem certa: não adianta chegar à validação sem antes passar pela autenticação. O computador testa os caminhos possíveis e devolve um que obedece a todas as regras — e o mais curto deles.",
+    validar: () => ["Vá de A para C, G e tente <b>F</b>: a porta recusa (falta a pista AUT).",
+      "Peça a 💡 Dica em qualquer ponto: ela vem da BFS calculada a partir da situação atual.",
+      "Mínimo: 7 passos (BFS). No menu <b>Resolver</b>, compare com a DFS (9 passos)."],
+    testes: ["test_cenario_1_caminho_mais_curto_e_invalido", "test_bfs_mapa_menor_numero_de_acoes", "test_mesma_posicao_pistas_diferentes_sao_estados_diferentes"],
+    aulas: ["<b>Aula 09</b> — grafo por lista de adjacência → o mapa (9 locais, 11 corredores).",
+      "<b>Aula 09</b> (slides 71–73) — BFS → a dica e o caminho com menos passos.", "<b>Aula 09</b> (slides 54–56) — DFS → a comparação no Resolver.",
+      "<b>Enunciado 7.3</b> — estado = (posição, pistas, portas, energia) → a “Sua situação agora”."]},
+  f4: {vida: "📇 <b>Busca na agenda:</b> ao digitar um nome, o celular não precisa ler todos os contatos — a busca vai descartando o que não serve. A árvore do cofre faz isso de forma garantida: <b>a cada passo, descarta metade</b>.",
+    auditoria: "Um computador que confere milhões de situações precisa lembrar rápido o que já conferiu, para não conferir de novo. Com a árvore equilibrada, procurar entre 1 milhão de itens leva cerca de <b>20 passos</b>, e não 1 milhão.",
+    validar: () => ["Sala 1: os 9 códigos são a sequência da aula 08 e provocam <b>RD, RE, RED e RDE</b>, nessa ordem; o FB aparece sob cada nó.",
+      "Sala 2: mesma posição com pistas diferentes = <b>estados diferentes</b>; mesma situação com mais energia = explorar de novo.",
+      "Sala 3: qualquer busca usa no máximo altura + 1 comparações."],
+    testes: ["test_sala1_quatro_rotacoes_da_aula", "test_sala2_respostas_calculadas", "test_exemplo_da_aula"],
+    aulas: ["<b>Aula 07</b> — altura de árvore (vazia = −1) → o FB sob cada nó.",
+      "<b>Aula 08</b> (slides 9–15) — a mesma sequência 70, 50, 40, 80, 90, 15, 25, 45, 42 → RD, RE, RED, RDE na Sala 1.",
+      "<b>Enunciado 8</b> — AVL como memória de estados visitados → a Sala 2 e o solver."]},
+  f5: {vida: "✔️ <b>Conferir é refazer:</b> quando o professor corrige uma conta, ele não acredita no resultado — refaz o caminho. Esta fase faz isso com as suas jogadas.",
+    auditoria: "Uma auditoria séria não aceita “confia em mim”: refaz cada passo e mostra a regra que cada um obedeceu. Se uma jogada tivesse quebrado uma regra, a auditoria apontaria qual.",
+    validar: () => ["Jogue as Fases 2 e 3 e rode a auditoria: ela <b>refaz as suas jogadas</b> pelas mesmas regras.",
+      "Sem jogar, o solver resolve aquela etapa (a origem aparece em cada bloco).", "Uma trilha que viola uma regra é recusada (veja o teste)."],
+    testes: ["test_integracao_com_o_historico_real_das_fases_2_e_3", "test_trilha_invalida_e_recusada", "test_relatorio_ordenado_com_merge"],
+    aulas: ["Integração: ordenação (aulas 02 e 04) no lote; fila, pilha e lista (aula 06) na triagem; grafo, BFS e DFS (aula 09) no mapa; AVL (aula 08) nos visitados.",
+      "<b>Recursão com caso-base</b> (aulas 02 e 04) → DFS recursiva e Merge Sort."]},
+  custos: {vida: "🚗 <b>Waze:</b> o caminho com menos ruas nem sempre é o mais rápido — uma rua curta, mas engarrafada, custa mais. É a diferença entre a BFS (menos passos) e o Dijkstra (menor custo).",
+    auditoria: "Equipes de auditoria têm tempo e dinheiro limitados. O caminho com menos paradas pode sair mais caro; o Dijkstra acha o que gasta menos no total.",
+    validar: () => ["Siga a rota da BFS (C, E, C, B, H, D, F): gasta <b>15</b> de energia.", "Siga a 💡 Dica (Dijkstra): gasta <b>11</b>.", "Na tabela, o guloso “corredor mais barato” trava sem chegar."],
+    testes: ["test_dijkstra_e_o_minimo", "test_guloso_trava", "test_exemplo_da_aula"],
+    aulas: ["<b>Aula 11</b> — algoritmo guloso genérico → o guloso ingênuo, que trava (como o troco de 19 com {2, 3, 6}).",
+      "<b>Aula 11</b> — Dijkstra com relaxamento → a rota de menor energia.", "<b>Aula 08</b> (slides 35–45) — heap → a fila de prioridade do Dijkstra."]}};
+const corPerfil = k => `--cor:${PERFIS[k][3]}`;
+function blocoPerfil(k, fase) {
+  const T = PERFIL_TXT[fase], [ic, nome] = PERFIS[k];
+  if (k === "estudante") return `<span class="cab">${ic} ${nome} · pra que serve isso?</span><div>${T.vida}</div>
+    ${dicaClique("E numa auditoria de verdade?", T.auditoria)}`;
+  if (k === "colega") return `<span class="cab">${ic} ${nome} · como validar em 1 minuto</span><ol>${T.validar().map(x => `<li>${x}</li>`).join("")}</ol>
+    ${dicaClique("Testes que comprovam", T.testes.map(t => `<span class="codigo">${t}</span>`).join(" · ") + `<br>Lista completa, com arquivo e linha: <a href="${REPO.replace("/blob/main/", "")}/blob/main/docs/checklist-entrega.md" target="_blank" rel="noopener">matriz de inspeção</a>. O código da fase está no botão 🔧.`)}`;
+  return `<span class="cab">${ic} ${nome} · conexão com as aulas</span><ul>${T.aulas.map(x => `<li>${x}</li>`).join("")}</ul>`;
+}
+function blocosPerfis(fase) {
+  if (!PERFIL_TXT[fase]) return "";
+  if (P.perfil && P.perfil !== "tudo") return `<div class="perfil" style="${corPerfil(P.perfil)}">${blocoPerfil(P.perfil, fase)}</div>`;
+  return Object.keys(PERFIS).map(k => `<details class="perfil" style="${corPerfil(k)}"><summary>${PERFIS[k][0]} Para ${PERFIS[k][1].toLowerCase()}</summary>${blocoPerfil(k, fase).replace(/^<span class="cab">.*?<\/span>/, "")}</details>`).join("");
+}
+function escolherPerfil() {
+  const v = document.createElement("div"); v.className = "veu";
+  v.innerHTML = `<div class="tut larga"><div class="rotulo">Quem está jogando?</div><h2>Escolha o seu perfil</h2>
+    <p>O jogo é o mesmo para todos; muda o que aparece em destaque em cada fase. Dá para trocar a qualquer momento no botão 👤 do topo.</p>
+    <div class="cartoes-perfil">${Object.entries(PERFIS).map(([k, [ic, nome, frase, cor]]) => `<button class="cartao-perfil" style="--cor:${cor}" data-perfil="${k}"><span class="ic">${ic}</span><b>${nome}</b>${frase}</button>`).join("")}</div>
+    <button class="btn neutro" data-perfil="tudo">👀 Ver tudo (os três perfis recolhidos)</button></div>`;
+  document.body.appendChild(v);
+  v.querySelectorAll("[data-perfil]").forEach(b => b.onclick = () => { P.perfil = b.dataset.perfil; salvar(); v.remove(); marcarPerfil(); const t = telaAtual; ir(t === "capa" ? "f1" : t); });
+  v.onclick = e => { if (e.target === v) v.remove(); };
+}
+function marcarPerfil() { const b = $("#perfil-btn"); if (!b) return; const k = P.perfil;
+  b.textContent = k && k !== "tudo" ? `👤 ${PERFIS[k][0]} ${PERFIS[k][1]}` : k === "tudo" ? "👤 Ver tudo" : "👤 Perfil";
+  b.style.setProperty("--cor", k && k !== "tudo" ? PERFIS[k][3] : "#6b5236"); }
 // "Ver o código desta fase": o código Python que roda a fase, copiado do arquivo quando a página foi gerada.
 const REPO = "https://github.com/perlalacerda/urna-logica/blob/main/";
 const esc = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -295,7 +398,8 @@ function deslizar(raiz, redesenhar) {
 }
 function desenharSelos() { $("#selos").innerHTML = P.selos.map((s, i) => `<span class="selo${s ? " ok" : ""}" title="Selo ${i + 1}">${s ? "✔" : i + 1}</span>`).join(""); }
 
-function ir(tela) { TELAS[tela](); window.scrollTo(0, 0); desenharSelos(); marcarSom(); if (TUT[tela]) tutorial(tela); }
+let telaAtual = "menu";
+function ir(tela) { telaAtual = tela; TELAS[tela](); window.scrollTo(0, 0); desenharSelos(); marcarSom(); marcarPerfil(); if (TUT[tela]) tutorial(tela); }
 const voltar = '<button class="btn neutro" onclick="ir(\'menu\')">← Voltar ao menu</button>';
 const NARRA = {
   1: "Chegaram 12 fichas com os registros das seções de Verídia, mas vieram <b>embaralhadas</b>! Para conferir, a auditoria precisa delas em ordem: primeiro pela <b>zona eleitoral</b>, depois pela <b>seção</b> (a sala onde se vota) e, se empatar, pelo <b>horário</b>. Você monta a regra; o computador arruma.",
@@ -309,6 +413,7 @@ function cabecalho(n) {
   return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between">
       <h2 style="margin:0">${fase.nome} ${P.selos[n - 1] ? "· ✔ selo" : ""} ${pintaEstrelas(P.estrelas["f" + n])}</h2><span>${botaoCodigo("f" + n)}${botaoComoJogar("f" + n)}</span></div>
     ${pearl(NARRA[n])}
+    ${blocosPerfis("f" + n)}
     <p><b>🎯 Sua missão:</b> ${c.missao}</p>
     ${porTras(BASTIDOR[n])}
     <details><summary>O texto original do enunciado</summary><div class="doc">${fase.abertura}</div></details>`;
@@ -322,11 +427,13 @@ TELAS.capa = () => {
     <div class="linhas"><div>Verídia, 2042: a apuração da eleição saiu embaralhada.</div>
       <div>Você é a analista da CIV. Ganhe os <b>5 selos</b> e abra o Cofre de Verificação.</div>
       <div>Tudo é clicável. Travou? Use 💡 Dica.</div></div>
-    <button class="btn grande" id="cp-ir">▶ Começar</button>
-    <button class="btn neutro grande" id="cp-menu">Ver as fases</button>
+    <h2 style="margin-top:6px">Quem está jogando?</h2>
+    <div class="cartoes-perfil">${Object.entries(PERFIS).map(([k, [ic, nome, frase, cor]]) => `<button class="cartao-perfil" style="--cor:${cor}" data-perfil="${k}"><span class="ic">${ic}</span><b>${nome}</b>${frase}</button>`).join("")}</div>
+    <button class="btn neutro" id="cp-tudo">👀 Ver tudo</button> <button class="btn neutro" id="cp-menu">Ver as fases</button>
     <details style="text-align:left;max-width:720px;margin:18px auto 0"><summary>Ler a história completa</summary>${D.prologo.map(p => `<p>${p}</p>`).join("")}</details>
     <p class="legenda">${D.aviso}</p></div>`;
-  $("#cp-ir").onclick = () => { P.capa = true; salvar(); ir("f1"); };
+  document.querySelectorAll(".capa [data-perfil]").forEach(b => b.onclick = () => { P.perfil = b.dataset.perfil; P.capa = true; salvar(); ir("f1"); });
+  $("#cp-tudo").onclick = () => { P.perfil = "tudo"; P.capa = true; salvar(); ir("f1"); };
   $("#cp-menu").onclick = () => { P.capa = true; salvar(); ir("menu"); };
 };
 TELAS.menu = () => {
@@ -369,7 +476,7 @@ TELAS.f1 = () => {
     <p style="margin:0">Clique nas peças <b>na ordem em que a regra compara</b>: a 1ª peça decide primeiro; a 2ª só desempata.</p>
     <div id="f1-slots"></div>
     <div class="escolha pecas" id="f1-pecas">${F.campos.map(([k, n]) => `<button data-c="${k}">${n}</button>`).join("")}<button class="neutro" id="f1-limpa" style="background:#e6d6b2">↺ limpar</button></div>
-    <p class="legenda">Como no dicionário: primeiro a 1ª letra, depois a 2ª… Se ainda empatar, o número da ficha (identificador) desempata no fim.</p>
+    ${dicaClique("Como funciona a chave?", "Como no dicionário: primeiro a 1ª letra, depois a 2ª… Se ainda empatar, o número da ficha (identificador) desempata no fim.")}
     <h3>2. Escolha um jeito de arrumar</h3>
     <div class="decidir"><b class="rot">Para decidir</b>Os três chegam à <b>mesma ordem</b>. O que muda é o <b>trabalho</b>: quantas vezes o computador compara duas fichas ${termo("comparacao", "comparação")}. Com 12 fichas, tanto faz; com milhares, a diferença vira horas.</div>
     <div id="f1-alg">${cartoesMetodos(f1sel.alg)}</div>
@@ -589,6 +696,7 @@ TELAS.custos = () => {
   const F = D.custos, S = P.mc, C = F.comparacao, PU = F.puro;
   $("#tela").innerHTML = `<div class="folha"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between"><h2 style="margin:0">${F.nome} ${pintaEstrelas(P.estrelas.custos)}</h2><span>${botaoCodigo("custos")}${botaoComoJogar("custos")}</span></div>
     ${pearl("Descobrimos que os corredores de Verídia não custam todos o mesmo: alguns estão em obras e gastam muito mais energia. O caminho com <b>menos passos</b> nem sempre é o que gasta <b>menos energia</b>!")}
+    ${blocosPerfis("custos")}
     ${porTras(["energia", "bfs", "guloso", "dijkstra"])}
     <p><b>🎯 Sua missão:</b> chegar ao Centro de Validação (F) com as pistas SEQ e AUT, gastando o <b>mínimo</b> de energia. As regras são as da Fase 3; a diferença é que cada corredor tem um custo (o número no meio da linha; em vermelho, os corredores em obras).</p>
     <div class="agora" id="mc-agora"></div>
@@ -669,7 +777,7 @@ TELAS.f4 = () => {
         <div>↙↙ duas vezes para a esquerda → <b>giro à direita</b> · ↘↘ duas vezes para a direita → <b>giro à esquerda</b></div>
         <div>↙↘ esquerda e depois direita (zigue-zague) → <b>giro duplo E-D</b> · ↘↙ direita e depois esquerda → <b>giro duplo D-E</b></div>
         <div>Nenhum nó ficou 2 andares mais alto de um lado? → <b>não gira</b>. Com menos de 3 códigos, nunca gira.</div>
-        <div class="legenda">Embaixo de cada nó aparece o FB (altura da esquerda − altura da direita). Se virar +2 ou −2, há giro.</div></div>
+        ${dicaClique("O que é o FB embaixo dos nós?", "FB = altura da esquerda − altura da direita. Numa árvore equilibrada, fica entre −1 e +1. Se virar +2 ou −2, há giro.")}</div>
     </div></div></div>
     <div id="f4-sala2" style="display:none"><p>O computador anda pelo mapa da Fase 3 e o cofre anota onde ele já esteve, para não repetir caminho. ${termo("estado", "o que é uma situação?")}</p>
       <div class="decidir"><b class="rot">Para decidir</b>Para o cofre, duas situações são <b>a mesma</b> quando têm o mesmo <b>📍 local</b>, as mesmas <b>🔑 pistas</b> e as mesmas <b>🚪 portas abertas</b>.

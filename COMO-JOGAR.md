@@ -4,6 +4,8 @@
 
 **No navegador:** a primeira tela tem só três linhas e o botão **▶ Começar**. Cada fase abre com um cartão **Como jogar em 10 segundos** (o botão **❔ Como jogar** o mostra de novo) e tem a faixa laranja **O que fazer agora**, o botão **💡 Dica**, **Desfazer** e **Recomeçar**. Ao vencer, cai um carimbo com o selo e de 1 a 3 **estrelas**: três estrelas = jogar como o computador (o mínimo de ações que a BFS acha nas Fases 2 e 3; a menor energia do Dijkstra no desafio extra). O progresso fica guardado no navegador. O som do carimbo começa desligado (botão 🔇 no topo).
 
+**Perfis:** na abertura, o jogo pergunta quem está jogando — 🎒 Estudante (pra que serve isso na vida e numa auditoria de verdade), 🔧 Colega avaliador (como validar cada fase em 1 minuto e quais testes comprovam) ou 🎓 Professora (a conexão de cada fase com as aulas e os slides). Dá para trocar no botão 👤 do topo ou ver os três ("Ver tudo").
+
 **Ajuda para quem é leigo:** a Miss Pearl conta o que está acontecendo em cada fase; os botões verdes com ❔ (e o 📖 Dicionário no topo) explicam cada palavra em três camadas — no jogo, na eleição e o conceito da aula; os quadros **Para decidir** explicam as opções antes de cada escolha. Ao ganhar um selo, o carimbo oferece **▶ Ir para a próxima fase**.
 
 **Fase 1 no navegador:** em vez de escolher um critério pronto, monte a chave clicando nas peças **zona → seção → horário**, escolha um método e veja as fichas se moverem.
