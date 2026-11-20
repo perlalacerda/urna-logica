@@ -188,7 +188,8 @@ const NOVO = () => ({ selos: [false, false, false, false, false],
   f4: { k: 0, acertos: 0, palpites: [], pares: {} }, f5: { feito: false, alg: null },
   mc: { atual: 0, hist: [], trilha: ["A"], melhor: null }, estrelas: {}, tut: {}, som: false, capa: false });
 let P = NOVO();
-try { const s = localStorage.getItem("urna-logica"); if (s) P = Object.assign(NOVO(), JSON.parse(s)); } catch (e) {}
+try { if (/[?&]novo\b/.test(location.search)) localStorage.removeItem("urna-logica");
+  const s = localStorage.getItem("urna-logica"); if (s) P = Object.assign(NOVO(), JSON.parse(s)); } catch (e) {}
 function salvar() { try { localStorage.setItem("urna-logica", JSON.stringify(P)); } catch (e) {} desenharSelos(); }
 for (const k of ["f2", "f3", "mc"]) if (P[k].erros === undefined) P[k].erros = 0;   // progresso salvo por uma versão anterior
 
@@ -553,12 +554,12 @@ TELAS.menu = () => {
       <button class="btn sec grande" onclick="ir('solver')">Resolver (o computador joga)</button>
       <button class="btn neutro grande" onclick="ir('ajuda')">Como jogar</button>
       <button class="btn neutro grande" onclick="ir('resultados')">Resultados</button>
-      <button class="btn neutro" onclick="if(confirmarZerar())ir('menu')">Zerar progresso</button>
+      <button class="btn neutro" id="zerar" onclick="if(confirmarZerar()){capaPasso=1;ir('capa')}">Zerar progresso</button>
     </div></div>`;
 };
 let zerarPedido = false;
-function confirmarZerar() { if (!zerarPedido) { zerarPedido = true; alertaSuave("Clique de novo em “Zerar progresso” para confirmar."); return false; }
-  zerarPedido = false; P = NOVO(); P.capa = true; salvar(); return true; }
+function confirmarZerar() { if (!zerarPedido) { zerarPedido = true; const b = $("#zerar"); if (b) { b.textContent = "⚠️ Clique de novo para apagar tudo"; b.style.background = "#f3c2b6"; } return false; }
+  zerarPedido = false; P = NOVO(); salvar(); return true; }   // volta ao começo: história, perfil, como jogar
 function alertaSuave(t) { const d = document.createElement("div"); d.className = "msg dica"; d.textContent = t; $("#tela .folha").appendChild(d); }
 
 /* ================= FASE 1 ================= */
