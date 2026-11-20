@@ -30,7 +30,7 @@ As **regras** do jogo existem uma vez só, em `jogo/`. O jogador, o solver, os t
 
 ## Rota de avaliação sugerida (10 minutos)
 
-1. **Testes** — `rodar_testes.bat` (Windows) ou `python -m unittest discover -s testes -t .` → deve terminar em **OK** (141 testes).
+1. **Testes** — `rodar_testes.bat` (Windows) ou `python -m unittest discover -s testes -t .` → deve terminar em **OK** (142 testes).
 2. **Jogar uma fase** — no jogo, **▶ Começar**. A Fase 1 leva cerca de 2 minutos; todas as fases podem ser abertas pelo menu, sem jogar as anteriores.
 3. **Solver** — no menu, **Resolver**: BFS, DFS recursiva e DFS com pilha nas Fases 2 e 3, com caminho, estados expandidos, repetidos barrados, fronteira máxima e árvore de busca.
 4. **Conferir um algoritmo** — escolha uma linha da [matriz](checklist-entrega.md), clique na função e compare o comentário com o slide citado.

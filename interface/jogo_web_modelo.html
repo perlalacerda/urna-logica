@@ -122,6 +122,9 @@
   .abas { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; } .abas button { font: 700 16px var(--titulo); border: 2px solid var(--tinta2); border-radius: 8px 8px 0 0; padding: 8px 16px; background: #efe3c4; color: var(--tinta); }
   .abas button.sel { background: var(--petroleo); color: #fff; border-color: var(--petroleo2); } .abas button:disabled { opacity: .45; }
   .gloss h3 { margin-top: 12px; } .gloss .camada-t { font: 700 12px var(--titulo); letter-spacing: .06em; text-transform: uppercase; color: var(--laranja2); margin-top: 8px; display: block; }
+  /* ---------- ver o código ---------- */
+  pre.cod { background: #15110c; color: #f3ead6; font: 13px/1.45 var(--maquina); padding: 12px 14px; border-radius: 8px; overflow: auto; max-height: 52vh; white-space: pre; margin: 6px 0 14px; }
+  .tut.larga { max-width: 980px; }
   /* ---------- Fase 5: suspense ---------- */
   .chk { opacity: .25; transition: opacity .3s; } .chk.on { opacity: 1; }
   .cofre { font-size: 90px; text-align: center; animation: gira 1.2s ease both; }
@@ -261,6 +264,25 @@ function tutorial(chave, sempre) {
     <p class="legenda">Travou? O botão 💡 Dica mostra o próximo passo.</p></div>`;
   document.body.appendChild(v); $("#tut-ok").onclick = () => v.remove(); v.onclick = e => { if (e.target === v) v.remove(); };
 }
+// "Ver o código desta fase": o código Python que roda a fase, copiado do arquivo quando a página foi gerada.
+const REPO = "https://github.com/perlalacerda/urna-logica/blob/main/";
+const esc = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const botaoCodigo = chave => `<button class="btn sec" onclick="verCodigo('${chave}')">🔧 Ver o código desta fase</button>`;
+function verCodigo(chave) {
+  const L = D.codigo[chave], v = document.createElement("div"); v.className = "veu";
+  v.innerHTML = `<div class="tut larga"><div class="rotulo">Por baixo do capô</div><h2>🔧 O código que roda esta fase</h2>
+    <p>Este é o código Python de verdade, copiado do arquivo quando a página foi gerada. No topo de cada função, o comentário traz o <b>pseudocódigo do slide</b> com a numeração das linhas, para comparar lado a lado.</p>
+    <div class="escolha">${L.map((x, i) => `<button data-i="${i}">${esc(x.nome.split(".").pop())}</button>`).join("")}</div>
+    <div id="cod-corpo"></div><button class="btn" id="cod-fecha">Fechar</button></div>`;
+  document.body.appendChild(v);
+  const mostra = i => { const x = L[i]; v.querySelectorAll("[data-i]").forEach(b => b.classList.toggle("sel", +b.dataset.i === i));
+    v.querySelector("#cod-corpo").innerHTML = `<h3 style="margin-top:6px">${esc(x.titulo)}</h3>
+      <p class="legenda" style="margin:0"><span class="codigo">${x.arquivo}:${x.linha}</span> · <a href="${REPO}${x.arquivo}#L${x.linha}" target="_blank" rel="noopener">abrir no GitHub</a></p>
+      <pre class="cod">${esc(x.codigo)}</pre>`; };
+  v.querySelectorAll("[data-i]").forEach(b => b.onclick = () => mostra(+b.dataset.i));
+  v.querySelector("#cod-fecha").onclick = () => v.remove(); v.onclick = e => { if (e.target === v) v.remove(); };
+  mostra(0);
+}
 const botaoComoJogar = chave => `<button class="btn neutro" onclick="tutorial('${chave}', true)">❔ Como jogar</button>`;
 // Desliza as fichas da posição antiga para a nova (técnica FLIP: guarda onde estavam, redesenha, anima a diferença).
 function deslizar(raiz, redesenhar) {
@@ -285,7 +307,7 @@ const BASTIDOR = {1: ["vetor", "chave", "comparacao", "bubble", "merge", "quick"
 function cabecalho(n) {
   const c = D.capitulos[n - 1], fase = D["fase" + n];
   return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between">
-      <h2 style="margin:0">${fase.nome} ${P.selos[n - 1] ? "· ✔ selo" : ""} ${pintaEstrelas(P.estrelas["f" + n])}</h2>${botaoComoJogar("f" + n)}</div>
+      <h2 style="margin:0">${fase.nome} ${P.selos[n - 1] ? "· ✔ selo" : ""} ${pintaEstrelas(P.estrelas["f" + n])}</h2><span>${botaoCodigo("f" + n)}${botaoComoJogar("f" + n)}</span></div>
     ${pearl(NARRA[n])}
     <p><b>🎯 Sua missão:</b> ${c.missao}</p>
     ${porTras(BASTIDOR[n])}
@@ -565,7 +587,7 @@ TELAS.f3 = () => {
 let mcVer = "Dijkstra";
 TELAS.custos = () => {
   const F = D.custos, S = P.mc, C = F.comparacao, PU = F.puro;
-  $("#tela").innerHTML = `<div class="folha"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between"><h2 style="margin:0">${F.nome} ${pintaEstrelas(P.estrelas.custos)}</h2>${botaoComoJogar("custos")}</div>
+  $("#tela").innerHTML = `<div class="folha"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between"><h2 style="margin:0">${F.nome} ${pintaEstrelas(P.estrelas.custos)}</h2><span>${botaoCodigo("custos")}${botaoComoJogar("custos")}</span></div>
     ${pearl("Descobrimos que os corredores de Verídia não custam todos o mesmo: alguns estão em obras e gastam muito mais energia. O caminho com <b>menos passos</b> nem sempre é o que gasta <b>menos energia</b>!")}
     ${porTras(["energia", "bfs", "guloso", "dijkstra"])}
     <p><b>🎯 Sua missão:</b> chegar ao Centro de Validação (F) com as pistas SEQ e AUT, gastando o <b>mínimo</b> de energia. As regras são as da Fase 3; a diferença é que cada corredor tem um custo (o número no meio da linha; em vermelho, os corredores em obras).</p>
@@ -796,6 +818,17 @@ TELAS.ajuda = () => {
     <p class="legenda" style="margin-top:12px">Como esta página funciona: o Python executou as regras reais do jogo e calculou todas as situações possíveis de cada fase, o resultado de cada jogada e a dica do solver (BFS) para cada situação. A página só consulta essas tabelas: as regras estão no código em <span class="codigo">jogo/</span>, não aqui. O progresso fica guardado neste navegador.</p>
     ${voltar}</div>`;
 };
+const DESCR_TESTES = {
+  test_estruturas: "pilha, fila, lista ligada e AVL (vazias, um elemento, remoções, exemplo da aula 08)",
+  test_ordenacao: "registros, seed, Bubble, Merge e Quick, chave composta, estabilidade",
+  test_fases: "regras das Fases 1 e 2, jogada inválida, desfazer, reiniciar",
+  test_grafo_busca: "grafo, BFS e DFS da aula 09, regras do mapa, solver",
+  test_fases_finais: "Fase 4 (rotações, pares), Fase 5 (integração), gerador de mapas",
+  test_dicas: "as dicas do solver levam à vitória",
+  test_visualizacao: "a visualização usa dados reais",
+  test_jogo_web: "esta página concorda, jogada a jogada, com o Python",
+  test_mapa_custos: "heap, Dijkstra (aula 11), guloso, mapa com custos",
+  test_checklist: "a matriz de inspeção só cita o que existe"};
 TELAS.resultados = () => {
   $("#tela").innerHTML = `<div class="folha"><h2>Resultados</h2>
     <p>Estrelas: ${["f1", "f2", "f3", "f4", "f5", "custos"].map(k => `${k === "custos" ? "desafio extra" : "Fase " + k[1]} ${pintaEstrelas(P.estrelas[k]) || "—"}`).join(" · ")}</p>
@@ -805,6 +838,16 @@ TELAS.resultados = () => {
     <div class="caixa"><h3>Fase 4 — cofre</h3>${P.f4.k}/${D.fase4.lacres.length} lacres, ${P.f4.acertos} palpites certos; ${Object.values(P.f4.pares).filter(x => x === true).length}/${D.fase4.pares.length} pares certos</div>
     <div class="caixa"><h3>Fase 5 — auditoria</h3>${P.f5.feito ? (P.selos[4] ? "consistente" : "não consistente") : "não executada"}</div>
     <div class="caixa"><h3>Desafio extra — mapa com custos</h3>${P.mc.melhor === null ? "ainda não chegou a F" : `menor energia gasta: ${P.mc.melhor} (o Dijkstra gasta ${D.custos.otimo})`}</div>
+    <h2 style="margin-top:22px">🧪 Testes automáticos</h2>
+    ${D.testes ? `<p style="font-size:19px"><b>${D.testes.total} testes · ${D.testes.falhas === 0 ? "✅ todos aprovados" : `❌ ${D.testes.falhas} falha(s)`}</b> <span class="legenda">(resultado da execução quando esta página foi gerada)</span></p>
+      <table class="metr"><tr><th>arquivo de testes</th><th>o que confere</th><th>testes</th></tr>${D.testes.por_arquivo.map(([m, n]) => `<tr><td class="codigo">testes/${m}.py</td><td>${DESCR_TESTES[m] || ""}</td><td>${n}</td></tr>`).join("")}</table>`
+      : "<p>Rode <span class='codigo'>rodar_testes.bat</span> (ou <span class='codigo'>python -m unittest discover -s testes -t .</span>) para ver o resultado.</p>"}
+    <p class="legenda">Para conferir de novo: <span class="codigo">rodar_testes.bat</span> no Windows, ou <span class="codigo">python -m unittest discover -s testes -t .</span></p>
+    <h2 style="margin-top:22px">🤖 Declaração de uso de inteligência artificial</h2>
+    <div class="caixa" style="border-style:solid;font-size:16px">
+      <p>Este trabalho contou com o apoio de ferramenta de inteligência artificial generativa (Claude, da Anthropic) na escrita do código, dos testes, da interface e da documentação.</p>
+      <p>As decisões sobre requisitos, regras do jogo, linguagem e escolhas de projeto — e sobre o que manter, alterar ou descartar — foram da autora, que revisou, testou e validou o resultado e assume a responsabilidade pelo conteúdo.</p>
+      <p style="margin:0">O registro de cada interação (objetivo, trecho aproveitado, alterações e forma de validação) está em <span class="codigo">docs/registro-iag.md</span>, conforme a seção 14.4 do enunciado.</p></div>
     ${voltar}</div>`;
 };
 

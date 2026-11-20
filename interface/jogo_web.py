@@ -313,23 +313,101 @@ def dados_solver():
     return res
 
 
+# ============================================================ "VER O CÓDIGO DESTA FASE"
+# Para cada fase: as funções que fazem o trabalho, com a aula de origem. O texto do
+# código é copiado do arquivo AGORA (inspect), por isso a página nunca mostra uma
+# versão velha. O número da linha é o mesmo da matriz de inspeção.
+CODIGO_POR_FASE = {
+    "f1": [("jogo.registros:chave_composta", "Chave composta (enunciado, Fase 1)"),
+           ("algoritmos.ordenacao:bubble_sort", "Bubble Sort — aula 02, slide 10"),
+           ("algoritmos.ordenacao:merge_sort", "Merge Sort — aula 02, slides 20–22"),
+           ("algoritmos.ordenacao:quick_sort", "Quick Sort — aula 04, slides 31–37"),
+           ("algoritmos.ordenacao:_particiona", "Partição de Lomuto — aula 04")],
+    "f2": [("estruturas.fila:Fila.dequeue", "Fila: remover do início — aula 06"),
+           ("estruturas.pilha:Pilha.push", "Pilha: empilhar — aula 06"),
+           ("estruturas.pilha:Pilha.pop", "Pilha: desempilhar — aula 06"),
+           ("estruturas.lista_ligada:ListaLigada.inserir_fim", "Lista ligada: inserir no fim — aula 06"),
+           ("jogo.fase2:regra_guardar", "Regra do botão “Guardar na pilha”"),
+           ("jogo.fase2:regra_aceitar", "Regra do botão “Pôr no cofre”")],
+    "f3": [("estruturas.grafo:Grafo.adicionar_aresta", "Grafo por lista de adjacência — aula 09"),
+           ("jogo.fase3:mover", "Regras do mapa: vizinho, energia, porta, pista"),
+           ("algoritmos.busca_grafo:bfs", "BFS da aula 09 — slides 71–73"),
+           ("algoritmos.solver:bfs", "BFS no espaço de estados (o solver da dica)")],
+    "f4": [("estruturas.avl:ArvoreAVL._insere", "Inserção na AVL — aula 08"),
+           ("estruturas.avl:ArvoreAVL._rotacao_direita", "Rotação direita (RD) — aula 08"),
+           ("estruturas.avl:ArvoreAVL._rotacao_esquerda_direita", "Rotação dupla esquerda-direita (RED) — aula 08"),
+           ("algoritmos.solver:_Visitados", "A AVL como memória de estados visitados")],
+    "f5": [("jogo.fase5:Fase5.etapa_triagem", "Auditoria da Fase 2: refaz cada jogada pelas regras"),
+           ("jogo.fase5:Fase5.etapa_mapa", "Auditoria da Fase 3: refaz cada passo pelas regras"),
+           ("algoritmos.solver:dfs_recursiva", "DFS recursiva (caso-base e retorno)")],
+    "custos": [("estruturas.heap:HeapMinimo._subir", "Heap: subir — aula 08, slide 36"),
+               ("algoritmos.dijkstra:relaxa", "Relaxamento — aula 11"),
+               ("algoritmos.dijkstra:dijkstra", "Dijkstra — aula 11"),
+               ("algoritmos.dijkstra:guloso_ingenuo", "Guloso ingênuo (o que trava)")],
+}
+
+
+def dados_codigo():
+    import importlib
+    import inspect
+    raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    res = {}
+    for fase, itens in CODIGO_POR_FASE.items():
+        lista = []
+        for ref, titulo in itens:
+            modulo, nome = ref.split(":")
+            obj = importlib.import_module(modulo)
+            for parte in nome.split("."):
+                obj = getattr(obj, parte)
+            linhas, inicio = inspect.getsourcelines(obj)
+            arquivo = os.path.relpath(inspect.getsourcefile(obj), raiz).replace(os.sep, "/")
+            lista.append({"titulo": titulo, "nome": nome, "arquivo": arquivo, "linha": inicio,
+                          "codigo": "".join(linhas).rstrip()})
+        res[fase] = lista
+    return res
+
+
+def dados_testes():
+    """Roda a suíte de testes e resume por arquivo (só na geração da página, não dentro dos testes)."""
+    import io
+    import unittest
+    raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    suite = unittest.TestLoader().discover(os.path.join(raiz, "testes"), top_level_dir=raiz)
+    por = {}
+
+    def contar(s):
+        for t in s:
+            if isinstance(t, unittest.TestSuite):
+                contar(t)
+            else:
+                m = t.__class__.__module__.replace("testes.", "")
+                por[m] = por.get(m, 0) + 1
+    contar(suite)
+    r = unittest.TextTestRunner(stream=io.StringIO(), verbosity=0).run(suite)
+    return {"total": r.testsRun, "falhas": len(r.failures) + len(r.errors), "por_arquivo": sorted(por.items())}
+
+
 def gerar_dados():
     return {"titulo": narrativa.TITULO, "prologo": narrativa.PROLOGO, "aviso": narrativa.AVISO,
             "capitulos": narrativa.CAPITULOS,
             "fase1": dados_fase1(), "fase2": dados_fase2(), "fase3": dados_fase3(),
             "fase4": dados_fase4(), "fase5": dados_fase5(), "solver": dados_solver(),
-            "custos": dados_mapa_custos()}
+            "custos": dados_mapa_custos(), "codigo": dados_codigo()}
 
 
-def gerar_html(caminho="jogo.html"):
+def gerar_html(caminho="jogo.html", com_testes=False):
+    """com_testes=True roda a suíte e grava o resultado na tela Resultados (usado ao gerar a página oficial)."""
     modelo = os.path.join(os.path.dirname(__file__), "jogo_web_modelo.html")
     with open(modelo, encoding="utf-8") as arq:
         html = arq.read()
-    html = html.replace("/*__DADOS__*/null", json.dumps(gerar_dados(), ensure_ascii=False, default=str))
+    D = gerar_dados()
+    if com_testes:
+        D["testes"] = dados_testes()
+    html = html.replace("/*__DADOS__*/null", json.dumps(D, ensure_ascii=False, default=str))
     with open(caminho, "w", encoding="utf-8") as arq:
         arq.write(html)
     return os.path.abspath(caminho)
 
 
 if __name__ == "__main__":
-    print(gerar_html())
+    print(gerar_html(com_testes=True))

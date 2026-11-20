@@ -101,6 +101,17 @@ class TestJogoWeb(unittest.TestCase):
         self.assertEqual(self.D["fase3"]["minimo"], bfs(ProblemaMapa()).numero_acoes())
         self.assertEqual((self.D["fase2"]["minimo"], self.D["fase3"]["minimo"]), (7, 7))
 
+    def test_ver_o_codigo_mostra_o_codigo_atual(self):
+        """O código exibido em cada fase é o do arquivo, começando na linha informada."""
+        import os
+        raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        for fase in ("f1", "f2", "f3", "f4", "f5", "custos"):
+            self.assertTrue(self.D["codigo"][fase], fase)
+            for x in self.D["codigo"][fase]:
+                with open(os.path.join(raiz, x["arquivo"]), encoding="utf-8") as arq:
+                    linhas = arq.read().splitlines()
+                self.assertEqual(linhas[x["linha"] - 1].rstrip(), x["codigo"].splitlines()[0].rstrip())
+
     def test_mapa_custos_cada_movimento_igual_ao_python(self):
         from jogo.mapa_custos import construir_mapa_custos, ENERGIA_CUSTOS
         G, E = construir_mapa_custos(), self.D["custos"]["estados"]
