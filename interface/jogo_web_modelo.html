@@ -19,6 +19,23 @@
                 background: #1d120a; color: var(--papel); padding: 10px 18px; border-bottom: 4px solid var(--laranja); }
   header.topo .marca { font-family: var(--titulo); letter-spacing: .1em; text-transform: uppercase; font-size: 14px; font-weight: 700; }
   .selos { display: flex; gap: 8px; margin-left: auto; }
+  header.topo .faixa { flex-basis: 100%; font-size: 15px; color: #f3ead6; border-top: 1px solid #4a3a2a; padding-top: 6px; }
+  header.topo .faixa b { color: var(--ambar); }
+  .pearl .av svg { display: block; }
+  .historia { text-align: left; max-width: 820px; margin: 0 auto; }
+  .historia .elenco { display: flex; gap: 22px; justify-content: center; align-items: flex-end; margin: 6px 0 14px; }
+  .historia .elenco figure { margin: 0; text-align: center; font-size: 14px; color: var(--tinta2); max-width: 180px; }
+  .historia .bloco { border-left: 6px solid var(--laranja); background: #fbf3df; border-radius: 8px; padding: 10px 14px; margin: 10px 0; }
+  .historia .bloco > b:first-child { display: block; font: 800 14px var(--titulo); letter-spacing: .06em; text-transform: uppercase; color: var(--laranja2); }
+  .historia .bloco.civ { border-color: var(--petroleo); } .historia .bloco.civ > b:first-child { color: var(--petroleo2); }
+  .historia .problemas { counter-reset: p; list-style: none; padding: 0; margin: 6px 0 0; }
+  .historia .problemas li { counter-increment: p; display: flex; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px dotted var(--borda); }
+  .historia .problemas li::before { content: counter(p); flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+     background: var(--laranja); color: #fff6e4; font: 700 15px var(--titulo); }
+  .passos-capa { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 14px; font-size: 14px; color: var(--tinta2); }
+  .passos-capa span { padding: 3px 12px; border-radius: 12px; background: #efe3c4; } .passos-capa span.ativo { background: var(--laranja); color: #fff6e4; }
+  .comojogar { text-align: left; max-width: 720px; margin: 0 auto 16px; font-size: 19px; } .comojogar li { margin: 8px 0; }
+  .gloss .camada-t.eleicao { color: var(--petroleo2); }
   .selo { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-family: var(--titulo); font-weight: 700;
           background: #4a3a2a; color: #9c8a73; border: 2px solid #6b5236; font-size: 15px; }
   .selo.ok { background: radial-gradient(circle at 35% 35%, #f19a5c, var(--laranja2)); color: #fff6e4; border-color: var(--ambar); box-shadow: 0 0 10px rgba(255,179,71,.5); }
@@ -154,6 +171,7 @@
   <button class="som perfil-btn" id="perfil-btn" onclick="escolherPerfil()" title="Trocar o perfil de quem joga">👤 Perfil</button>
   <button class="som" onclick="abrirDicionario()" title="O que significa cada palavra do jogo">📖 Dicionário</button>
   <button class="som" id="som" onclick="P.som=!P.som;salvar();marcarSom()" title="Som do carimbo">🔇 som</button>
+  <div class="faixa" id="faixa" hidden></div>
 </header>
 <main id="tela"></main>
 
@@ -209,12 +227,12 @@ const GLOSS = {
   comparacao: ["⚖️", "Comparação", "O computador olha duas fichas e decide qual vem antes. Cada comparação gasta um tiquinho de tempo e de energia.",
     "Com milhões de registros, escolher o método errado transforma minutos em horas de computador — e de eletricidade — na apuração.",
     "Mede-se o custo de um algoritmo contando operações em função de n (quantas fichas): análise assintótica, aulas 03 e 04. n² cresce muito mais rápido que n log n: com 500 fichas, 124 750 comparações contra cerca de 4 500."],
-  bubble: ["🫧", "Bubble Sort (método da bolha)", "Compara vizinhos e troca os que estão fora de ordem; repete até não sobrar troca. As fichas grandes “sobem” como bolhas. Fácil, mas lento com muitas fichas.",
-    "Como arrumar cartas na mão trocando duas de cada vez.", "Faz n(n−1)/2 comparações: O(n²). Aula 02 (versões iterativa e recursiva)."],
-  merge: ["🔀", "Merge Sort (dividir e juntar)", "Divide o monte ao meio, de novo e de novo, até sobrar 1 ficha; depois junta os montinhos já em ordem. Sempre rápido.",
-    "Como dividir a apuração entre várias equipes e depois juntar os resultados já organizados.", "Dividir e conquistar: T(n) = 2·T(n/2) + n, o que dá O(n log n). Aula 04."],
-  quick: ["⚡", "Quick Sort (o pivô)", "Escolhe uma ficha como pivô e separa: menores de um lado, maiores do outro; repete em cada lado. Costuma ser o mais rápido.",
-    "Como separar as cédulas em “antes” e “depois” de uma cédula de referência.", "Partição de Lomuto com o último elemento como pivô. Caso médio O(n log n); pior caso O(n²), com o vetor já ordenado. Aula 04."],
+  bubble: ["🫧", "Bubble Sort (método da bolha)", "Compara vizinhos e troca os que estão fora de ordem; repete até não sobrar troca. As fichas grandes “sobem” como bolhas. Fácil, mas lento com muitas fichas.<br><b>Exemplo:</b> 3 1 2 → compara 3 e 1, troca → 1 3 2 → compara 3 e 2, troca → <b>1 2 3</b>.",
+    "", "Faz n(n−1)/2 comparações: O(n²). Aula 02 (versões iterativa e recursiva)."],
+  merge: ["🔀", "Merge Sort (dividir e juntar)", "Divide o monte ao meio, de novo e de novo, até sobrar 1 ficha; depois junta os montinhos já em ordem. Sempre rápido.<br><b>Exemplo:</b> 4 1 3 2 → divide em [4 1] e [3 2] → arruma cada metade: [1 4] e [2 3] → junta pegando sempre a menor da frente → <b>1 2 3 4</b>.",
+    "", "Dividir e conquistar: T(n) = 2·T(n/2) + n, o que dá O(n log n). Aula 04."],
+  quick: ["⚡", "Quick Sort (o pivô)", "Escolhe uma ficha como pivô e separa: menores de um lado, maiores do outro; repete em cada lado. Costuma ser o mais rápido.<br><b>Exemplo:</b> 4 1 3 2 com pivô 2 → menores: [1]; maiores: [4 3] → arruma cada lado → <b>1 2 3 4</b>.",
+    "", "Partição de Lomuto com o último elemento como pivô. Caso médio O(n log n); pior caso O(n²), com o vetor já ordenado. Aula 04."],
   fila: ["📥", "Esteira de chegada (fila)", "As provas chegam uma atrás da outra; só a da frente pode sair — como a fila da cantina.",
     "Os documentos chegam à central na ordem em que foram enviados.", "Fila = FIFO (primeiro a entrar, primeiro a sair). Inserir no fim e remover do início: O(1). Aula 06. É também a estrutura da BFS."],
   pilha: ["🥞", "Pilha de espera (pilha)", "Uma pilha de pratos: o último que você põe em cima é o primeiro que sai.",
@@ -242,7 +260,7 @@ const GLOSS = {
 };
 const termo = (k, txt) => `<span class="termo" onclick="explicar('${k}')" title="O que é isto?">${txt || GLOSS[k][1].replace(/ \(.*\)$/, "")} ❔</span>`;
 function blocoTermo(k) { const [ic, nome, jogo, eleicao, aula] = GLOSS[k];
-  return `<h3>${ic} ${nome}</h3><span class="camada-t">No jogo</span><div>${jogo}</div>${eleicao ? `<span class="camada-t">Na eleição</span><div>${eleicao}</div>` : ""}
+  return `<h3>${ic} ${nome}</h3><span class="camada-t">${eleicao ? "No jogo" : "Como funciona"}</span><div>${jogo}</div>${eleicao ? `<span class="camada-t eleicao">Na eleição</span><div>${eleicao}</div>` : ""}
     <details><summary>🔬 O conceito da aula (para quem quer ir fundo)</summary><div>${aula}</div></details>`; }
 function janela(html) { const v = document.createElement("div"); v.className = "veu";
   v.innerHTML = `<div class="tut gloss">${html}<button class="btn" style="margin-top:12px">Fechar</button></div>`;
@@ -251,8 +269,42 @@ function explicar(k) { janela(`<div class="rotulo">O que é isto?</div>${blocoTe
 function abrirDicionario() { janela(`<div class="rotulo">Dicionário do jogo</div><h2>📖 As palavras do jogo</h2>
   <p class="legenda">Cada palavra tem três camadas: o que ela é no jogo, com o que se parece numa eleição e o conceito de matemática e computação por trás.</p>
   ${Object.keys(GLOSS).map(blocoTermo).join("")}`); }
+// Personagens originais, desenhados em SVG (o mesmo código visual da Audiência Pública).
+function apura(humor = "normal", tam = 92) {
+  const olhos = humor === "feliz"
+    ? '<path d="M27 33 q4 -5 8 0 M45 33 q4 -5 8 0" stroke="#ffb347" stroke-width="3" fill="none"/>'
+    : humor === "pensando"
+    ? '<rect x="27" y="29" width="7" height="7" fill="#ffb347"/><rect x="46" y="31" width="7" height="3" fill="#ffb347"/>'
+    : '<rect x="28" y="29" width="7" height="7" fill="#ffb347"/><rect x="45" y="29" width="7" height="7" fill="#ffb347"/>';
+  const boca = humor === "pensando" ? '<path d="M33 44 h14" stroke="#ffb347" stroke-width="3"/>'
+    : '<path d="M31 42 q9 8 18 0" stroke="#ffb347" stroke-width="3" fill="none"/>';
+  return `<svg width="${tam}" height="${tam * 1.25}" viewBox="0 0 80 100" role="img" aria-label="APURA-42">
+    <line x1="40" y1="8" x2="40" y2="16" stroke="#2b1d12" stroke-width="3"/><circle cx="40" cy="7" r="5" fill="#ffb347" stroke="#2b1d12" stroke-width="2"/>
+    <rect x="12" y="16" width="56" height="62" rx="10" fill="#1f5f5b" stroke="#2b1d12" stroke-width="3"/>
+    <rect x="28" y="19" width="24" height="4" rx="2" fill="#2b1d12"/>
+    <rect x="19" y="24" width="42" height="30" rx="7" fill="#15110c" stroke="#2b1d12" stroke-width="2"/>
+    ${olhos}${boca}
+    <circle cx="26" cy="64" r="4" fill="#d9682b"/><circle cx="40" cy="64" r="4" fill="#f4e7c9"/><circle cx="54" cy="64" r="4" fill="#d9682b"/>
+    <path d="M68 50 l9 -6" stroke="#2b1d12" stroke-width="4" stroke-linecap="round"/><circle cx="78" cy="40" r="7" fill="rgba(255,248,232,.6)" stroke="#2b1d12" stroke-width="3"/>
+    <rect x="22" y="78" width="8" height="12" fill="#2b1d12"/><rect x="50" y="78" width="8" height="12" fill="#2b1d12"/>
+    <rect x="17" y="88" width="16" height="6" rx="3" fill="#d9682b"/><rect x="47" y="88" width="16" height="6" rx="3" fill="#d9682b"/></svg>`;
+}
+function missPearl(tam = 80) {   // Miss Pearl: personagem original (analista retrô da CIV)
+  return `<svg width="${tam}" height="${tam * 1.2}" viewBox="0 0 70 84" role="img" aria-label="Miss Pearl">
+    <path d="M14 30 q0 -22 21 -22 q21 0 21 22 q0 10 6 14 q-10 3 -14 -6 l-26 0 q-4 9 -14 6 q6 -4 6 -14z" fill="#3b2414"/>
+    <circle cx="35" cy="31" r="14" fill="#e8b98f" stroke="#2b1d12" stroke-width="2"/>
+    <path d="M21 26 q14 -14 28 0 q-6 -10 -14 -10 q-8 0 -14 10z" fill="#3b2414"/>
+    <path d="M24 30 q4 -4 9 0 M37 30 q5 -4 9 0" stroke="#2b1d12" stroke-width="2.5" fill="none"/>
+    <path d="M22 29 l-3 -3 M48 29 l3 -3" stroke="#2b1d12" stroke-width="2"/>
+    <path d="M30 38 q5 4 10 0" stroke="#b5321e" stroke-width="2.5" fill="none"/>
+    <path d="M10 82 q2 -26 25 -27 q23 1 25 27z" fill="#1f5f5b" stroke="#2b1d12" stroke-width="2"/>
+    <path d="M27 56 l8 9 l8 -9" fill="#d9682b" stroke="#2b1d12" stroke-width="1.5"/>
+    <rect x="42" y="64" width="12" height="9" rx="2" fill="#f4e7c9" stroke="#2b1d12"/><text x="48" y="71" font-size="5" text-anchor="middle" fill="#2b1d12" font-family="sans-serif">CIV</text>
+    <rect x="12" y="60" width="13" height="18" rx="1" fill="#f4e7c9" stroke="#2b1d12" stroke-width="1.5"/>
+    <path d="M14 65 h9 M14 69 h9 M14 73 h6" stroke="#6b5236" stroke-width="1.2"/></svg>`;
+}
 // Narradora: o que está acontecendo, em linguagem de jogo.
-const pearl = t => `<div class="pearl"><span class="av">👩‍💼</span><div><b class="quem">Miss Pearl · auditora-chefe da CIV</b>${t}</div></div>`;
+const pearl = t => `<div class="pearl"><span class="av">${missPearl(46)}</span><div><b class="quem">Miss Pearl · auditora-chefe da CIV</b>${t}</div></div>`;
 // "Por trás da tela": as estruturas e algoritmos que a fase usa, cada um clicável.
 const porTras = ks => `<div class="portras"><b>🔍 Por trás da tela, o computador usa:</b>${ks.map(k => termo(k)).join("")}</div>`;
 // Traduz um número de comparações para quem não é da área: quanto tempo uma pessoa levaria a 1 segundo por comparação.
@@ -343,7 +395,10 @@ const PERFIL_TXT = {
 const corPerfil = k => `--cor:${PERFIS[k][3]}`;
 function blocoPerfil(k, fase) {
   const T = PERFIL_TXT[fase], [ic, nome] = PERFIS[k];
-  if (k === "estudante") return `<span class="cab">${ic} ${nome} · pra que serve isso?</span><div>${T.vida}</div>
+  const pr = PROBLEMA[fase.replace(/^f(\d)$/, "$1")];
+  if (k === "estudante") return `<span class="cab">${ic} ${nome} · o problema e a ferramenta</span>
+    <div>Para resolver o problema “<b>${pr[0].toLowerCase()}</b>”, o computador usa ${pr[2]}.</div>
+    <div style="margin-top:6px"><b>E pra que serve isso no dia a dia?</b> ${T.vida}</div>
     ${dicaClique("E numa auditoria de verdade?", T.auditoria)}`;
   if (k === "colega") return `<span class="cab">${ic} ${nome} · como validar em 1 minuto</span><ol>${T.validar().map(x => `<li>${x}</li>`).join("")}</ol>
     ${dicaClique("Testes que comprovam", T.testes.map(t => `<span class="codigo">${t}</span>`).join(" · ") + `<br>Lista completa, com arquivo e linha: <a href="${REPO.replace("/blob/main/", "")}/blob/main/docs/checklist-entrega.md" target="_blank" rel="noopener">matriz de inspeção</a>. O código da fase está no botão 🔧.`)}`;
@@ -361,7 +416,7 @@ function escolherPerfil() {
     <div class="cartoes-perfil">${Object.entries(PERFIS).map(([k, [ic, nome, frase, cor]]) => `<button class="cartao-perfil" style="--cor:${cor}" data-perfil="${k}"><span class="ic">${ic}</span><b>${nome}</b>${frase}</button>`).join("")}</div>
     <button class="btn neutro" data-perfil="tudo">👀 Ver tudo (os três perfis recolhidos)</button></div>`;
   document.body.appendChild(v);
-  v.querySelectorAll("[data-perfil]").forEach(b => b.onclick = () => { P.perfil = b.dataset.perfil; salvar(); v.remove(); marcarPerfil(); const t = telaAtual; ir(t === "capa" ? "f1" : t); });
+  v.querySelectorAll("[data-perfil]").forEach(b => b.onclick = () => { P.perfil = b.dataset.perfil; salvar(); v.remove(); marcarPerfil(); ir(telaAtual); });
   v.onclick = e => { if (e.target === v) v.remove(); };
 }
 function marcarPerfil() { const b = $("#perfil-btn"); if (!b) return; const k = P.perfil;
@@ -399,7 +454,7 @@ function deslizar(raiz, redesenhar) {
 function desenharSelos() { $("#selos").innerHTML = P.selos.map((s, i) => `<span class="selo${s ? " ok" : ""}" title="Selo ${i + 1}">${s ? "✔" : i + 1}</span>`).join(""); }
 
 let telaAtual = "menu";
-function ir(tela) { telaAtual = tela; TELAS[tela](); window.scrollTo(0, 0); desenharSelos(); marcarSom(); marcarPerfil(); if (TUT[tela]) tutorial(tela); }
+function ir(tela) { telaAtual = tela; TELAS[tela](); window.scrollTo(0, 0); desenharSelos(); faixaFase(tela); marcarSom(); marcarPerfil(); if (TUT[tela]) tutorial(tela); }
 const voltar = '<button class="btn neutro" onclick="ir(\'menu\')">← Voltar ao menu</button>';
 const NARRA = {
   1: "Chegaram 12 fichas com os registros das seções de Verídia, mas vieram <b>embaralhadas</b>! Para conferir, a auditoria precisa delas em ordem: primeiro pela <b>zona eleitoral</b>, depois pela <b>seção</b> (a sala onde se vota) e, se empatar, pelo <b>horário</b>. Você monta a regra; o computador arruma.",
@@ -407,41 +462,83 @@ const NARRA = {
   3: "A trilha entre as seções se partiu. Você vai da Central de Auditoria (A) até o Centro de Validação (F). Só que há <b>portas trancadas</b>: cada uma pede uma pista que está em outro canto do mapa. Pegue as pistas antes!",
   4: "O computador da CIV está andando em círculos, visitando o mesmo lugar várias vezes. Vamos organizar a memória dele num <b>cofre em forma de árvore</b>, para ele lembrar rápido onde já esteve.",
   5: "Hora da verdade! A auditoria vai <b>refazer tudo</b> o que você fez e conferir, passo a passo, se cada jogada obedeceu às regras. Se tudo bater, o Cofre de Verificação abre."};
+// O problema de cada fase em poucas palavras; a história completa fica na capa.
+const PROBLEMA = {1: ["Arquivo embaralhado", "As 12 fichas das seções chegaram fora de ordem. Sem ordem, não dá para conferir nada.", "a <b>ordenação</b> com uma <b>chave composta</b>: arrumar por uma regra (primeiro zona, depois seção, depois horário)"],
+  2: ["Provas fora de ordem", "As provas chegam pela esteira e precisam entrar no cofre numa ordem exata. Se a ordem quebrar, a prova não vale.", "a <b>fila</b> (quem chega primeiro sai primeiro), a <b>pilha</b> (o último que entra sai primeiro) e a <b>lista ligada</b> (uma corrente em ordem)"],
+  3: ["Trilha partida", "O caminho entre as seções se partiu e há portas trancadas. É preciso achar uma rota que obedeça a todas as regras.", "o <b>grafo</b> (um mapa de pontos ligados) e a <b>busca em largura</b> (explorar em ondas para achar o caminho mais curto)"],
+  4: ["Computador andando em círculos", "O computador da CIV visita o mesmo lugar várias vezes porque não lembra onde já esteve.", "a <b>árvore equilibrada</b> (AVL): uma memória em que cada pergunta descarta metade das opções"],
+  5: ["Conferência final", "Ninguém deve acreditar no resultado sem ver a prova. A auditoria refaz cada passo e confere as regras.", "a <b>integração</b> de tudo: ordenação, fila, pilha, grafo, busca e árvore conferindo umas às outras"],
+  custos: ["Rota mais barata", "No mesmo mapa, cada corredor gasta uma energia diferente. O caminho com menos passos nem sempre é o mais barato.", "o <b>algoritmo de Dijkstra</b> (sempre continua pelo caminho que saiu mais barato até agora) e a comparação com o <b>guloso</b>"]};
+const MISSAO_CURTA = {1: "arrumar as 12 fichas na ordem da auditoria", 2: "pôr as provas no cofre na ordem E2 → E4 → E1 → E6", 3: "ir de A até F pegando as pistas SEQ e AUT",
+  4: "montar a memória em árvore e responder às salas", 5: "rodar a auditoria e abrir o Cofre", custos: "pegar SEQ e AUT e chegar a F gastando o mínimo de energia"};
+function faixaFase(chave) { const f = $("#faixa"); if (!f) return; const n = String(chave).replace(/^f(\d)$/, "$1"), pr = PROBLEMA[n];
+  if (!pr) { f.hidden = true; return; }
+  f.hidden = false; f.innerHTML = `<b>${n === "custos" ? "Desafio extra" : "Fase " + n}</b> · 🧩 Problema: <b>${pr[0]}</b> · 🎯 ${MISSAO_CURTA[n]}`; }
 const BASTIDOR = {1: ["vetor", "chave", "comparacao", "bubble", "merge", "quick"], 2: ["fila", "pilha", "lista"], 3: ["grafo", "estado", "bfs"], 4: ["arvore", "giro", "estado"], 5: ["comparacao", "bfs", "dfs"]};
 function cabecalho(n) {
   const c = D.capitulos[n - 1], fase = D["fase" + n];
   return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between">
       <h2 style="margin:0">${fase.nome} ${P.selos[n - 1] ? "· ✔ selo" : ""} ${pintaEstrelas(P.estrelas["f" + n])}</h2><span>${botaoCodigo("f" + n)}${botaoComoJogar("f" + n)}</span></div>
-    ${pearl(NARRA[n])}
+    ${pearl(`<b>Problema: ${PROBLEMA[n][0].toLowerCase()}.</b> ${PROBLEMA[n][1]}`)}
     ${blocosPerfis("f" + n)}
     <p><b>🎯 Sua missão:</b> ${c.missao}</p>
     ${porTras(BASTIDOR[n])}
+    ${dicaClique("A história desta fase", NARRA[n])}
     <details><summary>O texto original do enunciado</summary><div class="doc">${fase.abertura}</div></details>`;
 }
 
 /* ================= MENU ================= */
 const TELAS = {};
+let capaPasso = 1;
+const PROBLEMAS_CAPA = [["🗂️", "Arquivo embaralhado", "as fichas das seções chegaram fora de ordem."], ["📦", "Provas fora de ordem", "as provas precisam entrar no cofre numa ordem exata."],
+  ["🗺️", "Trilha partida", "o caminho entre as seções se partiu e há portas trancadas."], ["🔐", "Computador andando em círculos", "ele esquece onde já esteve e repete trabalho."],
+  ["🧾", "Conferência final", "refazer tudo e provar que cada passo obedeceu às regras."]];
 TELAS.capa = () => {
-  $("#tela").innerHTML = `<div class="folha capa">
-    <div style="font-size:64px">🗳️</div><h1>${D.titulo}</h1>
-    <div class="linhas"><div>Verídia, 2042: a apuração da eleição saiu embaralhada.</div>
-      <div>Você é a analista da CIV. Ganhe os <b>5 selos</b> e abra o Cofre de Verificação.</div>
-      <div>Tudo é clicável. Travou? Use 💡 Dica.</div></div>
-    <h2 style="margin-top:6px">Quem está jogando?</h2>
-    <div class="cartoes-perfil">${Object.entries(PERFIS).map(([k, [ic, nome, frase, cor]]) => `<button class="cartao-perfil" style="--cor:${cor}" data-perfil="${k}"><span class="ic">${ic}</span><b>${nome}</b>${frase}</button>`).join("")}</div>
-    <button class="btn neutro" id="cp-tudo">👀 Ver tudo</button> <button class="btn neutro" id="cp-menu">Ver as fases</button>
-    <details style="text-align:left;max-width:720px;margin:18px auto 0"><summary>Ler a história completa</summary>${D.prologo.map(p => `<p>${p}</p>`).join("")}</details>
+  const passos = `<div class="passos-capa">${["1. A história", "2. Quem joga", "3. Como jogar"].map((t, i) => `<span class="${capaPasso === i + 1 ? "ativo" : ""}">${t}</span>`).join("")}</div>`;
+  if (capaPasso === 1) {
+    $("#tela").innerHTML = `<div class="folha capa">${passos}<h1>${D.titulo}</h1>
+    <div class="historia">
+      <div class="elenco"><figure>${missPearl(96)}<figcaption><b>Miss Pearl</b><br>auditora-chefe da CIV</figcaption></figure>
+        <figure>${apura("normal", 82)}<figcaption><b>APURA-42</b><br>o computador da CIV</figcaption></figure></div>
+      <div class="bloco"><b>📍 Onde estamos</b>Verídia, 2042. A cidade acaba de votar para prefeito e vereadores.</div>
+      <div class="bloco"><b>⚠️ O que deu errado</b>No fim da apuração, uma falha atingiu o sistema de auditoria. Nada indica que algum voto foi alterado — mas os dados ficaram <b>fora de ordem</b>, ligações entre os locais de votação se partiram e parte da trilha não pode mais ser consultada.</div>
+      <div class="bloco"><b>😟 Por que isso importa para quem votou</b>Sem conseguir conferir, ninguém tem como mostrar que o resultado está certo. Uma eleição precisa ser verificável: qualquer pessoa deve poder refazer o caminho e chegar ao mesmo lugar.</div>
+      <div class="bloco civ"><b>🏛️ Quem vai investigar</b>A <b>CIV</b> (Comissão Independente de Verificação) não torce por candidato nenhum: só confere se a apuração pode ser reconstruída seguindo as regras. Quem lidera é a <b>Miss Pearl</b>, auditora-chefe. O <b>APURA-42</b> faz as contas. E <b>você</b> é a pessoa analista convocada para ajudar.</div>
+      <div class="bloco civ"><b>🧭 Como a auditoria vai funcionar</b>A Miss Pearl dividiu o trabalho em <b>5 problemas</b>. Cada problema resolvido vale um <b>selo</b>; com os 5 selos, o Cofre de Verificação abre.
+        <ol class="problemas">${PROBLEMAS_CAPA.map(([ic, t, d]) => `<li><span>${ic} <b>${t}</b>: ${d}</span></li>`).join("")}</ol></div>
+    </div>
+    <button class="btn grande" id="cp-ok">Entendi o problema ▶</button>
     <p class="legenda">${D.aviso}</p></div>`;
-  document.querySelectorAll(".capa [data-perfil]").forEach(b => b.onclick = () => { P.perfil = b.dataset.perfil; P.capa = true; salvar(); ir("f1"); });
-  $("#cp-tudo").onclick = () => { P.perfil = "tudo"; P.capa = true; salvar(); ir("f1"); };
-  $("#cp-menu").onclick = () => { P.capa = true; salvar(); ir("menu"); };
+    $("#cp-ok").onclick = () => { capaPasso = 2; TELAS.capa(); window.scrollTo(0, 0); };
+  } else if (capaPasso === 2) {
+    $("#tela").innerHTML = `<div class="folha capa">${passos}<h2>Quem está jogando?</h2>
+    <p style="max-width:720px;margin:0 auto">O jogo e os problemas são os mesmos para todo mundo. O perfil só decide <b>o que aparece em destaque</b> em cada fase. Dá para trocar a qualquer momento no botão 👤 do topo.</p>
+    <div class="cartoes-perfil">${Object.entries(PERFIS).map(([k, [ic, nome, frase, cor]]) => `<button class="cartao-perfil" style="--cor:${cor}" data-perfil="${k}"><span class="ic">${ic}</span><b>${nome}</b>${frase}</button>`).join("")}</div>
+    <button class="btn neutro" id="cp-tudo">👀 Ver tudo</button> <button class="btn neutro" id="cp-volta">◀ Voltar à história</button></div>`;
+    const escolhe = k => { P.perfil = k; salvar(); marcarPerfil(); capaPasso = 3; TELAS.capa(); window.scrollTo(0, 0); };
+    document.querySelectorAll(".capa [data-perfil]").forEach(b => b.onclick = () => escolhe(b.dataset.perfil));
+    $("#cp-tudo").onclick = () => escolhe("tudo");
+    $("#cp-volta").onclick = () => { capaPasso = 1; TELAS.capa(); };
+  } else {
+    $("#tela").innerHTML = `<div class="folha capa">${passos}<h2>Como jogar</h2>
+    <ol class="comojogar">
+      <li>Cada fase é <b>um dos 5 problemas</b>. A faixa no topo da tela sempre mostra o problema e a sua missão.</li>
+      <li>Não precisa digitar nada: <b>tudo se faz clicando</b> em botões, peças e locais do mapa.</li>
+      <li>Siga o quadro laranja <b>“O que fazer agora”</b>: ele diz qual é o próximo clique.</li>
+      <li>Travou? Clique em <b>💡 Dica</b>. Palavra estranha? Clique nela (as que têm ❔) ou abra o <b>📖 Dicionário</b>.</li>
+      <li>Resolveu? Você ganha o <b>selo</b> e um botão leva à próxima fase. Menos jogadas = mais estrelas ⭐.</li>
+    </ol>
+    <button class="btn grande" id="cp-f1">▶ Começar pela Fase 1</button> <button class="btn neutro" id="cp-menu">Ver todas as fases</button></div>`;
+    $("#cp-f1").onclick = () => { P.capa = true; salvar(); capaPasso = 1; ir("f1"); };
+    $("#cp-menu").onclick = () => { P.capa = true; salvar(); capaPasso = 1; ir("menu"); };
+  }
 };
 TELAS.menu = () => {
   if (!P.capa) return TELAS.capa();
   const n = P.selos.filter(Boolean).length, tot = Object.values(P.estrelas).reduce((a, b) => a + b, 0);
   $("#tela").innerHTML = `<div class="folha">
     <h1>${D.titulo}</h1>
-    <details><summary>A história</summary>${D.prologo.map(p => `<p>${p}</p>`).join("")}<p class="legenda">${D.aviso}</p></details>
+    <p><button class="btn neutro" onclick="capaPasso = 1; ir('capa')">📜 Rever a história e o problema</button></p>
     <p class="legenda">Estrelas: <b>${tot}</b> de 18. Três estrelas = resolver com o mínimo de jogadas (o mesmo que o computador acha).</p>
     <div class="agora"><b>O que fazer agora</b>${n === 5 ? "Os 5 selos foram reunidos. O Cofre de Verificação está aberto!" :
       `Escolha uma fase e ganhe o selo. Você tem ${n} de 5. Comece pela fase ${P.selos.findIndex(s => !s) + 1}.`}</div>
