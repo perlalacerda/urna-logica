@@ -1,5 +1,5 @@
 """
-Fila de prioridade com HEAP BINÁRIO DE MÍNIMO.   [Aula 08, slides 23-46]
+Fila de prioridade com HEAP BINÁRIO DE MÍNIMO.   [Aula 08, slides 23-45]
 
 Por que heap? (Aula 08, slide 24)
     Com lista NÃO ordenada: inserir O(1), extrair o menor O(n).
@@ -146,7 +146,7 @@ class HeapMinimo:
     def diminuir_chave(self, item, nova_prioridade):
         """
         Usada pelo Dijkstra quando relaxa(u, v, w) melhora d[v]. A aula 11
-        (análise com heap) diz que "o heap permite atualizar os valores com
+        (slide 27, análise com heap) diz que "o heap permite atualizar os valores com
         custo O(log |V|)": o elemento recebe prioridade menor e SOBE.
         """
         k = self.posicao[item]

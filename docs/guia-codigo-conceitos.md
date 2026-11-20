@@ -126,7 +126,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 - **Recursão × pilha:** a aula 06 mostra que todo algoritmo recursivo pode virar iterativo com uma pilha explícita. O projeto traz os dois lados: `dfs_recursiva` (pilha de chamadas do Python) e `dfs_pilha` (nossa `Pilha`).
 - **Limite prático:** o Python limita a profundidade da recursão; `_garantir_pilha_de_recursao` aumenta esse limite para o Quick Sort no pior caso. Limitação registrada no relatório.
 
-### 8. Pilha — LIFO (aula 06, slides 24–32)
+### 8. Pilha — LIFO (aula 06, slides 24–31)
 
 - **No jogo:** Fase 2 — pilha de espera e **desfazer**; Fase 3 — desfazer movimento; solver — DFS iterativa.
 - **No código:** `estruturas/pilha.py` → `push`, `pop`, `peek`, `esta_vazia` (implementação dinâmica, igual aos slides 30–31).
@@ -152,7 +152,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 - **Complexidade:** inserir no início ou no fim O(1); buscar, remover e inserir no meio O(n).
 - **Prova:** `TestListaLigada` (inserção e remoção no início, meio e fim; lista vazia; elemento inexistente).
 
-### 11. Grafo e lista de adjacência (aula 09, slides 15–25)
+### 11. Grafo e lista de adjacência (aula 09, slides 16–25)
 
 - **No jogo:** Fase 3 — 9 locais (vértices) e 11 corredores (arestas). O EP pede pelo menos 8 e 10.
 - **No código:** `estruturas/grafo.py` → `Grafo`; o mapa em `jogo/fase3.py` → `construir_mapa`.

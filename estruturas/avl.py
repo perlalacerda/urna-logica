@@ -178,7 +178,7 @@ class ArvoreAVL:
     def buscar(self, chave):
         """
         Pesquisa na árvore binária de busca (aula 07): em cada nó, decide
-        esquerda ou direita, descartando metade da árvore.
+        esquerda ou direita, descartando a outra subárvore inteira.
         Devolve (encontrou, valor, comparações).  O(log n) na AVL.
         """
         r, comparacoes = self.raiz, 0

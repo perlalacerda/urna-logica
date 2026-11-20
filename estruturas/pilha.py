@@ -1,5 +1,5 @@
 """
-Pilha (LIFO: "Last-In, First-Out") — implementação DINÂMICA.  [Aula 06, slides 24-32]
+Pilha (LIFO: "Last-In, First-Out") — implementação DINÂMICA.  [Aula 06, slides 24-31]
 
             topo
              |

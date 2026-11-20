@@ -74,7 +74,7 @@ class TestDijkstraDaAula(unittest.TestCase):
         self.assertFalse(relaxa("u", "v", 2, d, pi))   # não melhora de novo
 
     def test_exemplo_da_aula(self):
-        """Exemplo orientado da aula 11 (slides a-f): d final s0 t8 x9 y5 z7."""
+        """Exemplo orientado da aula 11 (slides 28-30, figuras a-f): d final s0 t8 x9 y5 z7."""
         G = Grafo(orientado=True)
         for u, v, w in [("s", "t", 10), ("s", "y", 5), ("t", "x", 1), ("t", "y", 2), ("y", "t", 3),
                         ("y", "x", 9), ("y", "z", 2), ("x", "z", 4), ("z", "x", 6), ("z", "s", 7)]:
