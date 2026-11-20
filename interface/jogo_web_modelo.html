@@ -141,8 +141,8 @@
   .termo:hover { background: var(--petroleo); color: #fff; }
   .portras { background: #f1e7cf; border: 2px dashed var(--petroleo); border-radius: 10px; padding: 8px 12px; margin: 10px 0; font-size: 16px; }
   .portras > b { font-family: var(--titulo); color: var(--petroleo2); margin-right: 6px; }
-  .decidir { background: #eef6f4; border-left: 6px solid var(--petroleo); border-radius: 8px; padding: 10px 14px; margin: 10px 0; font-size: 16px; }
-  .decidir .rot { font-family: var(--titulo); color: var(--petroleo2); display: block; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+  .decidir { background: #eef6f4; border-left: 6px solid var(--petroleo); border-radius: 8px; padding: 12px 16px; margin: 10px 0; font-size: 18px; }
+  .decidir .rot { font-family: var(--titulo); color: var(--petroleo2); display: block; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
   .metodos { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin: 8px 0 12px; }
   .metodo { text-align: left; background: #fff8ec; border: 3px solid var(--borda); border-radius: 12px; padding: 12px 14px; font: inherit; color: var(--tinta); cursor: pointer; }
   .passo { display: flex; gap: 12px; align-items: flex-start; margin: 16px 0 6px; font-size: 20px; }
@@ -150,6 +150,19 @@
   .passo b { font-family: var(--titulo); }
   .missao-fase { font-size: 20px; } .linha-tips { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
   .linha-tips details.tip[open] { flex-basis: 100%; }
+  .acoes-f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+  .acoes-f2 .btn { margin: 0; text-align: left; } .acoes-f2 .btn small { display: block; font: 400 15px "Segoe UI", system-ui, sans-serif; opacity: .95; margin-top: 2px; }
+  #f2-area .caixa { margin: 6px 0; padding: 8px 12px; }
+  .regras-par { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 10px 0; }
+  .regras-par > div { border: 3px solid var(--borda); border-radius: 12px; padding: 10px 12px; background: #fffaf0; font-size: 17px; }
+  .regras-par > div b.t { display: block; font: 800 17px var(--titulo); margin-bottom: 4px; }
+  .regras-par .r1 { border-color: #9c8a73; } .regras-par .r2 { border-color: var(--ambar); } .regras-par .r3 { border-color: var(--petroleo); }
+  .par-nav { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 8px 0; }
+  .par-nav button { font: 700 16px var(--titulo); border: 2px solid var(--tinta2); border-radius: 20px; padding: 4px 14px; background: #fffaf0; cursor: pointer; }
+  .par-nav button.sel { background: var(--petroleo); color: #fff6e4; border-color: var(--petroleo); } .par-nav button.ok { border-color: var(--verde); }
+  .mudou { background: #ffe0a8; border-radius: 4px; padding: 0 4px; } .mudou::after { content: "  ← mudou"; font-size: 14px; color: var(--laranja2); font-weight: 700; }
+  @media (max-width: 820px) { .regras-par, .acoes-f2 { grid-template-columns: 1fr; } }
+  .pulsa { animation: pulsa 1s ease 2; } @keyframes pulsa { 50% { box-shadow: 0 0 0 6px var(--ambar); } }
   .metodo .tit { font: 800 20px var(--titulo); display: block; margin-bottom: 4px; } .metodo .legenda { display: block; margin-top: 6px; }
   .metodo.sel { border-color: var(--petroleo); background: #dff0ed; box-shadow: 0 0 0 3px var(--petroleo) inset; }
   .metodo:disabled { opacity: .5; cursor: default; }
@@ -679,25 +692,20 @@ TELAS.f2 = () => {
   const F = D.fase2;
   $("#tela").innerHTML = `<div class="folha">${cabecalho(2)}
     <div class="agora" id="f2-agora"></div>
-    <div class="caixa"><h3>As provas que chegam</h3>${Object.entries(F.evidencias).map(([k, v]) => `<span class="ficha">${k}</span> ${v}${F.alvo.includes(k) ? "" : " · <b>🗑️ descartável</b>"}`).join("<br>")}</div>
+    ${dicaClique("As provas que chegam (quais são descartáveis?)", Object.entries(F.evidencias).map(([k, v]) => `<span class="ficha">${k}</span> ${v}${F.alvo.includes(k) ? "" : " · <b>🗑️ descartável</b>"}`).join("<br>"))}
     <div class="dois" id="f2-area"><div>
       <div class="caixa"><h3>📥 Esteira de chegada ${termo("fila", "é uma fila")}</h3><p class="legenda" style="margin:0">Só sai a da <b>frente</b> (a da esquerda, em destaque).</p><div id="f2-fila"></div></div>
       <div class="caixa"><h3>🥞 Pilha de espera ${termo("pilha", "é uma pilha")}</h3><p class="legenda" style="margin:0">Só sai a de <b>cima</b>.</p><div id="f2-pilha"></div></div>
       <div class="caixa"><h3>🗑️ Arquivo morto ${termo("arquivo", "o que vai aqui?")}</h3><div id="f2-arq"></div></div>
     </div><div>
       <div class="caixa"><h3>🔐 Cofre de custódia ${termo("lista", "é uma lista ligada")}</h3><p class="legenda" style="margin:0">Ordem exigida: <b>${F.alvo.join(" → ")}</b></p><div id="f2-cus"></div></div>
-      <div class="decidir"><b class="rot">Para decidir — o que cada botão faz</b>
-        <div>✅ <b>Pôr no cofre</b>: a da frente da esteira entra no cofre (só se for a vez dela).</div>
-        <div>⏸️ <b>Guardar na pilha</b>: a da frente vai esperar em cima da pilha (é prova, mas ainda não é a vez).</div>
-        <div>🗑️ <b>Descartar</b>: a da frente vai para o arquivo morto (só cópias descartáveis).</div>
-        <div>⬆️ <b>Tirar da pilha</b>: a de cima da pilha entra no cofre (só se for a vez dela).</div></div>
-      <div><button class="btn" data-a="aceitar">✅ Pôr no cofre<br><small>esteira → cofre</small></button>
-        <button class="btn" data-a="guardar">⏸️ Guardar na pilha<br><small>esteira → pilha</small></button>
-        <button class="btn" data-a="arquivar">🗑️ Descartar<br><small>esteira → arquivo</small></button>
-        <button class="btn" data-a="liberar">⬆️ Tirar da pilha<br><small>pilha → cofre</small></button></div>
+      <div class="msg" id="f2-msg">Faça a primeira jogada.</div>
+      <div class="acoes-f2"><button class="btn" data-a="aceitar">✅ Pôr no cofre<small>a da frente da esteira entra no cofre</small></button>
+        <button class="btn" data-a="guardar">⏸️ Guardar na pilha<small>a da frente espera em cima da pilha</small></button>
+        <button class="btn" data-a="arquivar">🗑️ Descartar<small>a da frente vai para o arquivo morto</small></button>
+        <button class="btn" data-a="liberar">⬆️ Tirar da pilha<small>a de cima da pilha entra no cofre</small></button></div>
       <div><button class="btn sec" id="f2-dica">💡 Dica</button><button class="btn neutro" id="f2-desf">↶ Desfazer</button><button class="btn neutro" id="f2-rein">Recomeçar</button></div>
     </div></div>
-    <div class="msg" id="f2-msg">Faça a primeira jogada.</div>
     <details><summary>Regras completas (com os nomes usados no código)</summary><ul>
       <li><b>Pôr no cofre</b> (aceitar): a 1ª da fila entra na custódia, se for a próxima esperada.</li>
       <li><b>Guardar na pilha</b> (guardar): a 1ª da fila vai para o topo da pilha, se fizer parte da custódia e precisar sair antes de quem está no topo.</li>
@@ -897,15 +905,18 @@ TELAS.f4 = () => {
         <div class="crt"><p class="legenda" style="color:#d9b98a;margin:4px">Antes do código entrar</p><svg id="f4-antes" style="max-height:230px"></svg></div>
         <div class="crt" style="margin-top:8px"><p class="legenda" style="color:#d9b98a;margin:4px">Depois (o novo código em laranja)</p><svg id="f4-depois" style="max-height:230px"></svg></div></div>
       <div><div id="f4-s1"></div><div class="msg" id="f4-msg"></div>
-      <div class="decidir"><b class="rot">Para decidir</b>1. Desça com o novo código até o lugar dele. 2. Olhe o caminho que ele fez a partir do nó que ficaria torto:
+      <div class="decidir" id="f4-decidir"><b class="rot">Para decidir</b>1. Desça com o novo código até o lugar dele. 2. Olhe o caminho que ele fez a partir do nó que ficaria torto:
         <div>↙↙ duas vezes para a esquerda → <b>giro à direita</b> · ↘↘ duas vezes para a direita → <b>giro à esquerda</b></div>
         <div>↙↘ esquerda e depois direita (zigue-zague) → <b>giro duplo E-D</b> · ↘↙ direita e depois esquerda → <b>giro duplo D-E</b></div>
         <div>Nenhum nó ficou 2 andares mais alto de um lado? → <b>não gira</b>. Com menos de 3 códigos, nunca gira.</div>
         ${dicaClique("O que é o FB embaixo dos nós?", "FB = altura da esquerda − altura da direita. Numa árvore equilibrada, fica entre −1 e +1. Se virar +2 ou −2, há giro.")}</div>
     </div></div></div>
     <div id="f4-sala2" style="display:none"><p>O computador anda pelo mapa da Fase 3 e o cofre anota onde ele já esteve, para não repetir caminho. ${termo("estado", "o que é uma situação?")}</p>
-      <div class="decidir"><b class="rot">Para decidir</b>Para o cofre, duas situações são <b>a mesma</b> quando têm o mesmo <b>📍 local</b>, as mesmas <b>🔑 pistas</b> e as mesmas <b>🚪 portas abertas</b>.
-        A energia ⚡ <b>não</b> conta para isso — mas, se a mesma situação voltar com <b>mais</b> energia, vale explorar de novo (dá para ir mais longe).</div>
+      <p style="margin:6px 0"><b>Por que isso importa?</b> Se o computador explorasse de novo uma situação que já viu, andaria em círculos — é exatamente o problema desta fase. Compare 📍 local, 🔑 pistas e 🚪 portas:</p>
+      <div class="regras-par">
+        <div class="r1"><b class="t">😴 É a mesma: não explorar</b>📍🔑🚪 iguais e a energia ⚡ igual ou menor. Nada de novo para descobrir.</div>
+        <div class="r2"><b class="t">⚡ Mesma, com mais energia: explorar</b>📍🔑🚪 iguais, mas agora sobra <b>mais</b> energia: dá para ir mais longe que da outra vez.</div>
+        <div class="r3"><b class="t">🆕 São diferentes: explorar</b>Mudou o 📍 local, as 🔑 pistas ou as 🚪 portas. Mesmo lugar com pista nova é outra situação.</div></div>
       <div id="f4-s2"></div></div>
     <div id="f4-sala3" style="display:none"><p>Procure um código no cofre e veja quantas comparações foram precisas: em cada andar, a árvore descarta um lado inteiro.</p>
       <p>Digite um número de 0 a 100: <input id="f4-cod" type="number" min="0" max="100" style="font-size:18px;width:90px"> <button class="btn sec" id="f4-buscar">Procurar</button></p><div class="msg" id="f4-res"></div></div>
@@ -917,7 +928,7 @@ TELAS.f4 = () => {
   window.f4mostra = mostra;
   const agora = () => $("#f4-agora").innerHTML = "<b>O que fazer agora</b>" + (venceu() ? `Cofre organizado! Siga em frente quando quiser.<br>${botaoProxima("f4")}` :
     S.k < F.lacres.length ? `Sala 1: o código ${F.lacres[S.k].codigo} vai entrar (${S.k + 1} de ${F.lacres.length}). Olhe a árvore “antes”, use o quadro “Para decidir” e dê seu palpite.` :
-    sala === 2 ? "Sala 2: para cada par, compare as duas situações e escolha a resposta." : `Sala 1 completa! <button class="btn" onclick="f4mostra(2)">Ir para a Sala 2 →</button>`);
+    sala === 2 ? "Sala 2: compare as duas situações do par (o que mudou está marcado) e escolha uma das 3 respostas." : `Sala 1 completa! <button class="btn" onclick="f4mostra(2)">Ir para a Sala 2 →</button>`);
   const sala1 = () => {
     if (S.k >= F.lacres.length) { $("#f4-s1").innerHTML = `<div class="msg ok">Sala 1 completa: ${S.acertos} de ${F.lacres.length} palpites certos. Vimos os quatro giros: RD, RE, RED e RDE. Com 9 códigos, a árvore tem só ${F.altura_final + 1} andares.</div>
         <button class="btn grande" onclick="f4mostra(2)">Ir para a Sala 2 →</button>`;
@@ -926,7 +937,9 @@ TELAS.f4 = () => {
     $("#f4-s1").innerHTML = `<div class="caixa"><b>Lacre ${S.k + 1} de ${F.lacres.length}: código ${q.codigo}.</b> O que vai acontecer ao guardá-lo?
       <div class="escolha">${F.opcoes.map(o => `<button data-v="${o}">${nomes[o]}</button>`).join("")}<button class="btn sec" id="f4-dica" style="min-height:0">💡 Dica</button></div></div>`;
     desenhaAVL($("#f4-antes"), q.antes); desenhaAVL($("#f4-depois"), null);
-    $("#f4-dica").onclick = () => { const m = $("#f4-msg"); m.className = "msg dica"; m.textContent = "Desça comparando (menor à esquerda, maior à direita). Depois suba conferindo: se um lado ficou 2 níveis mais alto, há giro. Mesmo lado duas vezes = giro simples (RD/RE); lados trocados = giro duplo (RED/RDE). Com menos de 3 códigos, nunca gira."; };
+    $("#f4-dica").onclick = () => { const m = $("#f4-msg"); m.className = "msg dica";
+      m.textContent = `Comece pela raiz da árvore “antes”: ${q.codigo} é menor? vá para a esquerda; maior? para a direita. Repita até achar o lugar vazio. Depois use o quadro “Para decidir” (piscando abaixo).`;
+      const d = $("#f4-decidir"); d.classList.remove("pulsa"); void d.offsetWidth; d.classList.add("pulsa"); };
     document.querySelectorAll("[data-v]").forEach(b => b.onclick = () => { const certo = b.dataset.v === q.rotacao; if (certo) S.acertos++;
       desenhaAVL($("#f4-depois"), q.depois, q.codigo);
       const m = $("#f4-msg"); m.className = "msg " + (certo ? "ok" : "nao");
@@ -937,18 +950,25 @@ TELAS.f4 = () => {
       else { sala1(); conferir(); } });
   };
   const lista = l => l.length ? l.join(", ") : "nenhuma";
-  const cartaoSit = (t, e, o) => { const dif = k => JSON.stringify(e[k]) !== JSON.stringify(o[k]) ? ' style="background:#ffe0a8;border-radius:4px;padding:0 4px"' : "";
-    return `<div class="caixa" style="margin:0;border-style:solid;font-size:17px"><h3>${t}</h3>
+  const cartaoSit = (t, e, o) => { const dif = k => JSON.stringify(e[k]) !== JSON.stringify(o[k]) ? ' class="mudou"' : "";
+    return `<div class="caixa" style="margin:0;border-style:solid;font-size:19px"><h3>${t}</h3>
       <div${dif("pos")}>📍 <b>${e.pos}</b> — ${e.local}</div><div${dif("pistas")}>🔑 pistas: <b>${lista(e.pistas)}</b></div>
       <div${dif("portas")}>🚪 portas abertas: <b>${lista(e.portas)}</b></div><div${dif("energia")}>⚡ energia: <b>${e.energia}</b></div></div>`; };
-  const sala2 = () => { $("#f4-s2").innerHTML = F.pares.map((p, i) => `<div class="caixa"><b>Par ${i + 1}</b> ${S.pares[i] === true ? "✔" : ""}
-      <div class="dois" style="margin:8px 0">${cartaoSit("O cofre já viu", p.a, p.b)}${cartaoSit("Chegou agora", p.b, p.a)}</div>
-      <p class="legenda" style="margin:0">Em amarelo, o que mudou.</p>
-      <div class="escolha"><button data-p="${i}" data-r="mesma">É a mesma: não explorar</button><button data-p="${i}" data-r="melhor">É a mesma, mas com mais energia: explorar</button><button data-p="${i}" data-r="outra">São diferentes: explorar</button></div>
-      <div class="msg" id="par${i}" style="min-height:0">${S.pares[i] === true ? "✔ " + p.explicacao : ""}</div></div>`).join("");
-    document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { const i = +b.dataset.p, p = F.pares[i];
+  let parAt = F.pares.findIndex((_, i) => S.pares[i] !== true); if (parAt < 0) parAt = 0;
+  const sala2 = () => { const p = F.pares[parAt], i = parAt, feito = S.pares[i] === true;
+    $("#f4-s2").innerHTML = `<div class="par-nav">${F.pares.map((_, k) => `<button data-ir="${k}" class="${k === i ? "sel" : ""} ${S.pares[k] === true ? "ok" : ""}">Par ${k + 1}${S.pares[k] === true ? " ✔" : ""}</button>`).join("")}</div>
+      <div class="caixa"><b>Par ${i + 1} de ${F.pares.length}:</b> o computador chegou a uma situação. Ele já viu uma parecida. Explora ou não?
+      <div class="dois" style="margin:8px 0">${cartaoSit("🗄️ O cofre já viu", p.a, p.b)}${cartaoSit("🆕 Chegou agora", p.b, p.a)}</div>
+      <div class="escolha"><button data-r="mesma">😴 É a mesma: não explorar</button><button data-r="melhor">⚡ Mesma, com mais energia: explorar</button><button data-r="outra">🆕 São diferentes: explorar</button></div>
+      <div class="msg" id="par-msg" style="min-height:0">${feito ? "✔ " + p.explicacao : ""}</div>
+      ${feito && i < F.pares.length - 1 ? `<button class="btn grande" data-ir="${i + 1}">Próximo par →</button>` : ""}</div>`;
+    document.querySelectorAll("#f4-s2 [data-ir]").forEach(b => b.onclick = () => { parAt = +b.dataset.ir; sala2(); });
+    document.querySelectorAll("#f4-s2 [data-r]").forEach(b => b.onclick = () => {
       const certo = {mesma: [true, false], melhor: [true, true], outra: [false, true]}[b.dataset.r].join() === p.resposta.join();
-      S.pares[i] = certo; if (!certo) S.errosPares = (S.errosPares || 0) + 1; salvar(); const m = $("#par" + i); m.className = "msg " + (certo ? "ok" : "nao"); m.textContent = (certo ? "Certo! " : "Não é isso. ") + p.explicacao; conferir(); agora(); }); };
+      S.pares[i] = certo; if (!certo) S.errosPares = (S.errosPares || 0) + 1; salvar();
+      if (certo) { sala2(); $("#par-msg").className = "msg ok"; $("#par-msg").textContent = "Certo! " + p.explicacao; }
+      else { const m = $("#par-msg"); m.className = "msg nao"; m.textContent = "Não é isso. " + p.explicacao; }
+      conferir(); agora(); }); };
   const conferir = () => { if (venceu() && !S.premiado) { S.premiado = true; P.selos[3] = true;
     const e = S.errosPares || 0, est = S.acertos >= 7 && !e ? 3 : S.acertos >= 5 && e <= 2 ? 2 : 1; ganharEstrelas("f4", est); salvar();
     const m = $("#f4-msg"); m.className = "msg vitoria"; m.textContent = "O cofre reconheceu a memória organizada. Selo 4 conquistado!";
@@ -967,8 +987,8 @@ TELAS.f5 = () => {
     : `Ainda faltam selos (${P.selos.slice(0, 4).map((s, i) => s ? null : i + 1).filter(Boolean).join(", ")}). Pode rodar a auditoria mesmo assim: onde você não jogou, o solver resolve.`;
   $("#tela").innerHTML = `<div class="folha">${cabecalho(5)}
     <div class="agora"><b>O que fazer agora</b>${agoraTxt}</div>
-    <h3>1. Escolha como a auditoria vai arrumar o lote</h3>
-    <div class="decidir"><b class="rot">Para decidir — por que escolher?</b>Antes de conferir, a auditoria arruma de novo as 12 fichas. Os três jeitos chegam à <b>mesma ordem</b>; o que muda é o <b>trabalho</b> (quantas comparações). Com poucas fichas, qualquer um serve. Numa eleição de verdade, com milhões de registros, o jeito rápido economiza horas de computador e energia. Veja nos cartões quanto cada um gastaria com 500 fichas. ${termo("comparacao", "o que é comparação?")}</div>
+    <h3>1. Escolha o método que a auditoria usa para refazer a Fase 1</h3>
+    <div class="decidir"><b class="rot">Por que ordenar de novo?</b>A auditoria <b>não confia</b> no que já foi feito: pega o lote <b>embaralhado original</b> e arruma tudo de novo, do zero, para conferir se chega à mesma ordem. Para isso precisa de um método de ordenação — os mesmos três da Fase 1. Todos chegam à <b>mesma ordem</b>; muda o <b>trabalho</b>. Veja nos cartões quanto cada um gastaria com 500 fichas. ${termo("comparacao", "o que é comparação?")}</div>
     <div id="f5-metodos">${cartoesMetodos(null, k => { const l = D.fase1.comparacao.find(x => x[0] === 500 && x[1].toLowerCase().startsWith(k)); return l ? `Com 500 fichas: ${l[2].toLocaleString("pt-BR")} comparações (uma pessoa: ${tempoPessoa(l[2])})` : ""; })}</div>
     <h3>2. Assista à auditoria conferir tudo</h3>
     <p class="legenda" style="margin-top:0">Ela confere 3 coisas: as fichas da Fase 1, as provas da Fase 2 e o caminho da Fase 3. ✅ = a regra foi obedecida.</p>
