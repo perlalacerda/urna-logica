@@ -82,11 +82,3 @@ O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e 
 - **Perfis de quem joga (20.11.2026, pedido da aluna):** em vez de pôr o conteúdo dos três públicos na mesma página só com cores (o que triplicaria o texto), a abertura pergunta o perfil e ele decide qual bloco aparece aberto; cores e ícones dão identidade a cada perfil, e "Ver tudo" mostra os três recolhidos. Os exemplos do cotidiano são analogias didáticas, sem afirmar como cada aplicativo funciona por dentro. [Equipe]
 - **Transcrição das aulas fora do repositório público (20.11.2026):** decisão da aluna, por respeito ao material da professora. O código continua citando aula e slide. [Equipe]
 
-## Pendências com a professora
-
-1. Quick Sort: `p..q` do slide × `p..q-1`.
-2. Fase 2: ação "arquivar" (adotada; confirmar se a professora aceita).
-3. Fase 3: "Unidade Oeste" × "Arquivo Oeste" (adotados como dois locais distintos).
-4. Bônus "editor de fases": fases em arquivo JSON contam?
-5. A professora concorda em aparecer, pelo nome, como orientadora na Audiência Pública?
-6. (Resolvido em 22.11.2026) Chave da AVL: agora inclui a energia, como pede o EP 8.1; a dominância ficou como melhoria opcional.
