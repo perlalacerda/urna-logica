@@ -205,10 +205,10 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 ### 17. Chave de estado e controle de visitados (Fase 4)
 
 - **No código:** `jogo/fase3.py` → `chave_estado` e `algoritmos/solver.py` → `_Visitados`.
-- **A ideia:** antes de explorar um estado, o solver pergunta à AVL "já vi esta chave?". A chave é **(posição, pistas, portas)**. A energia fica guardada como valor, com a regra de **dominância**: um estado repetido com energia menor ou igual não é explorado de novo; com mais energia, substitui o anterior.
-- **Por que a energia não entra na chave:** com as mesmas pistas e portas, ter menos energia nunca permite fazer algo novo. Incluir a energia multiplicaria o número de estados por até 11.
-- **Enigma 8.2 ("o estado que parece igual"):** Sala 2 da Fase 4. As respostas certas são **calculadas** por `chave_estado` e pela dominância, não escritas à mão.
-- **Prova:** `test_mesma_posicao_pistas_diferentes_sao_estados_diferentes`, `test_estados_repetidos_nao_sao_expandidos`, `test_sala2_respostas_calculadas`. No mapa padrão, a AVL barrou 24 estados repetidos na BFS.
+- **A ideia:** antes de explorar um estado, o solver pergunta à AVL "já vi esta chave?". A chave é o **estado inteiro: (posição, pistas, portas, energia)**, como pede o enunciado (8.1 e Etapa 7). Chave já vista = repetido, não explorado de novo.
+- **Melhoria opcional — dominância (`dominancia=True`):** uma segunda AVL guarda a maior energia de cada configuração (posição, pistas, portas). A mesma configuração com energia menor ou igual também é descartada: com as mesmas pistas e portas, ter menos energia nunca permite fazer algo novo. A BFS acha o mesmo mínimo e expande menos (mapa do jogo: 70 → 18).
+- **Enigma 8.2 ("o estado que parece igual"):** Sala 2 da Fase 4. As respostas certas são **calculadas** por `configuracao`, `chave_estado` e pela regra de dominância, não escritas à mão.
+- **Prova:** `test_mesma_posicao_pistas_diferentes_sao_estados_diferentes`, `test_estados_repetidos_nao_sao_expandidos`, `test_sala2_respostas_calculadas`, `test_chave_inclui_energia`, `test_dominancia_poda_e_mantem_a_solucao`. No mapa padrão, a BFS barrou 86 estados repetidos com a chave literal; com a dominância, 24 repetidos e 22 dominados.
 
 ### 18. Solver integrado às regras
 
@@ -218,7 +218,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 
 ### 19. Testes e análise de complexidade
 
-- **Onde:** `testes/` (147 testes, um arquivo por módulo, cobrindo a tabela da seção 15) e `experimentos.py` → `docs/metricas.md`.
+- **Onde:** `testes/` (148 testes, um arquivo por módulo, cobrindo a tabela da seção 15) e `experimentos.py` → `docs/metricas.md`.
 - **Como rodar:** `rodar_testes.bat` (dois cliques) ou `py -m unittest discover -s testes -t .`.
 - **Teoria × experimento:** as contagens confirmam a teoria das aulas (Bubble n(n−1)/2; Quick no pior caso n(n−1)/2; AVL com altura ≈ log₂ n). Os tempos dependem da máquina; as contagens, não.
 - **Um erro real encontrado por teste de integração:** a Fase 5 lia o histórico da Fase 2 num formato errado. Uma partida simulada do início ao fim revelou o erro; ele foi corrigido e virou o teste `test_integracao_com_o_historico_real_das_fases_2_e_3`.
@@ -297,7 +297,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 
 - **Como garante que o mapa é conexo:** sorteia primeiro uma **árvore geradora** — cada novo vértice se liga a um já existente. Uma árvore com n vértices tem n − 1 arestas e liga todos. Depois acrescenta arestas extras, que criam ciclos e rotas alternativas.
 - **Como garante que há solução:** sorteia onde ficam pistas e portas e roda a BFS. Se não houver solução, tenta a próxima seed.
-- **Resultado útil para a análise:** no mapa de 30 vértices, a BFS encontra 7 ações e a DFS, 35. No de 60 vértices, a DFS fez **mais** expansões que a BFS (235 × 181), mas viu **menos** chaves distintas (93 × 218): a mesma chave pode ser reexpandida quando volta com mais energia (dominância). A DFS não garante explorar menos.
+- **Resultado útil para a análise** (chave literal; `docs/metricas.md`): no mapa de 30 vértices, a BFS encontra 7 ações e a DFS, 59 (35 com a dominância). No de 60 vértices, a DFS fez **mais** expansões que a BFS (763 × 704; com a dominância, 235 × 181): a DFS não garante explorar menos.
 - **Prova:** `TestCenarios` (mesma seed → mesmo mapa; mapa conexo; sempre com solução).
 
 ---
@@ -313,7 +313,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 | Por que heap no Dijkstra? | O Extrai-Min sai em O(log n) em vez de O(n). Total O((V + E) log V) com heap; O(V²) com vetor. |
 | O Dijkstra do jogo é igual ao do slide? | O método é o mesmo. A diferença: o grafo de estados não está pronto na memória, então Q começa com o estado inicial e os estados entram no heap quando são descobertos. O do slide, literal, está em `dijkstra()` e é testado com o exemplo da aula. |
 | Por que AVL e não lista para os visitados? | Na lista, cada consulta custa O(n); na AVL, O(log n). O solver consulta a cada estado gerado. |
-| Por que a energia não está na chave? | Dominância: mesmo lugar, mesmas pistas e portas, com menos energia, nunca é melhor. Evita multiplicar os estados. |
+| A energia está na chave? | Sim, como pede o enunciado (8.1, Etapa 7). A dominância é uma melhoria opcional: descarta a mesma configuração com menos energia, que nunca é melhor, e reduz os expandidos sem mudar o mínimo da BFS. |
 | Dois estados na mesma posição são iguais? | Não, se as pistas ou portas forem diferentes: permitem ações diferentes (C sem SEQ × C com SEQ). |
 | Por que lista com cabeça? | Simplifica inserção e remoção no início; mesma complexidade (aula 06). |
 | Por que simplesmente ligada? | A custódia só é percorrida para a frente; um ponteiro basta. |

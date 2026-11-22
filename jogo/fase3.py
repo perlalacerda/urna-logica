@@ -133,9 +133,20 @@ def mover(G, estado, v, portas=PORTAS, pistas_mapa=PISTAS):
 
 def chave_estado(estado):
     """
-    Chave usada na AVL: (posição, pistas, portas). A energia fica de FORA da
-    chave e entra como "recurso" (dominância): mesmo lugar, mesmas pistas e
-    portas, mas com menos energia, nunca é melhor. Ver docs/decisoes.md.
+    Chave usada na AVL de visitados: (posição, pistas, portas, energia).
+    É o estado INTEIRO, como pede o enunciado (8.1: "a chave deve representar
+    todos os elementos que tornam um estado distinto"; Etapa 7: "posição igual
+    não significa estado igual quando pistas, portas ou energia diferem").
+    Pistas e portas já vêm ordenadas (tuplas), então a chave é canônica.
+    """
+    return estado[0], estado[1], estado[2], estado[3]
+
+
+def configuracao(estado):
+    """
+    (posição, pistas, portas): o estado SEM a energia. Usada só pela regra de
+    dominância, a melhoria opcional do solver (ver algoritmos/solver.py), e
+    pelo Dijkstra, em que a energia restante é a própria distância (E - d).
     """
     return estado[0], estado[1], estado[2]
 
@@ -175,6 +186,9 @@ class ProblemaMapa:
     def chave(self, estado):
         return chave_estado(estado)
 
+    def configuracao(self, estado):
+        return configuracao(estado)
+
     def recurso(self, estado):
         return estado[3]
 
@@ -194,8 +208,8 @@ class Fase3:
     def reiniciar(self):
         self.estado = estado_inicial(self.energia_inicial)
         self.historico = Pilha()            # para desfazer movimentos
-        self.visitados = ArvoreAVL()        # estados já vistos pelo jogador
-        self.visitados.inserir(chave_estado(self.estado), self.estado[3])
+        self.visitados = ArvoreAVL()        # configurações já vistas pelo jogador (só para o aviso)
+        self.visitados.inserir(configuracao(self.estado), self.estado[3])
         self.trilha = [INICIO]
 
     def venceu(self):
@@ -209,14 +223,14 @@ class Fase3:
         self.historico.push(self.estado)
         self.estado = novo
         self.trilha.append(v)
-        achou, energia_antes, _ = self.visitados.buscar(chave_estado(novo))
+        achou, energia_antes, _ = self.visitados.buscar(configuracao(novo))
         if achou and novo[3] <= energia_antes:
             msg += ("\nAviso: você já esteve aqui com as mesmas pistas e portas "
-                    "(e mais energia). Estado já explorado — esse desvio não ajuda.")
+                    "(e mais energia). Esse desvio não abre nada de novo.")
         elif achou:
-            self.visitados.atualizar_valor(chave_estado(novo), novo[3])
+            self.visitados.atualizar_valor(configuracao(novo), novo[3])
         else:
-            self.visitados.inserir(chave_estado(novo), novo[3])
+            self.visitados.inserir(configuracao(novo), novo[3])
         if self.venceu():
             msg += "\nVocê chegou ao Centro de Validação com a autenticação. Selo 3 conquistado!"
         elif novo[3] == 0:

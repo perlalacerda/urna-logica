@@ -59,14 +59,15 @@ def medir_busca():
         cenarios.append((f"mapa gerado ({n} vértices, {p.G.numero_arestas()} arestas, seed {s})", p))
     linhas = []
     for nome, p in cenarios:
-        for alg in (bfs, dfs_recursiva, dfs_pilha):
-            tempos, r = [], None
-            for _ in range(REPETICOES):
-                r = alg(p)
-                tempos.append(r.tempo_ms)
-            linhas.append((nome, r.algoritmo, r.numero_acoes() if r.encontrou else "-",
-                           r.expandidos, r.gerados, r.repetidos, r.maior_fronteira,
-                           r.avl_nos, r.avl_altura, r.avl_rotacoes, statistics.median(tempos)))
+        for dominancia in (False, True):            # chave literal; depois com a melhoria
+            for alg in (bfs, dfs_recursiva, dfs_pilha):
+                tempos, r = [], None
+                for _ in range(REPETICOES):
+                    r = alg(p, dominancia)
+                    tempos.append(r.tempo_ms)
+                linhas.append((nome, r.algoritmo, r.numero_acoes() if r.encontrou else "-",
+                               r.expandidos, r.gerados, r.repetidos, r.dominados, r.maior_fronteira,
+                               r.avl_nos, r.avl_altura, r.avl_rotacoes, statistics.median(tempos)))
     return linhas
 
 
@@ -99,15 +100,18 @@ def main():
           "já ordenada ou invertida, ou com muitas chaves iguais (pivô = último elemento). As movimentações do Quick "
           "contam também as autotrocas A[i]↔A[i] da linha 6 do slide 32.", "",
           "## 2. Busca no espaço de estados (Fase 3)", "",
-          "| cenário | estratégia | ações | expandidos | gerados | repetidos | fronteira máx. | nós AVL | altura AVL | rotações | tempo (ms) |",
-          "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+          "Chave da AVL = estado inteiro (posição, pistas, portas, energia), como pede o enunciado 8.1. "
+          "As linhas “+ dominância” usam a melhoria opcional da equipe: descartam também a mesma configuração "
+          "com energia menor ou igual (coluna “dominados”).", "",
+          "| cenário | estratégia | ações | expandidos | gerados | repetidos | dominados | fronteira máx. | nós AVL | altura AVL | rotações | tempo (ms) |",
+          "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for linha in medir_busca():
         *campos, ms = linha
         L.append("| " + " | ".join(str(c) for c in campos) + f" | {ms:.3f} |")
     L += ["", "BFS encontra o menor número de ações porque cada ação custa 1. A DFS não tem essa garantia: "
           "a rota encontrada tende a ser mais longa, e o número de estados expandidos pode ser menor ou "
-          "maior que o da BFS, conforme a ordem dos vizinhos e a posição do objetivo. Expandidos pode passar de nós AVL: "
-          "a mesma chave é reexpandida quando volta com mais energia (dominância). Complexidade: O((|V| + |E|) log |V|) no grafo de "
+          "maior que o da BFS, conforme a ordem dos vizinhos e a posição do objetivo. Com a chave literal, nenhuma chave é "
+          "expandida duas vezes. A dominância não muda o mínimo da BFS e reduz os expandidos. Complexidade: O((|V| + |E|) log |V|) no grafo de "
           "estados, porque cada sucessor é procurado na AVL; o grafo cresce com as combinações de posição, pistas e portas.", "",
           "## 3. Árvore AVL — altura × número de nós", "",
           "| nós | altura | log2(n) | rotações | tempo total de inserção (ms) |",

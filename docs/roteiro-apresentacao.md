@@ -86,7 +86,7 @@ Depois, ir para o terminal com o **menu inicial do jogo** (o mesmo prólogo apar
 ## Bloco 5 ★ — Solver: BFS × DFS e árvore de busca (3 min)
 
 **Ações:** voltar ao menu → **2 (Resolver)** → **2 (mapa)** → **4 (comparar)**.
-> "A BFS acha 7 ações; a DFS, 9. A BFS garante o menor número de ações porque cada movimento custa 1. Com pesos diferentes, isso não valeria."
+> "A BFS acha 7 ações; a DFS, 10. A BFS garante o menor número de ações porque cada movimento custa 1. Com pesos diferentes, isso não valeria."
 
 **Trocar para o navegador** (visualização), aba **Mapa e busca**:
 1. Estratégia BFS → **tocar**. Apontar a FILA crescendo pelo final.
@@ -126,14 +126,14 @@ Inserir **todos os 9 lacres** (previsões erradas não impedem o selo; só a Sal
 
 **Sala 2 — responder os 4 pares** (o Selo 4 exige todos certos). Comentar só o 1.º e o 2.º; responder os outros rapidamente:
 
-| Par | a) mesma chave? | b) explorar o novo? | Por quê |
+| Par | a) mesma configuração? | b) explorar o novo? | Por quê |
 |---|---|---|---|
-| 1. C sem pistas × C com SEQ | n | s | pistas diferentes = chaves diferentes |
-| 2. B {SEQ} energia 6 × energia 4 | s | n | mesma chave, menos energia: repetido |
-| 3. D energia 4 × energia 6 | s | s | mesma chave, MAIS energia: explora de novo |
+| 1. C sem pistas × C com SEQ | n | s | pistas diferentes = situações diferentes |
+| 2. B {SEQ} energia 6 × energia 4 | s | n | chave diferente (energia), mas menos energia: nada de novo (dominância) |
+| 3. D energia 4 × energia 6 | s | s | mesma configuração, MAIS energia: explora |
 | 4. H × B | n | s | posições diferentes |
 
-> "Mesma posição C, com e sem SEQ: chaves diferentes. Mesma chave com menos energia: repetido, o solver não expande. A AVL guarda (posição, pistas, portas) e a energia vai como valor — regra de dominância."
+> "Mesma posição C, com e sem SEQ: chaves diferentes. A chave da AVL é o estado inteiro, energia incluída, como pede o enunciado. Chave idêntica é repetido. Mesma posição, pistas e portas com menos energia tem outra chave, mas não traz nada de novo: a melhoria de dominância não expande."
 
 **Número para citar:** 10.000 chaves inseridas em ordem → altura 13 (log₂ 10.000 ≈ 13,3). Uma árvore de busca comum teria altura 9.999.
 
@@ -146,7 +146,7 @@ Inserir **todos os 9 lacres** (previsões erradas não impedem o selo; só a Sal
 
 Fechar a história na visualização, aba **"5 · Auditoria Final"**, quadro **Cofre de Verificação aberto** (epílogo).
 
-Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 × 35 ações no cenário 2) e a mensagem do **Cofre de Verificação aberto**.
+Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 × 59 ações no cenário 2) e a mensagem do **Cofre de Verificação aberto**.
 
 ---
 
@@ -155,7 +155,7 @@ Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 
 - Mostrar o resultado de `rodar_testes.bat`: **138 testes, OK**.
   > "Os testes cobrem a tabela da seção 15: estrutura vazia, um elemento, vários, inválidos, rotações, BFS com a ordem do exemplo da aula, integração manual × solver."
 - Citar um teste que pegou erro real: a Fase 5 lia o histórico da Fase 2 no formato errado; a partida simulada revelou; virou teste.
-- Bônus feitos: visualização animada offline; gerador de mapas por seed com verificador de solução. No mapa de 60 locais, a DFS fez **mais** expansões que a BFS (235 × 181), embora tenha visto menos chaves distintas (93 × 218): ela reexpande uma chave quando volta com mais energia. A DFS não garante explorar menos.
+- Bônus feitos: visualização animada offline; gerador de mapas por seed com verificador de solução. No mapa de 60 locais, a DFS fez **mais** expansões que a BFS (763 × 704 com a chave literal; 235 × 181 com a dominância). A DFS não garante explorar menos.
 
 ---
 

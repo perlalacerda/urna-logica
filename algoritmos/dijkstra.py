@@ -143,8 +143,9 @@ def dijkstra_estados(problema):
       verificado pela função mover(), a MESMA usada pelo jogador.
     """
     r, inicio = Resultado("Dijkstra"), time.perf_counter()
+    vertice = getattr(problema, "configuracao", problema.chave)   # energia = E - d: não entra no vértice
     s = problema.estado_inicial()
-    k0 = problema.chave(s)
+    k0 = vertice(s)
     d = {k0: 0}                    # d[] da aula
     pais = {k0: (None, None)}      # π[] da aula (com a ação que levou ao estado)
     estado_de = {k0: s}            # o estado completo guardado para cada vértice
@@ -164,7 +165,7 @@ def dijkstra_estados(problema):
             break
         for acao, novo, w in problema.sucessores(u):
             r.gerados += 1
-            kv = problema.chave(novo)
+            kv = vertice(novo)
             achou, _, _ = S.buscar(kv)
             if achou:                                  # já definitivo
                 r.repetidos += 1
@@ -214,8 +215,9 @@ def guloso_ingenuo(problema):
     """
     r, inicio = Resultado("Guloso (corredor mais barato)"), time.perf_counter()
     u = problema.estado_inicial()
+    lugar = getattr(problema, "configuracao", problema.chave)     # "não voltar" = não repetir a configuração
     visitados = ArvoreAVL()
-    visitados.inserir(problema.chave(u), problema.recurso(u))
+    visitados.inserir(lugar(u), problema.recurso(u))
     r.caminho = [(None, u)]
     r.ordem.append(u)
     r.expandidos = 1
@@ -223,7 +225,7 @@ def guloso_ingenuo(problema):
         C = HeapMinimo()                                     # C: fila de prioridade
         for acao, novo, w in problema.sucessores(u):
             r.gerados += 1
-            achou, _, _ = visitados.buscar(problema.chave(novo))
+            achou, _, _ = visitados.buscar(lugar(novo))
             if achou:                                        # não viável: repetiria estado
                 r.repetidos += 1
                 continue
@@ -235,7 +237,7 @@ def guloso_ingenuo(problema):
         _, (acao, novo), w = C.extrair_minimo()              # x <- seleciona(C)
         r.arvore.append((u, acao, novo))
         r.custo += w
-        visitados.inserir(problema.chave(novo), problema.recurso(novo))
+        visitados.inserir(lugar(novo), problema.recurso(novo))
         r.caminho.append((acao, novo))                       # S <- S ∪ {x}
         r.ordem.append(novo)
         r.expandidos += 1

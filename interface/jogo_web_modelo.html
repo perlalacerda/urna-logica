@@ -414,7 +414,7 @@ const PERFIL_TXT = {
     auditoria: "Para refazer a trilha de um documento, é preciso passar pelos lugares na ordem certa: não adianta chegar à validação sem antes passar pela autenticação. O computador testa os caminhos possíveis e devolve um que obedece a todas as regras — e o mais curto deles.",
     validar: () => ["Vá de A para C, G e tente <b>F</b>: a porta recusa (falta a pista AUT).",
       "Peça a 💡 Dica em qualquer ponto: ela vem da BFS calculada a partir da situação atual.",
-      "Mínimo: 7 passos (BFS). No menu <b>Resolver</b>, compare com a DFS (9 passos)."],
+      "Mínimo: 7 passos (BFS). No menu <b>Resolver</b>, compare com a DFS (10 passos)."],
     testes: ["test_cenario_1_caminho_mais_curto_e_invalido", "test_bfs_mapa_menor_numero_de_acoes", "test_mesma_posicao_pistas_diferentes_sao_estados_diferentes"],
     aulas: ["<b>Aula 09</b> — grafo por lista de adjacência → o mapa (9 locais, 11 corredores).",
       "<b>Aula 09</b> (slides 71–73) — BFS → a dica e o caminho com menos passos.", "<b>Aula 09</b> (slides 54–56) — DFS → a comparação no Resolver.",
@@ -926,9 +926,9 @@ TELAS.f4 = () => {
         ${dicaClique("O que é o FB embaixo dos nós?", "FB = altura da esquerda − altura da direita. Numa árvore equilibrada, fica entre −1 e +1. Se virar +2 ou −2, há giro.")}</div>
     </div></div></div>
     <div id="f4-sala2" style="display:none"><p>O computador anda pelo mapa da Fase 3 e o cofre anota onde ele já esteve, para não repetir caminho. ${termo("estado", "o que é uma situação?")}</p>
-      <p style="margin:6px 0"><b>Por que isso importa?</b> Se o computador explorasse de novo uma situação que já viu, andaria em círculos — é exatamente o problema desta fase. Compare 📍 local, 🔑 pistas e 🚪 portas:</p>
+      <p style="margin:6px 0"><b>Por que isso importa?</b> Se o computador explorasse de novo uma situação que já viu, andaria em círculos — é exatamente o problema desta fase. A chave do cofre é a situação inteira: 📍 local, 🔑 pistas, 🚪 portas e ⚡ energia. Compare:</p>
       <div class="regras-par">
-        <div class="r1"><b class="t">😴 É a mesma: não explorar</b>📍🔑🚪 iguais e a energia ⚡ igual ou menor. Nada de novo para descobrir.</div>
+        <div class="r1"><b class="t">😴 Nada de novo: não explorar</b>📍🔑🚪 iguais e a energia ⚡ igual (é o mesmo estado) ou menor (o que o novo faria, o antigo já fazia).</div>
         <div class="r2"><b class="t">⚡ Mesma, com mais energia: explorar</b>📍🔑🚪 iguais, mas agora sobra <b>mais</b> energia: dá para ir mais longe que da outra vez.</div>
         <div class="r3"><b class="t">🆕 São diferentes: explorar</b>Mudou o 📍 local, as 🔑 pistas ou as 🚪 portas. Mesmo lugar com pista nova é outra situação.</div></div>
       <div id="f4-s2"></div></div>
@@ -973,7 +973,7 @@ TELAS.f4 = () => {
     $("#f4-s2").innerHTML = `<div class="par-nav">${F.pares.map((_, k) => `<button data-ir="${k}" class="${k === i ? "sel" : ""} ${S.pares[k] === true ? "ok" : ""}">Par ${k + 1}${S.pares[k] === true ? " ✔" : ""}</button>`).join("")}</div>
       <div class="caixa"><b>Par ${i + 1} de ${F.pares.length}:</b> o computador chegou a uma situação. Ele já viu uma parecida. Explora ou não?
       <div class="dois" style="margin:8px 0">${cartaoSit("🗄️ O cofre já viu", p.a, p.b)}${cartaoSit("🆕 Chegou agora", p.b, p.a)}</div>
-      <div class="escolha"><button data-r="mesma">😴 É a mesma: não explorar</button><button data-r="melhor">⚡ Mesma, com mais energia: explorar</button><button data-r="outra">🆕 São diferentes: explorar</button></div>
+      <div class="escolha"><button data-r="mesma">😴 Nada de novo: não explorar</button><button data-r="melhor">⚡ Mesma, com mais energia: explorar</button><button data-r="outra">🆕 São diferentes: explorar</button></div>
       <div class="msg" id="par-msg" style="min-height:0">${feito ? "✔ " + p.explicacao : ""}</div>
       ${feito && i < F.pares.length - 1 ? `<button class="btn grande" data-ir="${i + 1}">Próximo par →</button>` : ""}</div>`;
     document.querySelectorAll("#f4-s2 [data-ir]").forEach(b => b.onclick = () => { parAt = +b.dataset.ir; sala2(); });

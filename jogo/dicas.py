@@ -133,8 +133,9 @@ def dica_fase4_sala1():
 
 
 def dica_fase4_sala2():
-    return ("A chave do cofre é (posição, pistas, portas). Se algum desses três mudar, são situações "
-            "diferentes. Se os três forem iguais, só vale explorar de novo quem tem MAIS energia.")
+    return ("Compare posição, pistas e portas. Se algum desses três mudar, são situações diferentes: "
+            "explorar. Se os três forem iguais, só vale explorar de novo quem tem MAIS energia; com "
+            "energia igual é o mesmo estado (mesma chave), e com menos não traz nada de novo.")
 
 
 # ---------------------------------------------------- Fase 5

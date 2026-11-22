@@ -190,17 +190,31 @@ class TestSolver(unittest.TestCase):
             r = alg(ProblemaMapa(energia=6))
             self.assertFalse(r.encontrou)
 
-    def test_estados_repetidos_nao_sao_expandidos(self):
-        r = solver_bfs(ProblemaMapa())
-        chaves = [chave_estado(e) for e in r.ordem]
-        self.assertEqual(len(chaves), len(set(chaves)))   # nenhuma chave expandida 2x
+    def test_chave_inclui_energia(self):
+        """Enunciado 8.1 e Etapa 7: posição igual não é estado igual quando a energia difere."""
+        self.assertNotEqual(chave_estado(("B", ("SEQ",), (), 6)), chave_estado(("B", ("SEQ",), (), 4)))
 
-    def test_dominancia_de_energia(self):
-        """Com energia 7 ou 8 há solução, mas só se a mesma chave puder ser revisitada com MAIS energia."""
-        for energia in (7, 8):
+    def test_estados_repetidos_nao_sao_expandidos(self):
+        """Enunciado 8.1: nenhuma chave (estado inteiro) é expandida duas vezes, em nenhum algoritmo."""
+        for alg in (solver_bfs, dfs_recursiva, dfs_pilha):
+            for energia in (8, 10):
+                with self.subTest(algoritmo=alg.__name__, energia=energia):
+                    r = alg(ProblemaMapa(energia=energia))
+                    chaves = [chave_estado(e) for e in r.ordem]
+                    self.assertEqual(len(chaves), len(set(chaves)))
+                    self.assertGreater(r.repetidos, 0)
+
+    def test_dominancia_poda_e_mantem_a_solucao(self):
+        """Melhoria opcional: mesma configuração com menos energia é descartada; a BFS acha o mesmo mínimo."""
+        for energia in (7, 8, 10):
             for alg in (solver_bfs, dfs_recursiva, dfs_pilha):
                 with self.subTest(energia=energia, algoritmo=alg.__name__):
-                    self.assertTrue(alg(ProblemaMapa(energia=energia)).encontrou)
+                    literal, dom = alg(ProblemaMapa(energia=energia)), alg(ProblemaMapa(energia=energia), True)
+                    self.assertTrue(literal.encontrou and dom.encontrou)
+                    self.assertLessEqual(dom.expandidos, literal.expandidos)
+                    self.assertGreater(dom.dominados, 0)
+            self.assertEqual(solver_bfs(ProblemaMapa(energia=energia)).numero_acoes(),
+                             solver_bfs(ProblemaMapa(energia=energia), True).numero_acoes())
 
     def test_solver_resolve_fase2(self):
         for alg in (solver_bfs, dfs_recursiva, dfs_pilha):
@@ -236,7 +250,7 @@ class TestIntegracaoFase3(unittest.TestCase):
         f.ir_para("A")
         ok, msg = f.ir_para("B")                 # B, sem pistas, agora com menos energia
         self.assertTrue(ok)
-        self.assertIn("já explorado", msg)
+        self.assertIn("nada de novo", msg)
 
     def test_desfazer_e_reiniciar(self):
         f = Fase3()

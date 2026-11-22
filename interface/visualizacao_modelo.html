@@ -635,7 +635,7 @@ S.push({ html: `
   ${falaAud("Cada caixinha é uma situação que o computador examinou; cada linha, um passo. Em laranja, o caminho até o Centro de Validação. Note como o local <b>C aparece duas vezes</b> no caminho: na segunda vez, já com a pista SEQ na mochila.")}
   <div class="controles"><select id="a-est"></select></div>
   <div class="crt"><svg id="a-arv"></svg></div>
-  <p><span class="carimbo verde">Conferido</span> &nbsp; BFS: 7 movimentos · DFS: 9 movimentos · nenhuma porta violada</p>`,
+  <p><span class="carimbo verde">Conferido</span> &nbsp; BFS: 7 movimentos · DFS: 10 movimentos · nenhuma porta violada</p>`,
   montar() {
     const sel = $("#a-est"); Object.keys(B.estrategias).forEach(n => sel.add(new Option(n, n)));
     const desenha = () => { const a = B.estrategias[sel.value].arvore, svg = $("#a-arv"); svg.innerHTML = "";
@@ -702,7 +702,7 @@ S.push({ html: `
   <div class="rotulo">Anexo 4 · sua vez</div><h2>O estado que parece igual (enigma 8.2)</h2>
   ${falaAud("Para não investigar a mesma situação duas vezes, o cofre precisa saber quando duas situações são <b>de fato</b> iguais. Mesmo lugar basta? Veja os pares.")}
   <div id="pares"></div>
-  ${tecnica(`Chave na AVL = (posição, pistas, portas). A energia fica como valor, com regra de dominância: repetido com energia menor ou igual não é expandido; com mais energia, substitui. As respostas abaixo são calculadas por <code>chave_estado()</code> e pela regra do solver (<code>jogo/fase4.py</code>). Teste <code>test_estados_repetidos_nao_sao_expandidos</code>.`)}`,
+  ${tecnica(`Chave na AVL = estado inteiro (posição, pistas, portas, energia), como pede o enunciado 8.1: chave idêntica = repetido, não expandido. Melhoria opcional (dominância): mesma posição, pistas e portas com energia menor ou igual também não é expandida. As respostas abaixo são calculadas por <code>chave_estado()</code> e pela regra do solver (<code>jogo/fase4.py</code>). Teste <code>test_estados_repetidos_nao_sao_expandidos</code>.`)}`,
   montar() {
     $("#pares").innerHTML = D.pares.map((p, i) => `<div class="caixa"><h3>Par ${i + 1}</h3>
       <div style="font-family:var(--maquina)">já visto: ${p.visto}<br>novo: ${p.novo}</div>

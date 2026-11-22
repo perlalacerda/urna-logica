@@ -30,7 +30,7 @@ As **regras** do jogo existem uma vez só, em `jogo/`. O jogador, o solver, os t
 
 ## Rota de avaliação sugerida (10 minutos)
 
-1. **Testes** — `rodar_testes.bat` (Windows) ou `python -m unittest discover -s testes -t .` → deve terminar em **OK** (147 testes).
+1. **Testes** — `rodar_testes.bat` (Windows) ou `python -m unittest discover -s testes -t .` → deve terminar em **OK** (148 testes).
 2. **Jogar uma fase** — no jogo, **▶ Começar**. A Fase 1 leva cerca de 2 minutos; todas as fases podem ser abertas pelo menu, sem jogar as anteriores.
 3. **Solver** — no menu, **Resolver**: BFS, DFS recursiva e DFS com pilha nas Fases 2 e 3, com caminho, estados expandidos, repetidos barrados, fronteira máxima e árvore de busca.
 4. **Conferir um algoritmo** — escolha uma linha da [matriz](checklist-entrega.md), clique na função e compare o comentário com o slide citado.
@@ -46,7 +46,7 @@ As **regras** do jogo existem uma vez só, em `jogo/`. O jogador, o solver, os t
 ## Respostas prontas para perguntas prováveis
 
 - **"E se trocasse a DFS por um algoritmo guloso?"** — O guloso escolhe o passo que parece melhor e nunca volta atrás. No desafio extra (mapa com custos), o guloso "corredor mais barato" **trava sem chegar** (`test_guloso_trava`). A DFS volta atrás quando trava, por isso acha uma solução se ela existir; a BFS acha a de **menos passos**; o Dijkstra, a de **menor custo**.
-- **"Programação dinâmica deixaria o jogo mais eficiente?"** — O solver usa uma ideia parecida, com ressalva: a AVL de visitados **poda** o trabalho repetido — uma situação já vista com energia igual ou maior não é expandida de novo (`test_estados_repetidos_nao_sao_expandidos`, `test_dominancia_de_energia`). Não é memorização no sentido da PD, porque não guarda o resultado de um subproblema para reusar. Mochila e Fibonacci não têm encaixe natural nas regras do jogo.
+- **"Programação dinâmica deixaria o jogo mais eficiente?"** — O solver usa uma ideia parecida, com ressalva: a AVL de visitados **poda** o trabalho repetido — um estado com chave já vista (posição, pistas, portas e energia) não é expandido de novo (`test_estados_repetidos_nao_sao_expandidos`), e a melhoria opcional de dominância descarta também a mesma situação com menos energia (`test_dominancia_poda_e_mantem_a_solucao`). Não é memorização no sentido da PD, porque não guarda o resultado de um subproblema para reusar. Mochila e Fibonacci não têm encaixe natural nas regras do jogo.
 - **"A BFS acha o caminho de menor custo?"** — Só se todos os passos custarem o mesmo. Com custos diferentes, a BFS gasta 15 de energia e o Dijkstra, 11 (`test_bfs_menos_movimentos_mais_energia`).
 
 ## Documentos

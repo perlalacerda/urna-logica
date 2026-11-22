@@ -10,16 +10,23 @@ Um "problema" é qualquer objeto com:
     estado_inicial()       -> estado
     sucessores(estado)     -> [(acao, novo_estado, custo)]   (as MESMAS regras do jogador)
     eh_objetivo(estado)    -> True/False
-    chave(estado)          -> chave comparável usada na AVL
+    chave(estado)          -> chave comparável usada na AVL (o estado inteiro)
     recurso(estado)        -> número (ex.: energia restante); 0 se não houver
+    configuracao(estado)   -> (opcional) o estado sem o recurso; usado pela dominância
 
-CONTROLE DE ESTADOS VISITADOS (Fase 4 — AVL)
+CONTROLE DE ESTADOS VISITADOS (Fase 4 — AVL)                [enunciado 8.1]
     Antes de explorar um estado, o solver pergunta à AVL: "já vi esta chave?"
+    A chave é o estado INTEIRO, energia incluída (enunciado 8.1 e Etapa 7).
     - Se não viu: insere e explora.
-    - Se viu com recurso MAIOR OU IGUAL: é repetido -> NÃO expande de novo.
-    - Se viu com recurso MENOR: o novo é melhor (mais energia) -> atualiza e explora.
-    Essa regra de "dominância" é segura: chegar ao mesmo lugar, com as mesmas
-    pistas e portas, porém com MENOS energia, nunca permite fazer algo novo.
+    - Se viu: é repetido -> NÃO expande de novo.
+
+MELHORIA OPCIONAL: DOMINÂNCIA (dominancia=True)             [Equipe]
+    Uma segunda AVL guarda, para cada CONFIGURAÇÃO (posição, pistas, portas),
+    a maior energia com que ela já foi vista. Um estado com a mesma
+    configuração e energia MENOR OU IGUAL também é descartado ("dominado"):
+    chegar ao mesmo lugar, com as mesmas pistas e portas, porém com MENOS
+    energia, nunca permite fazer algo novo. A solução encontrada é a mesma;
+    o solver só expande menos estados (comparação em docs/metricas.md).
 
 BFS x DFS
     BFS usa FILA: explora por camadas (1 ação, depois 2, depois 3...).
@@ -57,6 +64,7 @@ class Resultado:
         self.avl_altura = -1
         self.avl_nos = 0
         self.avl_rotacoes = 0
+        self.dominados = 0            # descartados pela dominância (só com dominancia=True)
 
     def numero_acoes(self):
         return max(0, len(self.caminho) - 1)
@@ -70,25 +78,38 @@ class Resultado:
 
 
 class _Visitados:
-    """Controle de visitados com AVL + dominância por recurso."""
+    """Controle de visitados com AVL (chave = estado inteiro) e, se pedido, dominância."""
 
-    def __init__(self, problema):
+    def __init__(self, problema, dominancia=False):
         self.problema = problema
-        self.avl = ArvoreAVL()
+        self.avl = ArvoreAVL()                               # chaves dos estados vistos
+        self.dominancia = dominancia and hasattr(problema, "configuracao")
+        self.melhor = ArvoreAVL() if self.dominancia else None   # configuração -> maior energia
+        self.dominados = 0
 
     def eh_repetido(self, estado):
-        achou, melhor, _ = self.avl.buscar(self.problema.chave(estado))
-        return achou and self.problema.recurso(estado) <= melhor
+        achou, _, _ = self.avl.buscar(self.problema.chave(estado))
+        if achou:
+            return True                                      # o mesmo estado, exatamente
+        if self.dominancia:
+            achou, maior, _ = self.melhor.buscar(self.problema.configuracao(estado))
+            if achou and self.problema.recurso(estado) <= maior:
+                self.dominados += 1
+                return True                                  # dominado: nada de novo
+        return False
 
     def marcar(self, estado):
-        chave, rec = self.problema.chave(estado), self.problema.recurso(estado)
-        if not self.avl.inserir(chave, rec):
-            self.avl.atualizar_valor(chave, rec)
+        self.avl.inserir(self.problema.chave(estado), self.problema.recurso(estado))
+        if self.dominancia:
+            conf, rec = self.problema.configuracao(estado), self.problema.recurso(estado)
+            if not self.melhor.inserir(conf, rec):
+                self.melhor.atualizar_valor(conf, rec)
 
     def preencher(self, r):
         r.avl_altura = self.avl.altura()
         r.avl_nos = len(self.avl)
         r.avl_rotacoes = sum(self.avl.rotacoes.values())
+        r.dominados = self.dominados
 
 
 def _reconstruir(pais, objetivo):
@@ -122,7 +143,7 @@ def _custos(problema, caminho):
 
 
 # ==================================================================== BFS
-def bfs(problema):
+def bfs(problema, dominancia=False):
     """
     Mesma estrutura do BFS da aula 09, trocando "vértice" por "estado":
         Q <- ∅; enqueue(Q, s)
@@ -132,8 +153,8 @@ def bfs(problema):
             para cada sucessor v de u:
                 se v não é repetido: marque v; π[v] <- u; enqueue(Q, v)
     """
-    r, inicio = Resultado("BFS"), time.perf_counter()
-    visitados = _Visitados(problema)
+    r, inicio = Resultado("BFS" + (" + dominância" if dominancia else "")), time.perf_counter()
+    visitados = _Visitados(problema, dominancia)
     s = problema.estado_inicial()
     pais = {s: (None, None)}            # π: só para reconstruir o caminho
     visitados.marcar(s)
@@ -162,7 +183,7 @@ def bfs(problema):
 
 
 # ==================================================================== DFS recursiva
-def dfs_recursiva(problema):
+def dfs_recursiva(problema, dominancia=False):
     """
     Mesma estrutura do visitaDFS da aula 09:
         visita(u):
@@ -175,8 +196,8 @@ def dfs_recursiva(problema):
             CASO-BASE 2: nenhum sucessor levou ao objetivo -> devolve "não achei"
     A "pilha" aqui é a pilha de chamadas do Python; medimos sua profundidade.
     """
-    r, inicio = Resultado("DFS (recursiva)"), time.perf_counter()
-    visitados = _Visitados(problema)
+    r, inicio = Resultado("DFS (recursiva)" + (" + dominância" if dominancia else "")), time.perf_counter()
+    visitados = _Visitados(problema, dominancia)
     s = problema.estado_inicial()
     pais = {s: (None, None)}
     visitados.marcar(s)
@@ -210,7 +231,7 @@ def dfs_recursiva(problema):
 
 
 # ==================================================================== DFS com pilha
-def dfs_pilha(problema):
+def dfs_pilha(problema, dominancia=False):
     """
     DFS iterativa: a pilha explícita substitui a recursão
     ("Simulação de recursão com pilha", aula 06).
@@ -222,8 +243,8 @@ def dfs_pilha(problema):
             se u é objetivo: pare
             empilhe os sucessores (em ordem inversa, para visitar o 1º primeiro)
     """
-    r, inicio = Resultado("DFS (pilha)"), time.perf_counter()
-    visitados = _Visitados(problema)
+    r, inicio = Resultado("DFS (pilha)" + (" + dominância" if dominancia else "")), time.perf_counter()
+    visitados = _Visitados(problema, dominancia)
     s = problema.estado_inicial()
     pais = {s: (None, None)}
     P = Pilha()

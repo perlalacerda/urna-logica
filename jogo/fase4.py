@@ -16,9 +16,12 @@ Três salas do cofre:
 
   SALA 2 — "O estado que parece igual" (enigma 8.2)
       Pares de situações do mapa. Para cada par, o jogador responde se elas
-      devem ter a MESMA chave na AVL e se o solver deve explorar a segunda.
-      As respostas certas NÃO estão escritas no código: são calculadas com
-      chave_estado() e com a regra de dominância usadas pelo solver.
+      têm a MESMA configuração (posição, pistas, portas) e se o solver deve
+      explorar a segunda. A chave da AVL é o estado inteiro, energia incluída
+      (chave_estado); "não explorar" vale para a chave idêntica (repetido) e,
+      com a melhoria de dominância, para a mesma configuração com menos energia.
+      As respostas certas NÃO estão escritas no código: são calculadas com as
+      funções do solver (chave_estado e configuracao).
 
   SALA 3 — "Consulta ao cofre" (busca existente e inexistente)
       O jogador procura códigos; o jogo mostra o caminho percorrido na
@@ -28,7 +31,7 @@ Selo 4: Sala 1 completa (todas as inserções feitas) e Sala 2 toda correta.
 """
 
 from estruturas.avl import ArvoreAVL
-from jogo.fase3 import chave_estado, rotulo
+from jogo.fase3 import chave_estado, configuracao, rotulo
 
 SEQUENCIA_LACRES = (70, 50, 40, 80, 90, 15, 25, 45, 42)
 OPCOES_ROTACAO = ("nenhuma", "RD", "RE", "RED", "RDE")
@@ -36,8 +39,8 @@ OPCOES_ROTACAO = ("nenhuma", "RD", "RE", "RED", "RDE")
 # Pares de situações do mapa: (estado já visto, estado novo)
 PARES_ESTADOS = (
     (("C", (), (), 9), ("C", ("SEQ",), (), 7)),               # mesma posição, pistas diferentes
-    (("B", ("SEQ",), (), 6), ("B", ("SEQ",), (), 4)),         # mesma chave, menos energia
-    (("D", ("AUT", "SEQ"), ("H",), 4), ("D", ("AUT", "SEQ"), ("H",), 6)),   # mesma chave, MAIS energia
+    (("B", ("SEQ",), (), 6), ("B", ("SEQ",), (), 4)),         # mesma configuração, menos energia
+    (("D", ("AUT", "SEQ"), ("H",), 4), ("D", ("AUT", "SEQ"), ("H",), 6)),   # mesma configuração, MAIS energia
     (("H", ("SEQ",), ("H",), 5), ("B", ("SEQ",), ("H",), 5)),  # posições diferentes
 )
 
@@ -45,12 +48,14 @@ PARES_ESTADOS = (
 def resposta_correta(visto, novo):
     """
     Calculada com as MESMAS funções do solver:
-      mesma_chave = chave_estado(visto) == chave_estado(novo)
-      explorar    = chaves diferentes OU energia do novo > energia do visto
+      mesma_conf = configuracao(visto) == configuracao(novo)
+      explorar   = configurações diferentes OU energia do novo > energia do visto
+    (com a energia igual, as chaves são idênticas: repetido; com a energia menor,
+    o novo é dominado e a melhoria de dominância não o expande)
     """
-    mesma_chave = chave_estado(visto) == chave_estado(novo)
-    explorar = (not mesma_chave) or novo[3] > visto[3]
-    return mesma_chave, explorar
+    mesma_conf = configuracao(visto) == configuracao(novo)
+    explorar = (not mesma_conf) or novo[3] > visto[3]
+    return mesma_conf, explorar
 
 
 def explicar(visto, novo):
@@ -65,13 +70,16 @@ def explicar(visto, novo):
             dif.append("as portas")
         motivo = ("os vizinhos são outros" if visto[0] != novo[0]
                   else "pistas diferentes abrem portas diferentes")
-        return (f"Chaves diferentes: muda(m) {' e '.join(dif)}. Permitem ações diferentes "
-                f"({motivo}). O solver explora as duas.")
+        return (f"Situações diferentes: muda(m) {' e '.join(dif)}. Permitem ações diferentes "
+                f"({motivo}). As chaves são diferentes e o solver explora as duas.")
     if explorar:
-        return ("Mesma chave (posição, pistas, portas), mas o novo tem MAIS energia: pode ir "
-                "mais longe. A AVL atualiza a energia guardada e o solver explora de novo.")
-    return ("Mesma chave e energia menor ou igual: tudo o que o novo poderia fazer, o "
-            "antigo já podia. Estado repetido — o solver NÃO expande de novo.")
+        return ("Mesmo lugar, mesmas pistas e portas; só a energia muda, então a chave é outra. "
+                "Com MAIS energia, dá para ir mais longe: o solver explora.")
+    if chave_estado(visto) == chave_estado(novo):
+        return "Chave idêntica, energia inclusive: estado repetido. O solver NÃO expande de novo."
+    return ("Mesmo lugar, mesmas pistas e portas, com MENOS energia: a chave é outra (a energia faz "
+            "parte dela), mas tudo o que o novo faria, o antigo já fazia. Com a melhoria de "
+            "dominância, o solver NÃO expande.")
 
 
 class Fase4:

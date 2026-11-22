@@ -507,13 +507,13 @@ class JogoTerminal:
 
     def sala2(self):
         f = self.fase4
-        print("\n  O solver guarda na AVL a CHAVE de cada estado: (posição, pistas, portas).")
-        print("  A energia não entra na chave: fica guardada junto, como valor.")
+        print("\n  O solver guarda na AVL a CHAVE de cada estado: (posição, pistas, portas, energia).")
+        print("  A CONFIGURAÇÃO é o estado sem a energia: (posição, pistas, portas).")
         for i, par in enumerate(f.pares):
             if f.respostas_sala2.get(i):
                 continue
             print(f"\n  Par {i + 1}:\n  {descrever_par(par)}")
-            print("  a) Os dois devem ter a MESMA chave na AVL?  (s = sim, n = não, ? = dica)")
+            print("  a) Os dois têm a MESMA configuração (posição, pistas, portas)?  (s = sim, n = não, ? = dica)")
             sn = {"sim": "s", "nao": "n", "dica": "?", "ajuda": "?"}
             r = ler_opcao(["s", "n", "?"], "  Resposta: ", apelidos=sn)
             if r == "?":

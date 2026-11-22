@@ -130,8 +130,11 @@ lista ocupa O(|V| + |E|), enquanto a matriz ocuparia O(|V|²).</p>
 <h3>3.4 Estado</h3>
 <p><b>Estado = (posição, pistas, portas abertas, energia)</b>. Dois estados na mesma posição são diferentes se as pistas forem diferentes: em C sem pistas
 e em C com SEQ. O espaço de estados é um <b>grafo implícito</b>: os vizinhos de um estado são gerados pelas regras, não guardados.
-Para a memória de visitados, a chave é (posição, pistas, portas) e a energia entra como valor por <b>dominância</b>: um estado repetido com energia menor
-ou igual não é expandido; com energia maior, substitui o anterior. Com as mesmas pistas e portas, ter menos energia nunca permite fazer algo novo.</p>
+Para a memória de visitados, a chave da AVL é o <b>estado inteiro</b>, energia incluída, como pede o enunciado (8.1: “a chave deve representar todos os
+elementos que tornam um estado distinto”; Etapa 7). Um estado com chave já vista é repetido e não é expandido. Como <b>melhoria opcional</b>
+(<code>dominancia=True</code>), uma segunda AVL guarda a maior energia de cada configuração (posição, pistas, portas): um estado com a mesma configuração
+e energia menor ou igual também é descartado, porque não permite fazer nada de novo. A melhoria não muda a solução mínima da BFS e reduz os estados
+expandidos no mapa do jogo de 70 para 18 (seção 8.2).</p>
 <p>O enigma: ignorando as portas, a BFS acha {" → ".join(curto)} ({len(curto) - 1} arestas), mas essa rota chega a F sem AUT e é recusada.
 A rota válida precisa buscar SEQ em E, atravessar H e pegar AUT em D.</p>"""))
 
@@ -220,8 +223,8 @@ teria profundidade n.</p>
 {tabela(["cenário", "estratégia", "ações", "expandidos", "repetidos", "fronteira máx.", "altura AVL", "tempo (ms)"], busca_l, "Fonte: experimentos.py; mapas de 30 e 60 vértices gerados por seed.", ["", "", "num", "num", "num", "num", "num", "num"])}
 <p>Na aula, BFS e DFS custam O(|V| + |E|) porque a cor de cada vértice é consultada em O(1). No solver, cada sucessor gerado é procurado na AVL
 de visitados, a O(log n): o custo fica O((|V| + |E|) log |V|) no grafo de estados. Esse grafo cresce com as combinações: com p pistas e k portas,
-até |V|·2<sup>p+k</sup> chaves distintas; como a energia fica fora da chave (dominância), a mesma chave pode ser reexpandida quando volta com mais energia,
-até E + 1 vezes. No mapa do jogo há 160 situações para 35 chaves distintas.
+até |V|·2<sup>p+k</sup> configurações, cada uma com até E + 1 valores de energia na chave. A dominância poda as que chegam com menos energia:
+no mapa do jogo, a BFS expande 70 estados com a chave literal e 18 com a dominância; no mapa gerado de 60 vértices, 704 e 181 (tabela em <code>docs/metricas.md</code>).
 Nos mapas gerados, a BFS acha sempre o caminho mais curto; a DFS chega com caminhos bem mais longos (35 contra 7 ações no mapa de 30 vértices).</p>
 <h3>8.3 Árvore AVL</h3>
 {tabela(["nós", "altura", "log₂ n", "rotações", "tempo total de inserção (ms)"], avl_l, "Inserção em ordem crescente, o pior caso de uma árvore de busca comum.", ["num", "num", "num", "num", "num"])}
@@ -238,7 +241,7 @@ aproveitado, o que foi alterado e como foi validado, acompanha a entrega à prof
 <ul>
 <li><b>Fidelidade às aulas:</b> o pseudocódigo de cada slide foi transcrito antes do código (transcrição mantida fora do repositório público, por respeito ao material da professora), e cada função foi
 conferida contra ele; os exemplos dos slides viraram testes. Essa conferência encontrou a divergência do Quick Sort (6.1).</li>
-<li><b>Decisões de projeto</b> registradas com a origem (enunciado, aula ou equipe) em <code>docs/decisoes.md</code>: chave de estado com dominância de energia,
+<li><b>Decisões de projeto</b> registradas com a origem (enunciado, aula ou equipe) em <code>docs/decisoes.md</code>: chave de estado com a energia (literal do enunciado) e dominância como melhoria opcional,
 ação "arquivar" na Fase 2, variante com custos sem alterar a Fase 3 original.</li>
 <li><b>Jogabilidade:</b> a aluna jogou como avaliadora e apontou o que não estava claro (termos técnicos sem tradução, regras do mapa, falta de botão
 "próxima fase", Fase 4 longa); a interface foi revista a partir dessa avaliação.</li>
