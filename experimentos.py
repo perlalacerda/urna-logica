@@ -96,7 +96,8 @@ def main():
         L.append(f"| {n} | {tipo} | {alg} | {comp} | {mov} | {ms:.3f} |")
     L += ["", "Referência teórica (aulas 03 e 04): Bubble faz sempre n(n−1)/2 comparações, Θ(n²); "
           "Merge, Θ(n log n) em todos os casos; Quick, Θ(n log n) no caso médio e Θ(n²) com entrada "
-          "já ordenada ou invertida (pivô = último elemento).", "",
+          "já ordenada ou invertida, ou com muitas chaves iguais (pivô = último elemento). As movimentações do Quick "
+          "contam também as autotrocas A[i]↔A[i] da linha 6 do slide 32.", "",
           "## 2. Busca no espaço de estados (Fase 3)", "",
           "| cenário | estratégia | ações | expandidos | gerados | repetidos | fronteira máx. | nós AVL | altura AVL | rotações | tempo (ms) |",
           "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
@@ -105,8 +106,9 @@ def main():
         L.append("| " + " | ".join(str(c) for c in campos) + f" | {ms:.3f} |")
     L += ["", "BFS encontra o menor número de ações porque cada ação custa 1. A DFS não tem essa garantia: "
           "a rota encontrada tende a ser mais longa, e o número de estados expandidos pode ser menor ou "
-          "maior que o da BFS, conforme a ordem dos vizinhos e a posição do objetivo. Complexidade: O(|V| + |E|) no grafo de "
-          "estados, cujo tamanho cresce com o número de combinações de posição, pistas e portas.", "",
+          "maior que o da BFS, conforme a ordem dos vizinhos e a posição do objetivo. Expandidos pode passar de nós AVL: "
+          "a mesma chave é reexpandida quando volta com mais energia (dominância). Complexidade: O((|V| + |E|) log |V|) no grafo de "
+          "estados, porque cada sucessor é procurado na AVL; o grafo cresce com as combinações de posição, pistas e portas.", "",
           "## 3. Árvore AVL — altura × número de nós", "",
           "| nós | altura | log2(n) | rotações | tempo total de inserção (ms) |",
           "|---:|---:|---:|---:|---:|"]

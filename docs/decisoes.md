@@ -88,3 +88,4 @@ O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e 
 3. Fase 3: "Unidade Oeste" × "Arquivo Oeste" (adotados como dois locais distintos).
 4. Bônus "editor de fases": fases em arquivo JSON contam?
 5. A professora concorda em aparecer, pelo nome, como orientadora na Audiência Pública?
+6. Chave da AVL de visitados sem a energia (dominância): o EP 8.1 pede que a chave represente todos os elementos que distinguem um estado; a energia fica no valor e decide a reexpansão. Confirmar se a alternativa é aceita.

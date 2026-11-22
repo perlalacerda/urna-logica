@@ -58,7 +58,7 @@ def bfs(G, s):
     return d, pi, ordem, Q.maior_tamanho
 
 
-def dfs(G):
+def dfs(G, ordem_vertices=None):
     """
     DFS (G)                                            [Aula 09, slides 54-55]
     1. para cada u em V[G]: cor[u] <- BRANCO; π[u] <- NULL
@@ -67,9 +67,12 @@ def dfs(G):
     6.     se cor[u] = BRANCO então visitaDFS(u)
     Complexidade: O(|V| + |E|).
     Devolve (d, f, pi, ordem_de_descoberta).
+    ordem_vertices: a ordem de V[G] nas linhas 1 e 5 (padrão: alfabética).
+    O exemplo dos slides 29-52 percorre V[G] começando por s.
     """
+    V = list(ordem_vertices) if ordem_vertices is not None else G.vertices()
     cor, d, f, pi = {}, {}, {}, {}
-    for u in G.vertices():                          # 1-3
+    for u in V:                                     # 1-3
         cor[u], pi[u] = BRANCO, None
     tempo = [0]                                     # 4 (lista: para alterar dentro da função)
     ordem = []
@@ -102,7 +105,7 @@ def dfs(G):
         tempo[0] += 1                               # 9
         f[u] = tempo[0]                             # 10
 
-    for u in G.vertices():                          # 5
+    for u in V:                          # 5
         if cor[u] == BRANCO:                        # 6
             visita_dfs(u)                           # 7
     return d, f, pi, ordem

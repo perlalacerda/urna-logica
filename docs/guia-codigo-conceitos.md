@@ -109,7 +109,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 - **No jogo:** enigma da Fase 1 — ordenar por zona, depois seção, depois horário.
 - **No código:** `jogo/registros.py` → `CRITERIOS["auditoria"] = (zona, secao, timestamp, id_registro)`.
 - **A ideia:** a tupla é comparada campo a campo, como num dicionário: só olha o 2.º campo se o 1.º empatar. Ordenar só pelo horário viola a regra (`test_so_pelo_horario_nao_basta`).
-- **Por que o `id_registro` no fim:** Merge (versão da aula) e Quick não são estáveis — em 200 vetores de teste com chaves repetidas, o Merge trocou a ordem de iguais em 96 e o Quick em 178; o Bubble, em nenhum (`test_estabilidade`). Sem desempate, registros com zona, seção e horário iguais poderiam sair em ordens diferentes em cada algoritmo, e o teste "os três algoritmos dão o mesmo resultado" falharia. O id é único: a ordem final passa a ser uma só (`test_tres_algoritmos_concordam`).
+- **Por que o `id_registro` no fim:** Merge (versão da aula) e Quick não são estáveis — em 50 vetores de teste com chaves repetidas, o Merge trocou a ordem de iguais em 23 e o Quick em 47; o Bubble, em nenhum (`test_estabilidade`). Sem desempate, registros com zona, seção e horário iguais poderiam sair em ordens diferentes em cada algoritmo, e o teste "os três algoritmos dão o mesmo resultado" falharia. O id é único: a ordem final passa a ser uma só (`test_tres_algoritmos_concordam`).
 - **Para mostrar:** no lote padrão, VR-0006 e VR-0012 empatam em zona 03, seção 001, 18:42:10 — o id desempata.
 
 ### 7. Recursão
@@ -167,7 +167,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 - **A ideia:** a fila garante que todos os vértices a distância 1 sejam visitados antes dos de distância 2, e assim por diante.
 - **Quando a BFS acha o caminho mais curto (pergunta obrigatória do EP, 7.2):** ela encontra o caminho com **menor número de arestas** (ações). Isso equivale ao menor custo **só quando toda ação custa o mesmo** — no jogo, cada movimento custa 1. Com pesos diferentes, a BFS não garante menor custo (seria preciso Dijkstra).
 - **Complexidade:** O(|V| + |E|).
-- **Prova:** `test_bfs_distancias_da_aula` reproduz o exemplo dos slides 60–70: ordem s, r, w, v, t, x, u, y; distâncias s=0, r=1, w=1, v=2, t=2, x=2, u=3, y=3.
+- **Prova:** `test_bfs_distancias_da_aula` usa o grafo do exemplo dos slides 60–70 e confere as distâncias do slide: s=0, r=1, w=1, v=2, t=2, x=2, u=3, y=3. A ordem de visita (s, r, w, v, t, x, u, y) difere da do slide (s, w, r, t, x, v, u, y) porque o código mantém as listas de adjacência em ordem alfabética. A DFS reproduz exatamente o exemplo dos slides 29–52 (`test_dfs_exemplo_do_slide`).
 
 ### 13. DFS — busca em profundidade (aula 09, slides 54–56)
 
@@ -218,7 +218,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 
 ### 19. Testes e análise de complexidade
 
-- **Onde:** `testes/` (138 testes, um arquivo por módulo, cobrindo a tabela da seção 15) e `experimentos.py` → `docs/metricas.md`.
+- **Onde:** `testes/` (147 testes, um arquivo por módulo, cobrindo a tabela da seção 15) e `experimentos.py` → `docs/metricas.md`.
 - **Como rodar:** `rodar_testes.bat` (dois cliques) ou `py -m unittest discover -s testes -t .`.
 - **Teoria × experimento:** as contagens confirmam a teoria das aulas (Bubble n(n−1)/2; Quick no pior caso n(n−1)/2; AVL com altura ≈ log₂ n). Os tempos dependem da máquina; as contagens, não.
 - **Um erro real encontrado por teste de integração:** a Fase 5 lia o histórico da Fase 2 num formato errado. Uma partida simulada do início ao fim revelou o erro; ele foi corrigido e virou o teste `test_integracao_com_o_historico_real_das_fases_2_e_3`.
@@ -297,7 +297,7 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 
 - **Como garante que o mapa é conexo:** sorteia primeiro uma **árvore geradora** — cada novo vértice se liga a um já existente. Uma árvore com n vértices tem n − 1 arestas e liga todos. Depois acrescenta arestas extras, que criam ciclos e rotas alternativas.
 - **Como garante que há solução:** sorteia onde ficam pistas e portas e roda a BFS. Se não houver solução, tenta a próxima seed.
-- **Resultado útil para a análise:** no mapa de 30 vértices, a BFS encontra 7 ações e a DFS, 35. No de 60 vértices, a DFS expandiu **mais** estados que a BFS (235 × 181): a DFS não garante explorar menos.
+- **Resultado útil para a análise:** no mapa de 30 vértices, a BFS encontra 7 ações e a DFS, 35. No de 60 vértices, a DFS fez **mais** expansões que a BFS (235 × 181), mas viu **menos** chaves distintas (93 × 218): a mesma chave pode ser reexpandida quando volta com mais energia (dominância). A DFS não garante explorar menos.
 - **Prova:** `TestCenarios` (mesma seed → mesmo mapa; mapa conexo; sempre com solução).
 
 ---

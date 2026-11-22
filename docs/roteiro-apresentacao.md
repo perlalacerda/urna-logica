@@ -155,7 +155,7 @@ Apontar no relatório: **CONSISTENTE** nas três etapas, a tabela BFS × DFS (7 
 - Mostrar o resultado de `rodar_testes.bat`: **138 testes, OK**.
   > "Os testes cobrem a tabela da seção 15: estrutura vazia, um elemento, vários, inválidos, rotações, BFS com a ordem do exemplo da aula, integração manual × solver."
 - Citar um teste que pegou erro real: a Fase 5 lia o histórico da Fase 2 no formato errado; a partida simulada revelou; virou teste.
-- Bônus feitos: visualização animada offline; gerador de mapas por seed com verificador de solução. No mapa de 60 locais, a DFS expandiu **mais** estados que a BFS (235 × 181) — a DFS não garante explorar menos.
+- Bônus feitos: visualização animada offline; gerador de mapas por seed com verificador de solução. No mapa de 60 locais, a DFS fez **mais** expansões que a BFS (235 × 181), embora tenha visto menos chaves distintas (93 × 218): ela reexpande uma chave quando volta com mais energia. A DFS não garante explorar menos.
 
 ---
 

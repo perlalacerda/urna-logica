@@ -77,6 +77,22 @@ class TestAlgoritmos(unittest.TestCase):
         self.assertGreater(instaveis["merge_sort"], 0)
         self.assertGreater(instaveis["quick_sort"], 0)
 
+    def test_merge_empate_pega_da_esquerda(self):
+        """Slide 21, linha 8: se B[i] <= B[j], vem da esquerda — no empate, o da esquerda sai primeiro."""
+        A = [(1, "a"), (1, "b")]
+        merge_sort(A, lambda x: x[0])
+        self.assertEqual(A, [(1, "a"), (1, "b")])
+
+    def test_particiona_exemplo_do_slide(self):
+        """Aula 04, slide 33: particionar [2, 8, 7, 1, 3, 5, 6, 4] com pivô 4 -> q = 3 e [2, 1, 3, 4, 7, 5, 6, 8]."""
+        from algoritmos.ordenacao import _particiona, Contador
+        A = [2, 8, 7, 1, 3, 5, 6, 4]
+        q = _particiona(A, 0, 7, lambda x: x, Contador("quick"))
+        self.assertEqual(q, 3)
+        self.assertEqual(A, [2, 1, 3, 4, 7, 5, 6, 8])
+        B = [4, 1, 4]                         # linha 4 usa <=: o igual ao pivô vai para a esquerda
+        self.assertEqual(_particiona(B, 0, 2, lambda x: x, Contador("quick")), 2)
+
     def test_primeiro_fora_de_ordem(self):
         self.assertEqual(primeiro_fora_de_ordem([1, 2, 5, 4, 6]), 2)
         self.assertEqual(primeiro_fora_de_ordem([1, 2, 3]), -1)

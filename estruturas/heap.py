@@ -24,7 +24,7 @@ O que é (slides 26-28)
        (9) (7)          cada pai é MENOR OU IGUAL aos seus filhos
 
 Cuidado (slide 28): heap NÃO é árvore binária de busca. Num heap só se sabe
-que o pai é menor que os filhos; não há ordem entre irmãos.
+que o pai é menor ou igual aos filhos; não há ordem entre irmãos.
 
 Cada elemento é guardado como (prioridade, ordem_de_chegada, item). A ordem de
 chegada desempata prioridades iguais, para o resultado ser sempre o mesmo.

@@ -569,7 +569,7 @@ S.push({ html: `
       <div class="caixa"><h3 id="b-tipo"></h3><div class="linha" id="b-front"></div></div>
       <div class="msg" id="b-res"></div></div>
   </div>
-  ${tecnica(`BFS e DFS literais da aula 09 em <code>algoritmos/busca_grafo.py</code>; no espaço de estados, <code>algoritmos/solver.py</code> (BFS com fila própria; DFS recursiva e com pilha própria). A BFS encontra o menor número de arestas quando todas as ações têm o mesmo custo (aqui, 1); com pesos diferentes, não garante menor custo. Complexidade O(|V|+|E|).`)}`,
+  ${tecnica(`BFS e DFS literais da aula 09 em <code>algoritmos/busca_grafo.py</code>; no espaço de estados, <code>algoritmos/solver.py</code> (BFS com fila própria; DFS recursiva e com pilha própria). A BFS encontra o menor número de arestas quando todas as ações têm o mesmo custo (aqui, 1); com pesos diferentes, não garante menor custo. Complexidade O(|V|+|E|) na aula; no espaço de estados, O((|V|+|E|) log |V|), porque cada estado é procurado na AVL.`)}`,
   montar() {
     const sel = $("#b-est"); Object.keys(B.estrategias).forEach(n => sel.add(new Option(n, n)));
     const est = () => B.estrategias[sel.value];

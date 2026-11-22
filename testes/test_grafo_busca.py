@@ -76,6 +76,29 @@ class TestBFSDFSdaAula(unittest.TestCase):
         self.assertEqual(caminho(pi, "A", "F"), ["A", "C", "G", "F"])
         self.assertEqual(d["F"], 3)
 
+    def test_dfs_exemplo_do_slide(self):
+        """Aula 09, slides 29-52 (grafo orientado): d|f do slide 52 e floresta com 2 árvores."""
+        G = Grafo(orientado=True)
+        for u, v in [("s", "r"), ("s", "t"), ("s", "w"), ("r", "v"), ("r", "w"), ("v", "s"), ("t", "w"),
+                     ("t", "x"), ("x", "w"), ("w", "v"), ("u", "t"), ("u", "x"), ("u", "y"), ("y", "w")]:
+            G.adicionar_aresta(u, v)
+        d, f, pi, _ = dfs(G, ["s", "r", "t", "u", "v", "w", "x", "y"])
+        esperado = {"s": (1, 12), "r": (2, 7), "v": (3, 4), "w": (5, 6), "t": (8, 11), "x": (9, 10), "u": (13, 16), "y": (14, 15)}
+        self.assertEqual({v: (d[v], f[v]) for v in esperado}, esperado)
+        self.assertEqual([v for v in pi if pi[v] is None], ["s", "u"])     # duas raízes = duas árvores
+
+    def test_dfs_intervalos_aninhados(self):
+        """Teorema dos parênteses: intervalos [d, f] são disjuntos ou um contém o outro; π[v] = u => [d[v], f[v]] dentro de [d[u], f[u]]."""
+        d, f, pi, _ = dfs(grafo_da_aula())
+        for u in d:
+            for v in d:
+                if u != v:
+                    disjuntos = f[u] < d[v] or f[v] < d[u]
+                    aninhados = (d[u] < d[v] < f[v] < f[u]) or (d[v] < d[u] < f[u] < f[v])
+                    self.assertTrue(disjuntos or aninhados, (u, v))
+            if pi[u] is not None:
+                self.assertTrue(d[pi[u]] < d[u] < f[u] < f[pi[u]])
+
     def test_dfs_tempos(self):
         d, f, pi, ordem = dfs(grafo_da_aula())
         for u in d:
@@ -171,6 +194,13 @@ class TestSolver(unittest.TestCase):
         r = solver_bfs(ProblemaMapa())
         chaves = [chave_estado(e) for e in r.ordem]
         self.assertEqual(len(chaves), len(set(chaves)))   # nenhuma chave expandida 2x
+
+    def test_dominancia_de_energia(self):
+        """Com energia 7 ou 8 há solução, mas só se a mesma chave puder ser revisitada com MAIS energia."""
+        for energia in (7, 8):
+            for alg in (solver_bfs, dfs_recursiva, dfs_pilha):
+                with self.subTest(energia=energia, algoritmo=alg.__name__):
+                    self.assertTrue(alg(ProblemaMapa(energia=energia)).encontrou)
 
     def test_solver_resolve_fase2(self):
         for alg in (solver_bfs, dfs_recursiva, dfs_pilha):

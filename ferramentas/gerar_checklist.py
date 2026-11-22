@@ -60,7 +60,7 @@ LINHAS = [
      "Menu Resolver; visualização", ["test_grafo_busca:TestSolver.test_todas_as_estrategias_respeitam_as_regras"], "6.3"),
     ("Altura de árvore (vazia = −1)", "Aula 07", ["estruturas.avl:altura"],
      "Fase 4 (FB embaixo de cada nó)", ["test_estruturas:TestAVL.test_arvore_vazia"], "5"),
-    ("AVL: inserção e rotações RD, RE, RED, RDE", "Aula 08, slides 9–15", ["estruturas.avl:ArvoreAVL._insere", "estruturas.avl:ArvoreAVL._rotacao_direita", "estruturas.avl:ArvoreAVL._rotacao_esquerda",
+    ("AVL: inserção e rotações RD, RE, RED, RDE", "Aula 08, slides 16–21 (algoritmo) e 9–15 (exemplo)", ["estruturas.avl:ArvoreAVL._insere", "estruturas.avl:ArvoreAVL._rotacao_direita", "estruturas.avl:ArvoreAVL._rotacao_esquerda",
      "estruturas.avl:ArvoreAVL._rotacao_esquerda_direita", "estruturas.avl:ArvoreAVL._rotacao_direita_esquerda"],
      "Fase 4, Sala 1", ["test_estruturas:TestAVL.test_exemplo_da_aula", "test_fases_finais:TestFase4.test_sala1_quatro_rotacoes_da_aula"], "5"),
     ("AVL como memória de estados visitados", "Aula 08 + enunciado 8", ["algoritmos.solver:_Visitados", "estruturas.avl:ArvoreAVL.buscar"],

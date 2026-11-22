@@ -86,6 +86,7 @@ def secoes():
     curto = Fase3().menor_caminho_ignorando_portas()[0]
     ambiente = f"Python {sys.version.split()[0]}, {platform.system()} {platform.release()}, {platform.machine()}"
     S = []
+    evid_avl = evidencia_avl()
 
     S.append(("1. Resumo do jogo e objetivo", f"""
 <p><b>Urna Lógica — O Enigma da Eleição de Verídia</b> é um jogo de lógica e investigação sobre uma eleição <b>inteiramente fictícia</b>.
@@ -158,7 +159,10 @@ o pseudocódigo do slide correspondente com a numeração das linhas, para confe
 {tabela(["Estrutura", "Arquivo", "Operações e custo", "Uso no jogo"], estr)}
 <p>A AVL segue a aula 08: fator de balanceamento FB = altura da esquerda − altura da direita; após a inserção, o ancestral desbalanceado mais próximo é
 corrigido com RD, RE, RED ou RDE. A sequência da aula (70, 50, 40, 80, 90, 15, 25, 45, 42) provoca as quatro rotações, e a Fase 4 a usa para que a jogadora
-preveja cada uma. O heap segue o heap de máximo da aula 08 com as comparações invertidas, como a aula indica.</p>"""))
+preveja cada uma. O heap segue o heap de máximo da aula 08 com as comparações invertidas, como a aula indica.</p>
+<h3>5.1 Evidência técnica da AVL (seção 8.3 do enunciado)</h3>
+<p>Desenhos gerados pela própria <code>ArvoreAVL.desenhar()</code> durante a inserção da sequência da aula 08. Em cada nó: altura h e fator de balanceamento FB.</p>
+{evid_avl}"""))
 
     custos_l = [[e(r.algoritmo), "sim" if r.encontrou else "<b>não</b> (trava)", str(r.numero_acoes()), str(r.custo), " → ".join(x[0] for _, x in r.caminho)] for r in custos]
     sol3 = [[e(r.algoritmo), str(r.numero_acoes()), str(r.expandidos), str(r.repetidos), str(r.maior_fronteira), " → ".join(x[0] for _, x in r.caminho)] for r in r3.values()]
@@ -171,8 +175,9 @@ o que muda é o trabalho (seção 8).</p>
 <code>quickSort(A, p, q)</code>, como está no slide, a recursão não termina quando o pivô é o maior elemento. O código usa <code>q − 1</code>, e um teste
 reproduz o laço infinito da versão literal (<code>test_quick_versao_literal_do_slide_nao_termina</code>).</p>
 <h3>6.2 BFS e DFS da aula 09</h3>
-<p><code>algoritmos/busca_grafo.py</code> implementa BFS (cores, d, π, fila) e DFS (tempos de descoberta e finalização) literalmente, e os testes usam
-os exemplos dos slides. A BFS garante o menor número de <b>arestas</b>; não garante o menor <b>custo</b> quando as arestas têm pesos diferentes (6.4).</p>
+<p><code>algoritmos/busca_grafo.py</code> implementa BFS (cores, d, π, fila) e DFS (tempos de descoberta e finalização) linha a linha como nos slides 54–55 e 71–72.
+A DFS reproduz o exemplo dos slides 29–52 (os mesmos d|f do slide 52 e a floresta com 2 árvores). A BFS usa o grafo e reproduz as distâncias
+do exemplo dos slides 60–70; a ordem de visita difere da do slide porque as listas de adjacência são mantidas em ordem alfabética. A BFS garante o menor número de <b>arestas</b>; não garante o menor <b>custo</b> quando as arestas têm pesos diferentes (6.4).</p>
 <h3>6.3 Solver no espaço de estados</h3>
 <p>BFS com a fila própria, DFS recursiva (pilha de chamadas) e DFS com a pilha própria, todas sobre o grafo implícito de estados e com a AVL como memória
 de visitados. Cada resultado registra caminho, custo, estados expandidos, gerados e repetidos, fronteira máxima, árvore de busca e métricas da AVL.
@@ -213,8 +218,10 @@ porque o pivô no último elemento divide o vetor em partes de tamanho n − 1 e
 teria profundidade n.</p>
 <h3>8.2 Busca no espaço de estados</h3>
 {tabela(["cenário", "estratégia", "ações", "expandidos", "repetidos", "fronteira máx.", "altura AVL", "tempo (ms)"], busca_l, "Fonte: experimentos.py; mapas de 30 e 60 vértices gerados por seed.", ["", "", "num", "num", "num", "num", "num", "num"])}
-<p>BFS e DFS custam O(|V| + |E|) no grafo de estados, mas esse grafo cresce com as combinações de posição, pistas e portas: com p pistas, até
-|V|·2<sup>p</sup> estados. A memória de visitados na AVL custa O(log n) por consulta; sem ela, estados repetidos seriam expandidos de novo.
+<p>Na aula, BFS e DFS custam O(|V| + |E|) porque a cor de cada vértice é consultada em O(1). No solver, cada sucessor gerado é procurado na AVL
+de visitados, a O(log n): o custo fica O((|V| + |E|) log |V|) no grafo de estados. Esse grafo cresce com as combinações: com p pistas e k portas,
+até |V|·2<sup>p+k</sup> chaves distintas; como a energia fica fora da chave (dominância), a mesma chave pode ser reexpandida quando volta com mais energia,
+até E + 1 vezes. No mapa do jogo há 160 situações para 35 chaves distintas.
 Nos mapas gerados, a BFS acha sempre o caminho mais curto; a DFS chega com caminhos bem mais longos (35 contra 7 ações no mapa de 30 vértices).</p>
 <h3>8.3 Árvore AVL</h3>
 {tabela(["nós", "altura", "log₂ n", "rotações", "tempo total de inserção (ms)"], avl_l, "Inserção em ordem crescente, o pior caso de uma árvore de busca comum.", ["num", "num", "num", "num", "num"])}
@@ -243,6 +250,8 @@ a execução (por exemplo, a afirmação de que Merge e Quick não são estávei
 
     S.append(("10. Dificuldades, limitações, melhorias e conclusão", f"""
 <h3>Dificuldades e como foram resolvidas</h3>
+<p class="nota">Limitação conhecida: no jogo do navegador, o “Desfazer” da Fase 3 usa um vetor JavaScript; a pilha própria (<code>estruturas/pilha.py</code>)
+é usada no terminal e no solver. As regras do navegador vêm do Python, que calcula as situações e a página só consulta.</p>
 <ul>
 <li><b>Quick Sort do slide:</b> a chamada <code>p..q</code> não termina com a partição de Lomuto; adotado <code>p..q−1</code>, com teste (pendente de confirmação com a professora).</li>
 <li><b>Integração da Fase 5:</b> uma partida simulada revelou que a Fase 5 lia o histórico da Fase 2 num formato diferente do gravado; corrigido e coberto por teste de integração.</li>
@@ -283,7 +292,28 @@ td { border-bottom: 1px solid #d8cdb5; padding: 3pt 5pt; vertical-align: top; } 
 .capa { height: 245mm; display: flex; flex-direction: column; justify-content: center; text-align: center; page-break-after: always; }
 .capa .inst { font-size: 13pt; color: #444; } .capa h1 { font-size: 26pt; margin: 30pt 0 8pt; } .capa .sub { font-size: 14pt; margin-bottom: 40pt; }
 .sumario li { text-align: left; }
+.duas { display: flex; gap: 10pt; } .duas pre { flex: 1; font-size: 9pt; background: #f6f1e6; border: 1px solid #d8cdb5; padding: 6pt; margin: 0 0 6pt; page-break-inside: avoid; white-space: pre; }
+.nota { font-size: 10.5pt; color: #333; }
 """
+
+
+def evidencia_avl():
+    """EP 8.3: uma sequência que provoca rotação, desenhos antes e depois, busca de chave existente e inexistente."""
+    from estruturas.avl import ArvoreAVL
+    a, partes = ArvoreAVL(), []
+    for k in (70, 50, 40, 80, 90, 15, 25, 45, 42):
+        antes, n = a.desenhar(), len(a.historico_rotacoes)
+        a.inserir(k)
+        if len(a.historico_rotacoes) > n:
+            tipo, no = a.historico_rotacoes[-1]
+            partes.append(f"<p><b>Inserir {k} → {tipo}</b> (desbalanceamento no nó {no})</p>"
+                          f"<div class='duas'><pre>Antes\n{e(antes)}</pre><pre>Depois\n{e(a.desenhar())}</pre></div>")
+    for k in (45, 60):
+        achou, _, comp = a.buscar(k)
+        partes.append(f"<p><b>Busca pela chave {k}</b> ({'existente' if achou else 'inexistente'}): caminho "
+                      f"{' → '.join(map(str, a.caminho_busca(k)))}{'' if achou else ' → NULL'}; {comp} comparações "
+                      f"(altura da árvore = {a.altura()}, no máximo altura + 1 = {a.altura() + 1}).</p>")
+    return "".join(partes)
 
 
 def gerar():

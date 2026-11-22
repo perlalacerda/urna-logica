@@ -74,7 +74,7 @@ class Fase5:
             acoes_do_jogador = [a[0] if isinstance(a, tuple) else a for a in acoes_do_jogador]
             f = Fase2()
             passos_ok = all(f.executar(a)[0] for a in acoes_do_jogador)
-            ok, origem, acoes = passos_ok and f.venceu(), "jogador (validado pelo solver)", list(acoes_do_jogador)
+            ok, origem, acoes = passos_ok and f.venceu(), "jogador (validado pelas regras do jogo, as mesmas do solver)", list(acoes_do_jogador)
             metricas = "ações do jogador reexecutadas uma a uma com as regras R1-R5"
         else:
             r = bfs(ProblemaTriagem())
@@ -97,7 +97,7 @@ class Fase5:
                 if not valido:
                     break
             ok = valido and e[0] == DESTINO
-            origem, trilha, final = "jogador (validado pelo solver)", list(trilha_do_jogador), e
+            origem, trilha, final = "jogador (validado pelas regras do jogo, as mesmas do solver)", list(trilha_do_jogador), e
             metricas = "cada movimento conferido pela função mover() (regras R1-R5)"
         else:
             r = bfs(ProblemaMapa(G))
