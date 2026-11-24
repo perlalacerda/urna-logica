@@ -55,12 +55,30 @@ def dados_fase1():
                 "algoritmo": c.algoritmo, "comparacoes": c.comparacoes, "movimentacoes": c.movimentacoes}
     comparacao = [[n, a, comp, mov] for n, a, comp, mov, _ in base.comparar_algoritmos()]
     chaves = dados_chaves_fase1(base)
+    cenarios = dados_cenarios_fase1(base.seed)
     return {"nome": Fase1.NOME, "abertura": Fase1.ABERTURA, "enigma": Fase1.ENIGMA,
             "registros": [reg(r) for r in base.registros],
             "criterios": [[c, DESCRICAO_CRITERIOS[c]] for c in ("id", "zona", "horario", "auditoria")],
             "algoritmos": [["bubble", "Bubble Sort"], ["merge", "Merge Sort"], ["quick", "Quick Sort"]],
-            "resultados": resultados, "comparacao": comparacao, "chaves": chaves,
+            "resultados": resultados, "comparacao": comparacao, "chaves": chaves, "cenarios": cenarios,
             "campos": [[c, NOMES_CAMPOS[c]] for c in CAMPOS]}
+
+
+def dados_cenarios_fase1(seed, n=500):
+    """
+    Quadro "O que aprendemos" da Fase 1: comparações de cada método com 500
+    registros em três tipos de entrada (aleatória, já ordenada, invertida).
+    Mesma montagem de experimentos.py: os números são medidos, não escritos à mão.
+    """
+    from algoritmos.ordenacao import ordenar
+    from jogo.registros import gerar_registros, embaralhar
+    chave = CRITERIOS["auditoria"]
+    base = embaralhar(gerar_registros(n, seed), seed + 1)
+    entradas = (("aleatoria", base), ("ordenada", sorted(base, key=chave)),
+                ("invertida", sorted(base, key=chave, reverse=True)))
+    return {"n": n, "linhas": {tipo: {alg: ordenar(list(dados), alg, chave).comparacoes
+                                      for alg in ("bubble", "merge", "quick")}
+                               for tipo, dados in entradas}}
 
 
 def dados_chaves_fase1(base):

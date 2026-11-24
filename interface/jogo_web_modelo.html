@@ -161,6 +161,17 @@
   .passo { display: flex; gap: 12px; align-items: flex-start; margin: 16px 0 6px; font-size: 20px; }
   .passo .num { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--laranja); color: #fff6e4; font: 800 19px var(--titulo); }
   .passo b { font-family: var(--titulo); }
+  .trilha-aud { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 8px 0 4px; font: 700 15px var(--titulo); }
+  .trilha-aud .t { padding: 3px 10px; border-radius: 999px; background: #e9dcbd; color: var(--tinta2); border: 2px solid transparent; }
+  .trilha-aud .t.ok { background: #d8ecdf; color: var(--verde); } .trilha-aud .t.aqui { background: var(--laranja); color: #fff; border-color: var(--laranja2); }
+  .trilha-aud .seta { color: var(--tinta2); } .trilha-aud .rot { color: var(--tinta2); margin-right: 4px; }
+  .liga { display: block; margin-top: 6px; }
+  .aprendi { background: var(--papel2); border: 2px solid var(--borda); border-radius: 12px; padding: 10px 14px; margin: 10px 0; font-size: 18px; line-height: 1.45; text-align: left; color: var(--tinta); }
+  .aprendi h3 { margin: 0 0 6px; } .aprendi .lin { margin: 5px 0; } .aprendi .lin b.r { color: var(--petroleo2); }
+  .aprendi .dep { background: #fff4e0; border-left: 5px solid var(--ambar); border-radius: 8px; padding: 6px 10px; margin-top: 8px; }
+  .aprendi table { border-collapse: collapse; margin: 6px 0; font-size: 16px; } .aprendi td, .aprendi th { border: 1px solid var(--borda); padding: 3px 8px; text-align: right; }
+  .aprendi th:first-child, .aprendi td:first-child { text-align: left; } .aprendi td.melhor { font-weight: 800; color: var(--verde); }
+  .veu .aprendi { max-width: 640px; margin: 12px auto; max-height: 46vh; overflow-y: auto; }
   .missao-fase { font-size: 20px; } .linha-tips { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
   .linha-tips details.tip[open] { flex-basis: 100%; }
   .acoes-f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
@@ -256,6 +267,7 @@ function carimbo(titulo, estrelas, linha, de) {
   v.innerHTML = `<div style="text-align:center"><div class="carimbo"><div><div class="grande">${titulo}</div><div style="font-size:15px;margin:4px 0">CONQUISTADO</div>
     <div class="est">${"★".repeat(estrelas)}${"☆".repeat(3 - estrelas)}</div></div></div>
     <p style="color:#fff1cf;font-size:19px;max-width:480px;margin:22px auto 12px">${linha}</p>
+    ${de && APRENDI[de.replace(/^f/, "")] ? aprendiHTML(de.replace(/^f/, ""), true) : ""}
     ${de ? `<button class="btn grande" id="cb-prox">▶ Ir para: ${PROXIMA[de][1]}</button>` : ""}
     <button class="btn neutro" id="cb-fica">Ficar aqui</button></div>`;
   document.body.appendChild(v); tocarCarimbo();
@@ -296,7 +308,7 @@ const GLOSS = {
     "", "Usa uma fila. Tempo O(V + E). Acha o menor número de arestas — não o menor custo, se os corredores tiverem pesos diferentes. Aula 09."],
   dfs: ["🧶", "DFS (busca em profundidade)", "Outro jeito de explorar o mapa (no menu Resolver): segue um caminho até não dar mais, volta e tenta outro. Acha uma saída, mas nem sempre a mais curta.",
     "", "Usa pilha (ou recursão). Tempo O(V + E). Não garante o caminho mais curto. Aula 09."],
-  energia: ["⚡", "Energia (custo)", "Cada passo no mapa gasta energia ⚡. Se acabar, você não anda mais. No desafio extra, cada corredor gasta uma quantidade diferente.",
+  energia: ["⚡", "Energia (custo)", "A energia ⚡ é o orçamento de ações da equipe de auditoria: cada passo no mapa gasta um pouco (tempo e gente). Se acabar, você não anda mais. No desafio extra, cada corredor gasta uma quantidade diferente.",
     "", "É o custo do caminho. No desafio extra, cada corredor tem um peso w(u, v) diferente."],
   arvore: ["🌳", "Árvore do cofre (árvore AVL)", "O cofre da Fase 4: cada código entra descendo — menor vai para a esquerda, maior para a direita. Para achar um código, cada pergunta descarta um lado inteiro da árvore.",
     "", "Árvore binária de busca balanceada (AVL). Buscar e inserir: O(log n). Aulas 07 e 08."],
@@ -368,10 +380,10 @@ const cartoesMetodos = (sel, extra) => `<div class="metodos">${["bubble", "merge
 const TUT = {
   f1: ["🗂️", "Fase 1 — O Arquivo Embaralhado", ["As 12 fichas das seções chegaram fora de ordem.", "Monte a regra de arrumação clicando nas peças: <b>zona → seção → horário</b>.", "Escolha um jeito de arrumar (cada um explica como trabalha) e clique em <b>Ordenar</b>: veja as fichas se mexerem.", "A auditoria aceita ou mostra, em vermelho, onde a ordem quebrou."]],
   f2: ["📦", "Fase 2 — A Central de Triagem", ["As provas chegam pela <b>📥 esteira</b>: só a da frente pode sair.", "Ponha no <b>🔐 cofre</b> na ordem <b>E2 → E4 → E1 → E6</b>.", "Prova que ainda não é a vez espera na <b>🥞 pilha</b> (só a de cima sai). Cópias descartáveis vão para o <b>🗑️ arquivo morto</b>.", "Errou? <b>Desfazer</b>. Menos jogadas = mais estrelas."]],
-  f3: ["🗺️", "Fase 3 — O Mapa das Seções", ["Você é o 🕵️. Clique num <b>local verde</b> para andar até ele.", "Siga a lista de tarefas: pegue a pista <b>🔑 SEQ</b> (em E) e depois a <b>🔑 AUT</b> (em D).", "As portas 🔒 só abrem com a pista certa: H pede SEQ; F pede AUT.", "Cada passo gasta ⚡ 1 de energia (você tem 10). Travou? 💡 Dica acende o próximo local."]],
+  f3: ["🗺️", "Fase 3 — O Mapa das Seções", ["Você é o 🕵️. Clique num <b>local verde</b> para andar até ele.", "Siga a lista de tarefas: pegue a pista <b>🔑 SEQ</b> (em E) e depois a <b>🔑 AUT</b> (em D).", "As portas 🔒 só abrem com a pista certa: H pede SEQ; F pede AUT.", "Cada passo gasta ⚡ 1 de energia — o orçamento de ações da equipe (você tem 10). Travou? 💡 Dica acende o próximo local."]],
   f4: ["🔐", "Fase 4 — O Cofre dos Estados", ["<b>Sala 1:</b> os códigos entram numa árvore — menor à esquerda, maior à direita.", "Antes de cada código, <b>adivinhe</b> se a árvore fica torta e precisa girar. O quadro “Para decidir” ensina a ver.", "<b>Sala 2:</b> diga se duas situações do mapa são a mesma para a memória do computador.", "Terminou as duas salas? Selo 4!"]],
   f5: ["🧾", "Fase 5 — A Auditoria Final", ["Escolha um jeito de arrumar o lote (os cartões explicam cada um).", "Assista à auditoria conferir o lote, a triagem e o mapa, item por item.", "Onde você jogou, ela confere as <b>suas</b> jogadas.", "Com os 5 selos, o Cofre de Verificação abre."]],
-  custos: ["⚡", "Desafio extra — O Mapa com Custos", ["O mesmo mapa da Fase 3, mas o número em cada corredor é a energia que ele gasta.", "Pegue SEQ e AUT e chegue a F, como antes.", "Desta vez vence quem gastar <b>menos energia</b>.", "Depois, compare com a BFS, o guloso e o Dijkstra."]]
+  custos: ["⚡", "Desafio extra — O Mapa com Custos", ["O mesmo mapa da Fase 3, mas o número em cada corredor é quanto ele gasta do orçamento da equipe (a energia ⚡).", "Pegue SEQ e AUT e chegue a F, como antes.", "Desta vez vence quem gastar <b>menos energia</b>.", "Depois, compare com a BFS, o guloso e o Dijkstra."]]
 };
 function tutorial(chave, sempre) {
   if (!sempre && P.tut[chave]) return; P.tut[chave] = true; salvar();
@@ -517,7 +529,65 @@ const PROBLEMA = {1: ["Arquivo embaralhado", "As 12 fichas das seções chegaram
   3: ["Trilha partida", "O caminho entre as seções se partiu e há portas trancadas. É preciso achar uma rota que obedeça a todas as regras.", "o <b>grafo</b> (um mapa de pontos ligados) e a <b>busca em largura</b> (explorar em ondas para achar o caminho mais curto)"],
   4: ["Computador andando em círculos", "O computador da CIV visita o mesmo lugar várias vezes porque não lembra onde já esteve.", "a <b>árvore equilibrada</b> (AVL): uma memória em que cada pergunta descarta um lado inteiro da árvore"],
   5: ["Conferência final", "Ninguém deve acreditar no resultado sem ver a prova. A auditoria refaz cada passo e confere as regras.", "a <b>integração</b> de tudo: ordenação, fila, pilha, grafo, busca e árvore conferindo umas às outras"],
-  custos: ["Rota mais barata", "No mesmo mapa, cada corredor gasta uma energia diferente. O caminho com menos passos nem sempre é o mais barato.", "o <b>algoritmo de Dijkstra</b> (sempre continua pelo caminho que saiu mais barato até agora) e a comparação com o <b>guloso</b>"]};
+  custos: ["Rota mais barata", "No mesmo mapa, cada corredor gasta uma parte diferente do orçamento da auditoria. O caminho com menos passos nem sempre é o mais barato.", "o <b>algoritmo de Dijkstra</b> (sempre continua pelo caminho que saiu mais barato até agora) e a comparação com o <b>guloso</b>"]};
+/* ================= A TRILHA DA AUDITORIA =================
+   A pergunta da CIV (enunciado, seção 2): dá para reconstruir uma trilha coerente entre os registros de origem,
+   os locais de votação e o relatório final? Cada fase reconstrói UM elo dessa trilha (o "produto da fase" da seção 4). */
+const TRILHA = [["📂", "Registros em ordem"], ["🔐", "Provas na sequência"], ["🗺️", "Caminho do lote"], ["🧠", "Busca sem repetir"], ["🧾", "Relatório final"]];
+function trilhaAud(n) {
+  const chips = TRILHA.map(([ic, t], k) => `<span class="t${n === k + 1 ? " aqui" : P.selos[k] ? " ok" : ""}">${P.selos[k] && n !== k + 1 ? "✔" : ic} ${t}</span>`);
+  if (n === "custos") chips.push(`<span class="t aqui">⚡ Trilha mais econômica</span>`);
+  return `<div class="trilha-aud"><span class="rot">🧭 A trilha da auditoria:</span>${chips.join('<span class="seta">→</span>')}</div>`;
+}
+// Na voz da Miss Pearl: o problema da fase e o que ele tem a ver com a apuração de Verídia.
+const LIGACAO = {
+  1: "As 12 fichas das seções chegaram embaralhadas. Para provar a apuração, preciso conferir seção por seção se nenhum registro sumiu ou se repetiu — e isso só dá para fazer com as fichas em ordem. <b>1º elo da trilha: os registros de origem.</b>",
+  2: "Agora as provas de cada seção entram no cofre na ordem em que a apuração aconteceu: 🔒 o lacre da urna (E2), 📄 o boletim que ela gerou (E4), 💾 o log que registrou o boletim (E1) e ✍️ a assinatura que valida tudo (E6). Se a ordem quebrar, ninguém prova que uma prova não foi trocada no caminho. <b>2º elo: a sequência de custódia.</b>",
+  3: "Com registros e provas em ordem, falta refazer, local por local, o caminho que o lote percorreu: da Central de Auditoria (A) ao Centro de Validação (F). O lote só vale se passou pela conferência de sequência (pista SEQ) e pela autenticação (pista AUT). O caminho mais curto pula a autenticação — e por isso não vale. <b>3º elo: o caminho do lote entre os locais.</b>",
+  4: "Para achar esse caminho, o APURA-42 testa centenas de situações — e estava conferindo as mesmas várias vezes, sem sair do lugar. Vou dar a ele uma memória organizada em árvore, para saber na hora se uma situação já foi examinada. <b>4º elo: uma busca que não anda em círculos.</b>",
+  5: "Hora de responder à pergunta da CIV: dá para reconstruir a trilha dos registros de origem até o relatório final, respeitando todas as regras? A auditoria refaz cada etapa e emite o <b>relatório de consistência</b>. <b>5º elo: a prova final.</b>",
+  custos: "A CIV tem um <b>orçamento de ações</b> para a auditoria — é a ⚡ energia: cada deslocamento da equipe custa tempo e gente. Alguns corredores estão em obras e custam bem mais. A pergunta agora: qual trilha válida gasta <b>menos orçamento</b>?"};
+/* "O que aprendemos": o conceito, o que ele resolveu em Verídia, a melhor escolha AQUI e o "depende".
+   Os números vêm do Python (D), não são escritos à mão. */
+const fmt = n => n.toLocaleString("pt-BR");
+const APRENDI = {
+  1: () => { const C = D.fase1.cenarios, L = C.linhas, nomes = {aleatoria: "embaralhada", ordenada: "já em ordem", invertida: "invertida"};
+    const tab = `<table><tr><th>${C.n} fichas chegando…</th><th>Bubble</th><th>Merge</th><th>Quick</th></tr>${Object.keys(nomes).map(t => { const m = Math.min(...Object.values(L[t]));
+      return `<tr><td>${nomes[t]}</td>${["bubble", "merge", "quick"].map(a => `<td class="${L[t][a] === m ? "melhor" : ""}">${fmt(L[t][a])}</td>`).join("")}</tr>`; }).join("")}</table>
+      <span class="legenda">Comparações feitas por cada método (contadas pelo próprio código). Em verde, a menor da linha.</span>`;
+    return {conceito: "Ordenação com <b>chave composta</b>: zona → seção → horário → identificador.",
+      resolveu: "As fichas ficaram em ordem e a auditoria conferiu seção por seção, sem perder nem repetir registro.",
+      melhor: `<b>Merge Sort.</b> Fez menos comparações nos três casos (${fmt(L.aleatoria.merge)}) e nunca piora, chegue o lote como chegar.${tab}`,
+      depende: `Com o lote embaralhado, o Quick também vai bem (${fmt(L.aleatoria.quick)} comparações) e costuma ser o mais rápido no relógio. Mas, se o lote já chegar em ordem ou invertido, ele cai para ${fmt(L.ordenada.quick)}, igual ao Bubble. Com só 12 fichas, qualquer método serve; o Bubble ajuda a entender a ideia, mas não aguenta lotes grandes.`}; },
+  2: () => ({conceito: "<b>Fila</b> (o primeiro que chega sai primeiro), <b>pilha</b> (o último que entra sai primeiro) e <b>lista ligada</b> (uma corrente que cresce no fim).",
+    resolveu: `As provas entraram no cofre na ordem E2 → E4 → E1 → E6, sem pular a vez de ninguém; o mínimo é ${D.fase2.minimo} jogadas. Jogada errada foi recusada sem estragar nada, e o Desfazer voltou a jogada mais recente.`,
+    melhor: "<b>Cada estrutura no seu papel.</b> A fila garante a ordem de chegada da esteira; a pilha segura quem ainda não é a vez e guarda o histórico do Desfazer; a lista ligada simples basta para o cofre, que só é lido do início ao fim.",
+    depende: "A pilha funcionou porque só uma prova (E1) precisou esperar. Se várias provas tivessem de esperar e sair na mesma ordem em que entraram, a pilha inverteria essa ordem: aí o certo seria uma segunda fila. E, se fosse preciso percorrer o cofre de trás para a frente, a lista duplamente ligada seria a escolha."}),
+  3: () => { const S = D.solver.mapa, b = S["BFS"], d = S["DFS (recursiva)"];
+    return {conceito: "<b>Grafo</b> (locais ligados por corredores), <b>estado</b> (local + pistas + portas + energia) e <b>busca</b>: BFS em ondas, DFS em profundidade.",
+      resolveu: `A trilha do lote foi refeita com ${b.acoes} passos, passando pela autenticação antes da validação. O caminho mais curto no desenho foi recusado, porque pulava a pista AUT.`,
+      melhor: `<b>BFS.</b> Como todo passo custa o mesmo, a BFS garante o caminho com menos passos: ${b.acoes}. A DFS achou um de ${d.acoes}.`,
+      depende: `A BFS só garante o menor caminho porque todo passo custa 1. Se os corredores custarem diferente, ela erra a conta — é o desafio extra. A DFS guarda menos coisas na memória ao mesmo tempo (fronteira de ${d.fronteira} × ${b.fronteira} da BFS), mas não garante o caminho mais curto nem explorar menos.`}; },
+  4: () => { const b = D.solver.mapa["BFS"];
+    return {conceito: "<b>Árvore AVL</b>: uma árvore de busca que se reequilibra com rotações; e a <b>chave de estado</b>, que reúne tudo o que muda as ações possíveis.",
+      resolveu: `O APURA-42 parou de conferir de novo o que já tinha visto: na busca do mapa, a memória barrou ${b.repetidos} situações repetidas.`,
+      melhor: "<b>AVL com a chave completa.</b> Procurar custa no máximo altura + 1 comparações, e a altura fica perto de log₂ n: entre 1 milhão de situações, no máximo 28 passos. A chave inclui posição, pistas, portas e energia, porque o mesmo local com pistas diferentes permite ações diferentes.",
+      depende: "Com poucas situações, uma lista simples bastaria. A AVL compensa quando são muitas e quando elas chegam em ordem: aí uma árvore de busca comum vira uma fila comprida (10.000 chaves em ordem → altura 9.999), e a AVL fica com altura 13."}; },
+  5: () => ({conceito: "<b>Integração</b>: ordenação, fila, pilha, lista, grafo, busca e AVL conferindo umas às outras; e ordenação de novo, na tabela do relatório.",
+    resolveu: "A auditoria refez as suas jogadas pelas mesmas regras e emitiu o relatório de consistência: a resposta à pergunta da CIV.",
+    melhor: "<b>Conferir refazendo.</b> A auditoria não aceita “confia em mim”: refaz cada passo pelas regras. Para ordenar a tabela do relatório, o Merge, que nunca piora.",
+    depende: "A auditoria prova que esta trilha obedece às regras de Verídia — e só isso. Se uma regra estiver mal escrita, a auditoria aprova o que a regra permite. Por isso as regras ficam à vista de todos, e os testes conferem cada uma."}),
+  custos: () => { const C = D.custos.comparacao, [b, g, dj] = C;
+    return {conceito: "<b>Algoritmo guloso</b> (escolher sempre o que parece melhor agora) e <b>Dijkstra</b> (um guloso que soma o custo desde a saída).",
+      resolveu: `A trilha válida que gasta menos orçamento: ${dj.custo} de energia, com ${dj.acoes} passos. A rota da BFS tem só ${b.acoes} passos, mas gasta ${b.custo}.`,
+      melhor: "<b>Dijkstra.</b> Com custos diferentes e nenhum negativo, ele garante o menor gasto total. O guloso ingênuo (sempre o corredor mais barato da vez) volta à Central e trava sem chegar.",
+      depende: "Se todos os corredores custassem o mesmo, a BFS daria a mesma resposta, de um jeito mais simples. O Dijkstra só vale com custos que não sejam negativos. E o guloso ingênuo às vezes acerta — mas não há garantia."}; }};
+function aprendiHTML(n, curto) {
+  const A = APRENDI[n](), lin = (r, t) => `<div class="lin"><b class="r">${r}</b> ${t}</div>`;
+  return `<div class="aprendi"><h3>💡 O que aprendemos ${n === "custos" ? "no desafio extra" : "na Fase " + n}</h3>
+    ${lin("🧩 Conceito:", A.conceito)}${curto ? "" : lin("🔗 Na auditoria de Verídia:", A.resolveu)}
+    ${lin("🏆 A melhor escolha aqui:", A.melhor)}<div class="dep"><b>🤔 Mas depende…</b> ${A.depende}</div></div>`;
+}
 const MISSAO_CURTA = {1: "arrumar as 12 fichas na ordem da auditoria", 2: "pôr as provas no cofre na ordem E2 → E4 → E1 → E6", 3: "ir de A até F pegando as pistas SEQ e AUT",
   4: "montar a memória em árvore e responder às salas", 5: "rodar a auditoria e abrir o Cofre", custos: "pegar SEQ e AUT e chegar a F gastando o mínimo de energia"};
 function faixaFase(chave) { const f = $("#faixa"); if (!f) return; const n = String(chave).replace(/^f(\d)$/, "$1"), pr = PROBLEMA[n];
@@ -528,11 +598,12 @@ function cabecalho(n) {
   const c = D.capitulos[n - 1], fase = D["fase" + n];
   return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between">
       <h2 style="margin:0">${fase.nome} ${P.selos[n - 1] ? "· ✔ selo" : ""} ${pintaEstrelas(P.estrelas["f" + n])}</h2><span>${botaoCodigo("f" + n)}${botaoComoJogar("f" + n)}</span></div>
-    ${pearl(`<b>Problema: ${PROBLEMA[n][0].toLowerCase()}.</b> ${PROBLEMA[n][1]}`)}
+    ${trilhaAud(n)}
+    ${pearl(`<b>Problema: ${PROBLEMA[n][0].toLowerCase()}.</b> ${LIGACAO[n]}`)}
     ${blocosPerfis("f" + n)}
     <p class="missao-fase"><b>🎯 Sua missão:</b> ajudar a Miss Pearl a ${c.missao.charAt(0).toLowerCase() + c.missao.slice(1)}</p>
     ${porTras(BASTIDOR[n])}
-    <div class="linha-tips">${dicaClique("A história desta fase", NARRA[n])}${dicaClique("O texto original do enunciado", `<div class="doc">${fase.abertura}</div>`)}</div>`;
+    <div class="linha-tips">${P.selos[n - 1] ? dicaClique("💡 O que aprendemos nesta fase", aprendiHTML(n)) : ""}${dicaClique("A história desta fase", NARRA[n])}${dicaClique("O texto original do enunciado", `<div class="doc">${fase.abertura}</div>`)}</div>`;
 }
 
 /* ================= MENU ================= */
@@ -814,7 +885,7 @@ TELAS.f3 = () => {
     const tem = x => e.pistas.includes(x);
     $("#f3-missoes").innerHTML = [[tem("SEQ"), "1. Pegar a pista 🔑 SEQ na Unidade Oeste (E)"], [tem("AUT"), "2. Passar por H e pegar a pista 🔑 AUT na Unidade Leste (D)"],
       [e.venceu, "3. Entrar no Centro de Validação (F) 🏁"]].map(([ok, t]) => `<li class="${ok ? "ok" : ""}">${ok ? "✅" : "⬜"} ${t}</li>`).join("");
-    $("#f3-estado").innerHTML = `📍 Você está em <b>${e.pos}</b> — ${F.vertices.find(v => v.id === e.pos).nome}<br>🎒 Pistas: <b>${e.pistas.join(", ") || "nenhuma ainda"}</b><br>⚡ Energia: ${"⚡".repeat(e.energia)} (${e.energia})<br>👣 Caminho até aqui: ${S.trilha.join(" → ")}`;
+    $("#f3-estado").innerHTML = `📍 Você está em <b>${e.pos}</b> — ${F.vertices.find(v => v.id === e.pos).nome}<br>🎒 Pistas: <b>${e.pistas.join(", ") || "nenhuma ainda"}</b><br>⚡ Energia (orçamento de ações): ${"⚡".repeat(e.energia)} (${e.energia})<br>👣 Caminho até aqui: ${S.trilha.join(" → ")}`;
     $("#f3-agora").innerHTML = "<b>O que fazer agora</b>" + (e.venceu ? `Você chegou! Siga em frente quando quiser.<br>${botaoProxima("f3")}` : e.orientacao); };
   function clique(v) { const e = F.estados[S.atual], m = $("#f3-msg");
     if (!F.adjacencia[e.pos].includes(v)) { m.className = "msg nao"; m.textContent = v === e.pos ? "Você já está aqui." : `Não há corredor entre ${e.pos} e ${v}. Clique num dos círculos verdes: ${F.adjacencia[e.pos].join(", ")}.`; return; }
@@ -841,9 +912,11 @@ let mcVer = "Dijkstra";
 TELAS.custos = () => {
   const F = D.custos, S = P.mc, C = F.comparacao, PU = F.puro;
   $("#tela").innerHTML = `<div class="folha"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between"><h2 style="margin:0">${F.nome} ${pintaEstrelas(P.estrelas.custos)}</h2><span>${botaoCodigo("custos")}${botaoComoJogar("custos")}</span></div>
-    ${pearl("Descobrimos que os corredores de Verídia não custam todos o mesmo: alguns estão em obras e gastam muito mais energia. O caminho com <b>menos passos</b> nem sempre é o que gasta <b>menos energia</b>!")}
+    ${trilhaAud("custos")}
+    ${pearl(`<b>Problema: trilha mais econômica.</b> ${LIGACAO.custos}`)}
     ${blocosPerfis("custos")}
     ${porTras(["energia", "bfs", "guloso", "dijkstra"])}
+    ${P.mc.melhor !== null && P.mc.melhor !== undefined ? `<div class="linha-tips">${dicaClique("💡 O que aprendemos no desafio extra", aprendiHTML("custos"))}</div>` : ""}
     <p><b>🎯 Sua missão:</b> chegar ao Centro de Validação (F) com as pistas SEQ e AUT, gastando o <b>mínimo</b> de energia. As regras são as da Fase 3; a diferença é que cada corredor tem um custo (o número no meio da linha; em vermelho, os corredores em obras).</p>
     <div class="agora" id="mc-agora"></div>
     <div class="dois"><div class="crt"><svg id="mc-mapa"></svg><p class="legenda" style="color:#d9b98a;margin:4px 8px">Círculos verdes tracejados = locais aonde você pode ir agora. O número em cada corredor é a energia que ele gasta.</p></div>
@@ -1057,12 +1130,13 @@ const DISCURSO = [
     ["🗺️", "Trilha partida", "exploramos o mapa em ondas, do mais perto ao mais longe — como as ondas de uma pedra jogada na água."],
     ["🔐", "Computador em círculos", "demos a ele uma memória em árvore, que lembra rápido onde já esteve."],
     ["🧾", "Conferência final", "refizemos tudo do zero e conferimos cada passo."]]],
-  ["💡 O que aprendemos", "Cinco lições para levar para casa:", [
-    ["🧮", "Ordem poupa trabalho", "com milhões de registros, o método certo troca horas por minutos."],
-    ["📏", "Computador não adivinha", "ele segue regras — e qualquer pessoa pode conferir essas regras."],
-    ["🗺️", "Mais curto ≠ mais barato", "o caminho com menos passos nem sempre gasta menos energia."],
-    ["🧠", "Lembrar evita repetir", "anotar o que já viu impede de andar em círculos."],
-    ["✅", "Conferir é refazer", "não basta confiar: a prova é refazer o caminho e chegar ao mesmo lugar."]]],
+  ["💡 O que aprendemos", "Para cada problema, a melhor ferramenta <b>neste caso de Verídia</b> — e por que ela nem sempre é a melhor:", [
+    ["🗂️", "Ordenar o lote", "aqui, o <b>Merge</b>: menos comparações e nunca piora. <i>Depende:</i> com lote embaralhado o Quick também vai bem; com lote já em ordem, ele fica lento como o Bubble."],
+    ["📦", "Guardar as provas", "<b>fila</b> para a ordem de chegada, <b>pilha</b> para quem espera e para o Desfazer, <b>lista ligada</b> para o cofre. <i>Depende:</i> se várias provas esperassem e saíssem na ordem de chegada, seria outra fila."],
+    ["🗺️", "Refazer o caminho", "a <b>BFS</b>: acha o caminho com menos passos. <i>Depende:</i> só porque todo passo custa o mesmo."],
+    ["🧠", "Não repetir conferências", "a <b>AVL</b>: acha qualquer situação em poucos passos. <i>Depende:</i> com poucas situações, uma lista bastaria."],
+    ["⚡", "Gastar menos orçamento", "o <b>Dijkstra</b>: menor custo total. <i>Depende:</i> se todo corredor custasse igual, a BFS bastava."],
+    ["✅", "Provar o resultado", "<b>refazer</b> cada passo pelas regras. <i>Depende:</i> a prova vale o que valem as regras — por isso elas ficam à vista de todos."]]],
   ["🙏 Obrigada!", "Agradeço à <b>Profa. Dra. Lucy</b>, que orientou esta investigação; aos <b>colegas da turma 2026</b>, que revisaram cada regra; aos <b>estudantes</b> que jogaram e perguntaram; e a <b>você</b>, analista, que resolveu os 5 problemas. <b>Verídia pode confiar no que pode conferir.</b>"]];
 function confete() { const c = document.createElement("div"); c.className = "confete";
   c.innerHTML = Array.from({length: 46}, (_, i) => `<i style="left:${(i * 37) % 100}%;animation-delay:${(i % 9) * .25}s;background:${["#d9682b", "#ffb347", "#1f5f5b", "#f4e7c9", "#2e7d4f"][i % 5]}"></i>`).join("");
@@ -1087,7 +1161,8 @@ TELAS.final = () => {
       <p><button class="btn grande" onclick="discurso=0;ir('menu')">🏠 Voltar ao menu</button>
         ${extra ? "" : `<button class="btn sec grande" onclick="ir('custos')">⚡ Jogar o desafio extra</button>`}
         <button class="btn neutro" onclick="ir('resultados')">📊 Resultados e testes</button>
-        <button class="btn neutro" onclick="discurso=0;ir('final')">↺ Ouvir de novo</button></p></div></div>`;
+        <button class="btn neutro" onclick="discurso=0;ir('final')">↺ Ouvir de novo</button></p>
+      <details class="tip" style="text-align:left"><summary>💡 O que aprendemos, fase a fase (com o “depende”)</summary><div>${[1, 2, 3, 4, 5, "custos"].map(n => aprendiHTML(n)).join("")}</div></details></div></div>`;
   confete(); desenha();
 };
 
