@@ -48,6 +48,8 @@ O enunciado (5.3) pede zona → seção → horário. Merge (versão da aula) e 
 
 ## Regras das fases
 
+- **Vocabulário das fases (25.11.2026):** "lista de custódia" na Fase 2 (enunciado 6.3); "Cofre dos Estados" na Fase 4 (enunciado 8), a memória do solver, em que cada situação ganha um código guardado numa AVL; "Cofre de Verificação" no fim (enunciado 2.1). "Lacre" fica só para o lacre da urna (E2) e para o local Galeria de Lacres. "Energia" é o orçamento de ações (enunciado 2.2). [Equipe]
+
 - **Fase 2 (adotado, documentado):** ações aceitar, guardar, arquivar, liberar e desfazer.
   - **arquivar** dá destino a E3 e E5, que não fazem parte da custódia. [Equipe]
   - **guardar** só aceita uma evidência que precise sair *antes* da que está no topo. Isso impede "enterrar" uma evidência na pilha (beco sem saída). [Equipe]

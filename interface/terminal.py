@@ -446,11 +446,11 @@ class JogoTerminal:
         titulo(f.NOME)
         print(f.ABERTURA)
         while True:
-            sala1 = f"{f.proximo}/{len(f.sequencia)} lacres" + (" (completa)" if f.sala1_completa() else "")
+            sala1 = f"{f.proximo}/{len(f.sequencia)} códigos" + (" (completa)" if f.sala1_completa() else "")
             sala2 = f"{sum(f.respostas_sala2.values())}/{len(f.pares)} corretas" + (" (completa)" if f.sala2_completa() else "")
-            print(f"\n  1. Sala 1 — Lacres do cofre (AVL e rotações)   [{sala1}]")
+            print(f"\n  1. Sala 1 — Guardar os códigos (AVL e rotações)   [{sala1}]")
             print(f"  2. Sala 2 — O estado que parece igual         [{sala2}]")
-            print("  3. Sala 3 — Consulta ao cofre (busca)")
+            print("  3. Sala 3 — Procurar um código (busca)")
             print("  4. Reiniciar a fase\n  0. Voltar")
             orientar(dicas.orientacao_fase4(f))
             op = ler_opcao(["1", "2", "3", "4", "0"], apelidos={"reiniciar": "4", "voltar": "0"})
@@ -466,13 +466,13 @@ class JogoTerminal:
             else:
                 return
             if f.venceu():
-                print("\n  O cofre reconheceu a memória organizada. Selo 4 conquistado!")
+                print("\n  O Cofre dos Estados reconheceu a memória organizada. Selo 4 conquistado!")
                 pausa()
                 return
 
     def sala1(self):
         f = self.fase4
-        print("\n  O cofre indexa os códigos dos lacres numa árvore AVL.")
+        print("\n  O Cofre dos Estados é a memória do APURA-42: cada situação ganha um código, guardado numa árvore AVL.")
         print("  Lembre: FB = altura da esquerda - altura da direita; deve ficar entre -1 e +1.")
         print("  Se um nó chegar a +2 ou -2, uma rotação corrige:")
         print("    +2 e entrou à esquerda da esquerda -> RD    -2 e à direita da direita -> RE")
@@ -481,7 +481,7 @@ class JogoTerminal:
             codigo = f.sequencia[f.proximo]
             print("\n  Árvore atual:")
             print("  " + f.avl.desenhar().replace("\n", "\n  "))
-            print(f"\n  Próximo lacre: {codigo}. O que vai acontecer ao inseri-lo?")
+            print(f"\n  Próximo código: {codigo}. O que vai acontecer ao inseri-lo?")
             for i, o in enumerate(OPCOES_ROTACAO, 1):
                 print(f"   {i}. {o}")
             print("   ?. dica    0. sair da sala (o progresso fica guardado)")
@@ -533,7 +533,7 @@ class JogoTerminal:
     def sala3(self):
         f = self.fase4
         if f.avl.raiz is None:
-            print("\n  O cofre está vazio: insira lacres na Sala 1 primeiro.")
+            print("\n  O cofre está vazio: insira os códigos na Sala 1 primeiro.")
             return
         print("\n  Árvore do cofre:\n  " + f.avl.desenhar().replace("\n", "\n  "))
         try:
@@ -649,8 +649,8 @@ class JogoTerminal:
         print("    " + (", ".join(f"{a} {e}" for a, e in self.fase2.acoes_feitas) or "(nenhuma)"))
         print("\n  Fase 3 — trilha percorrida:")
         print(f"    {' -> '.join(self.fase3.trilha)}  (energia restante: {self.fase3.estado[3]})")
-        print("\n  Fase 4 — cofre:")
-        print(f"    Sala 1: {self.fase4.proximo}/{len(self.fase4.sequencia)} lacres, "
+        print("\n  Fase 4 — Cofre dos Estados:")
+        print(f"    Sala 1: {self.fase4.proximo}/{len(self.fase4.sequencia)} códigos, "
               f"{self.fase4.acertos_sala1()} previsões corretas; altura da AVL {self.fase4.avl.altura()}")
         print(f"    Sala 2: {sum(self.fase4.respostas_sala2.values())}/{len(self.fase4.pares)} pares corretos")
         print("\n  Fase 5 — auditoria: " + ("consistente" if self.fase5.venceu() else

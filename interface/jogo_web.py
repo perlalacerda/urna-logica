@@ -346,7 +346,7 @@ CODIGO_POR_FASE = {
            ("estruturas.pilha:Pilha.pop", "Pilha: desempilhar — aula 06"),
            ("estruturas.lista_ligada:ListaLigada.inserir_fim", "Lista ligada: inserir no fim — aula 06"),
            ("jogo.fase2:regra_guardar", "Regra do botão “Guardar na pilha”"),
-           ("jogo.fase2:regra_aceitar", "Regra do botão “Pôr no cofre”")],
+           ("jogo.fase2:regra_aceitar", "Regra do botão “Pôr na custódia”")],
     "f3": [("estruturas.grafo:Grafo.adicionar_aresta", "Grafo por lista de adjacência — aula 09"),
            ("jogo.fase3:mover", "Regras do mapa: vizinho, energia, porta, pista"),
            ("algoritmos.busca_grafo:bfs", "BFS da aula 09 — slides 71–73"),

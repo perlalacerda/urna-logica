@@ -6,8 +6,8 @@ balanceamento) e CHAVE DE ESTADO.
 
 Três salas do cofre:
 
-  SALA 1 — "Lacres do cofre" (inserção e rotações)
-      O cofre indexa os códigos dos lacres numa AVL. Antes de cada inserção,
+  SALA 1 — "Guardar os códigos" (inserção e rotações)
+      O cofre indexa os códigos das situações numa AVL. Antes de cada inserção,
       o jogador PREVÊ o que vai acontecer: nenhuma rotação, RD, RE, RED ou RDE.
       A sequência é a mesma do exemplo da aula 08 (slides 9-15):
           70, 50, 40, 80, 90, 15, 25, 45, 42
@@ -23,7 +23,7 @@ Três salas do cofre:
       As respostas certas NÃO estão escritas no código: são calculadas com as
       funções do solver (chave_estado e configuracao).
 
-  SALA 3 — "Consulta ao cofre" (busca existente e inexistente)
+  SALA 3 — "Procurar um código" (busca existente e inexistente)
       O jogador procura códigos; o jogo mostra o caminho percorrido na
       árvore e quantas comparações foram feitas (no máximo altura + 1).
 
@@ -110,7 +110,7 @@ class Fase4:
         que de fato ocorreu. Devolve um dicionário para a interface.
         """
         if self.sala1_completa():
-            return {"ok": False, "mensagem": "Todos os lacres já foram inseridos."}
+            return {"ok": False, "mensagem": "Todos os códigos já foram inseridos."}
         if previsao not in OPCOES_ROTACAO:
             return {"ok": False, "mensagem": f"Previsão inválida: {previsao}."}
         codigo = self.sequencia[self.proximo]

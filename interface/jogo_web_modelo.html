@@ -305,9 +305,9 @@ const GLOSS = {
     "", "Fila = FIFO (primeiro a entrar, primeiro a sair). Inserir no fim e remover do início: O(1). Aula 06. É também a estrutura da BFS."],
   pilha: ["🥞", "Pilha de espera (pilha)", "A pilha de espera da Fase 2: a prova que você guarda por último fica em cima e é a primeira a sair. O botão Desfazer funciona igual: desfaz primeiro a jogada mais recente.",
     "", "Pilha = LIFO (último a entrar, primeiro a sair). Empilhar e desempilhar no topo: O(1). Aula 06. O botão Desfazer e a DFS usam pilha."],
-  lista: ["🔐", "Cofre de custódia (lista ligada)", "O cofre de custódia da Fase 2: cada prova fica presa à anterior, como elos de uma corrente, na ordem E2 → E4 → E1 → E6. Se um elo entra fora da vez, a corrente não vale.",
+  lista: ["🔗", "Lista de custódia (lista ligada)", "A lista de custódia da Fase 2: cada prova fica presa à anterior, como elos de uma corrente, na ordem E2 → E4 → E1 → E6. Se um elo entra fora da vez, a corrente não vale.",
     "", "Lista ligada: cada nó guarda o dado e um ponteiro para o próximo. Procurar: O(n). Aula 06 (lista com cabeça). Acréscimo da equipe: um ponteiro para o último, que deixa inserir no fim em O(1)."],
-  arquivo: ["🗑️", "Arquivo morto", "Na Fase 2, as cópias que não são prova oficial vão para o arquivo morto: elas não entram na corrente do cofre.",
+  arquivo: ["🗑️", "Arquivo morto", "Na Fase 2, as cópias que não são prova oficial vão para o arquivo morto: elas não entram na corrente da custódia.",
     "", "No código, a ação “arquivar” tira a evidência da fila sem colocá-la na custódia (jogo/fase2.py)."],
   grafo: ["🗺️", "Mapa (grafo)", "O mapa da Fase 3: locais (bolinhas) ligados por corredores (linhas). Você só anda de um local a outro se houver corredor entre eles.",
     "", "Grafo G = (V, E): vértices = locais, arestas = corredores. Guardado como lista de adjacência (cada local tem a lista dos vizinhos). Aula 09."],
@@ -378,7 +378,7 @@ const cartoesMetodos = (sel, extra) => `<div class="metodos">${["bubble", "merge
     <span class="tit">${GLOSS[k][0]} ${GLOSS[k][1].split(" (")[0]}</span>${METODO[k]}${extra ? `<span class="legenda">${extra(k)}</span>` : ""}</button>`).join("")}</div>`;
 const TUT = {
   f1: ["🗂️", "Fase 1 — O Arquivo Embaralhado", ["As 12 fichas das seções chegaram fora de ordem.", "Monte a regra de arrumação clicando nas peças: <b>zona → seção → horário</b>.", "Escolha um jeito de arrumar (cada um explica como trabalha) e clique em <b>Ordenar</b>: veja as fichas se mexerem.", "A auditoria aceita ou mostra, em vermelho, onde a ordem quebrou."]],
-  f2: ["📦", "Fase 2 — A Central de Triagem", ["As provas chegam pela <b>📥 esteira</b>: só a da frente pode sair.", "Ponha no <b>🔐 cofre</b> na ordem <b>E2 → E4 → E1 → E6</b>.", "Prova que ainda não é a vez espera na <b>🥞 pilha</b> (só a de cima sai). Cópias descartáveis vão para o <b>🗑️ arquivo morto</b>.", "Errou? <b>Desfazer</b>. Menos jogadas = mais estrelas."]],
+  f2: ["📦", "Fase 2 — A Central de Triagem", ["As provas chegam pela <b>📥 esteira</b>: só a da frente pode sair.", "Ponha na <b>🔗 lista de custódia</b> na ordem <b>E2 → E4 → E1 → E6</b>.", "Prova que ainda não é a vez espera na <b>🥞 pilha</b> (só a de cima sai). Cópias descartáveis vão para o <b>🗑️ arquivo morto</b>.", "Errou? <b>Desfazer</b>. Menos jogadas = mais estrelas."]],
   f3: ["🗺️", "Fase 3 — O Mapa das Seções", ["Você é o 🕵️. Clique num <b>local verde</b> para andar até ele.", "Siga a lista de tarefas: pegue a pista <b>🔑 SEQ</b> (em E) e depois a <b>🔑 AUT</b> (em D).", "As portas 🔒 só abrem com a pista certa: H pede SEQ; F pede AUT.", "Cada passo gasta ⚡ 1 de energia — o orçamento de ações da equipe (você tem 10). Travou? 💡 Dica acende o próximo local."]],
   f4: ["🔐", "Fase 4 — O Cofre dos Estados", ["<b>Sala 1:</b> os códigos entram numa árvore — menor à esquerda, maior à direita.", "Antes de cada código, <b>adivinhe</b> se a árvore fica torta e precisa girar. O quadro “Para decidir” ensina a ver.", "<b>Sala 2:</b> diga se duas situações do mapa são a mesma para a memória do computador.", "Terminou as duas salas? Selo 4!"]],
   f5: ["🧾", "Fase 5 — A Auditoria Final", ["Escolha um jeito de arrumar o lote (os cartões explicam cada um).", "Assista à auditoria conferir o lote, a triagem e o mapa, item por item.", "Onde você jogou, ela confere as <b>suas</b> jogadas.", "Com os 5 selos, o Cofre de Verificação abre."]],
@@ -415,12 +415,12 @@ const PERFIL_TXT = {
       "<b>Chave composta</b> → o enigma desta fase: montar a regra peça por peça."]},
   f2: {vida: "🍽️ <b>Fila da cantina:</b> quem chega primeiro é atendido primeiro — é a <b>fila</b> (a esteira). A <b>pilha</b> de bandejas: a última que você põe em cima é a primeira que sai. E o <b>Ctrl+Z</b> desfaz a última coisa que você fez: também é uma pilha.",
     auditoria: "Toda prova precisa de <b>cadeia de custódia</b>: o registro da ordem em que cada documento foi recebido e guardado. Se a ordem se perde, ninguém consegue provar que a prova não foi trocada no caminho — e ela deixa de valer.",
-    validar: () => ["Com E1 na frente, clique <b>Pôr no cofre</b>: recusado (o cofre espera E2) e nada muda.",
+    validar: () => ["Com E1 na frente, clique <b>Pôr na custódia</b>: recusado (a custódia espera E2) e nada muda.",
       "Guarde E1 na pilha e tente <b>Guardar</b> outra: a regra recusa quem ficaria por cima de alguém que precisa sair antes.",
       "Faça duas jogadas e clique <b>Desfazer</b> duas vezes: volta a mais recente primeiro (o histórico é uma pilha)."],
     testes: ["test_jogada_invalida_nao_altera_estado", "test_desfazer_lifo", "test_solver_resolve_fase2"],
     aulas: ["<b>Aula 06</b> — fila (FIFO) → a esteira de chegada.", "<b>Aula 06</b> — pilha (LIFO) → a pilha de espera e o botão Desfazer.",
-      "<b>Aula 06</b> (slides 17–23) — lista ligada com cabeça → o cofre de custódia. O ponteiro para o último (inserir no fim em O(1)) é acréscimo da equipe."]},
+      "<b>Aula 06</b> (slides 17–23) — lista ligada com cabeça → a lista de custódia. O ponteiro para o último (inserir no fim em O(1)) é acréscimo da equipe."]},
   f3: {vida: "🗺️ <b>Waze e GPS:</b> aplicativos de rota tratam a cidade como um mapa de pontos ligados por ruas — um <b>grafo</b> — e procuram um caminho. Rua bloqueada é como a porta trancada daqui: o caminho mais curto no desenho nem sempre é permitido.",
     auditoria: "Para refazer a trilha de um documento, é preciso passar pelos lugares na ordem certa: não adianta chegar à validação sem antes passar pela autenticação. O computador testa os caminhos possíveis e devolve um que obedece a todas as regras — e o mais curto deles.",
     validar: () => ["Vá de A para C, G e tente <b>F</b>: a porta recusa (falta a pista AUT).",
@@ -519,13 +519,13 @@ function ir(tela) { telaAtual = tela; TELAS[tela](); window.scrollTo(0, 0); dese
 const voltar = '<button class="btn neutro" onclick="ir(\'menu\')">← Voltar ao menu</button>';
 const NARRA = {
   1: "Chegaram 12 fichas com os registros das seções de Verídia, mas vieram <b>embaralhadas</b>! Para conferir, a auditoria precisa delas em ordem: primeiro pela <b>zona eleitoral</b>, depois pela <b>seção</b> (a sala onde se vota) e, se empatar, pelo <b>horário</b>. Você monta a regra; o computador arruma.",
-  2: "As provas da apuração estão chegando pela esteira. Elas precisam entrar no cofre de custódia numa <b>ordem exata</b>: E2, E4, E1, E6. Se a ordem quebrar, a prova não vale. Algumas são cópias descartáveis; outras precisam esperar a vez numa pilha.",
+  2: "As provas da apuração estão chegando pela esteira. Elas precisam entrar na lista de custódia numa <b>ordem exata</b>: E2, E4, E1, E6. Se a ordem quebrar, a prova não vale. Algumas são cópias descartáveis; outras precisam esperar a vez numa pilha.",
   3: "A trilha entre as seções se partiu. Você vai da Central de Auditoria (A) até o Centro de Validação (F). Só que há <b>portas trancadas</b>: cada uma pede uma pista que está em outro canto do mapa. Pegue as pistas antes!",
   4: "O computador da CIV está andando em círculos, visitando o mesmo lugar várias vezes. Vamos organizar a memória dele num <b>cofre em forma de árvore</b>, para ele lembrar rápido onde já esteve.",
   5: "Hora da verdade! A auditoria vai <b>refazer tudo</b> o que você fez e conferir, passo a passo, se cada jogada obedeceu às regras. Se tudo bater, o Cofre de Verificação abre."};
 // O problema de cada fase em poucas palavras; a história completa fica na capa.
 const PROBLEMA = {1: ["Arquivo embaralhado", "As 12 fichas das seções chegaram fora de ordem. Sem ordem, não dá para conferir nada.", "a <b>ordenação</b> com uma <b>chave composta</b>: arrumar por uma regra (primeiro zona, depois seção, depois horário)"],
-  2: ["Provas fora de ordem", "As provas chegam pela esteira e precisam entrar no cofre numa ordem exata. Se a ordem quebrar, a prova não vale.", "a <b>fila</b> (quem chega primeiro sai primeiro), a <b>pilha</b> (o último que entra sai primeiro) e a <b>lista ligada</b> (uma corrente em ordem)"],
+  2: ["Provas fora de ordem", "As provas chegam pela esteira e precisam entrar na lista de custódia numa ordem exata. Se a ordem quebrar, a prova não vale.", "a <b>fila</b> (quem chega primeiro sai primeiro), a <b>pilha</b> (o último que entra sai primeiro) e a <b>lista ligada</b> (uma corrente em ordem)"],
   3: ["Trilha partida", "O caminho entre as seções se partiu e há portas trancadas. É preciso achar uma rota que obedeça a todas as regras.", "o <b>grafo</b> (um mapa de pontos ligados) e a <b>busca em largura</b> (explorar em ondas para achar o caminho mais curto)"],
   4: ["Computador andando em círculos", "O computador da CIV visita o mesmo lugar várias vezes porque não lembra onde já esteve.", "a <b>árvore equilibrada</b> (AVL): uma memória em que cada pergunta descarta um lado inteiro da árvore"],
   5: ["Conferência final", "Ninguém deve acreditar no resultado sem ver a prova. A auditoria refaz cada passo e confere as regras.", "a <b>integração</b> de tudo: ordenação, fila, pilha, grafo, busca e árvore conferindo umas às outras"],
@@ -533,18 +533,18 @@ const PROBLEMA = {1: ["Arquivo embaralhado", "As 12 fichas das seções chegaram
 /* ================= A TRILHA DA AUDITORIA =================
    A pergunta da CIV (enunciado, seção 2): dá para reconstruir uma trilha coerente entre os registros de origem,
    os locais de votação e o relatório final? Cada fase reconstrói UM elo dessa trilha (o "produto da fase" da seção 4). */
-const TRILHA = [["📂", "Registros em ordem"], ["🔐", "Provas na sequência"], ["🗺️", "Caminho do lote"], ["🧠", "Busca sem repetir"], ["🧾", "Relatório final"]];
+const TRILHA = [["📂", "1 · Arquivo Embaralhado"], ["🔗", "2 · Central de Triagem"], ["🗺️", "3 · Mapa das Seções"], ["🧠", "4 · Cofre dos Estados"], ["🧾", "5 · Auditoria Final"]];
 function trilhaAud(n) {
   const chips = TRILHA.map(([ic, t], k) => `<span class="t${n === k + 1 ? " aqui" : P.selos[k] ? " ok" : ""}">${P.selos[k] && n !== k + 1 ? "✔" : ic} ${t}</span>`);
-  if (n === "custos") chips.push(`<span class="t aqui">⚡ Trilha mais econômica</span>`);
+  if (n === "custos") chips.push(`<span class="t aqui">⚡ Extra · Mapa com Custos</span>`);
   return `<div class="trilha-aud"><span class="rot">🧭 A trilha da auditoria:</span>${chips.join('<span class="seta">→</span>')}</div>`;
 }
 // Na voz da Miss Pearl: o problema da fase e o que ele tem a ver com a apuração de Verídia.
 const LIGACAO = {
   1: "As 12 fichas das seções chegaram embaralhadas. Para provar a apuração, preciso conferir seção por seção se nenhum registro sumiu ou se repetiu — e isso só dá para fazer com as fichas em ordem. <b>1º elo da trilha: os registros de origem.</b>",
-  2: "Agora as provas de cada seção entram no cofre na ordem em que a apuração aconteceu: 🔒 o lacre da urna (E2), 📄 o boletim que ela gerou (E4), 💾 o log que registrou o boletim (E1) e ✍️ a assinatura que valida tudo (E6). Se a ordem quebrar, ninguém prova que uma prova não foi trocada no caminho. <b>2º elo: a sequência de custódia.</b>",
+  2: "Agora as provas de cada seção entram na lista de custódia na ordem em que a apuração aconteceu: 🔒 o lacre da urna (E2), 📄 o boletim que ela gerou (E4), 💾 o log que registrou o boletim (E1) e ✍️ a assinatura que valida tudo (E6). Se a ordem quebrar, ninguém prova que uma prova não foi trocada no caminho. <b>2º elo: a sequência de custódia.</b>",
   3: "Com registros e provas em ordem, falta refazer, local por local, o caminho que o lote percorreu: da Central de Auditoria (A) ao Centro de Validação (F). O lote só vale se passou pela conferência de sequência (pista SEQ) e pela autenticação (pista AUT). O caminho mais curto pula a autenticação — e por isso não vale. <b>3º elo: o caminho do lote entre os locais.</b>",
-  4: "Para achar esse caminho, o APURA-42 testa centenas de situações — e estava conferindo as mesmas várias vezes, sem sair do lugar. Vou dar a ele uma memória organizada em árvore, para saber na hora se uma situação já foi examinada. <b>4º elo: uma busca que não anda em círculos.</b>",
+  4: "Para achar esse caminho, o APURA-42 testa centenas de situações — e estava conferindo as mesmas várias vezes, sem sair do lugar. Vou dar a ele o <b>Cofre dos Estados</b>, uma memória organizada em árvore, para saber na hora se uma situação já foi examinada. <b>4º elo: uma busca que não anda em círculos.</b>",
   5: "Hora de responder à pergunta da CIV: dá para reconstruir a trilha dos registros de origem até o relatório final, respeitando todas as regras? A auditoria refaz cada etapa e emite o <b>relatório de consistência</b>. <b>5º elo: a prova final.</b>",
   custos: "A CIV tem um <b>orçamento de ações</b> para a auditoria — é a ⚡ energia: cada deslocamento da equipe custa tempo e gente. Alguns corredores estão em obras e custam bem mais. A pergunta agora: qual trilha válida gasta <b>menos orçamento</b>?"};
 /* "O que aprendemos": o conceito, o que ele resolveu em Verídia, a melhor escolha AQUI e o "depende".
@@ -560,9 +560,9 @@ const APRENDI = {
       melhor: `<b>Merge Sort.</b> Fez menos comparações nos três casos (${fmt(L.aleatoria.merge)}) e nunca piora, chegue o lote como chegar.${tab}`,
       depende: `Com o lote embaralhado, o Quick também vai bem (${fmt(L.aleatoria.quick)} comparações) e costuma ser o mais rápido no relógio. Mas, se o lote já chegar em ordem ou invertido, ele cai para ${fmt(L.ordenada.quick)}, igual ao Bubble. Com só 12 fichas, qualquer método serve; o Bubble ajuda a entender a ideia, mas não aguenta lotes grandes.`}; },
   2: () => ({conceito: "<b>Fila</b> (o primeiro que chega sai primeiro), <b>pilha</b> (o último que entra sai primeiro) e <b>lista ligada</b> (uma corrente que cresce no fim).",
-    resolveu: `As provas entraram no cofre na ordem E2 → E4 → E1 → E6, sem pular a vez de ninguém; o mínimo é ${D.fase2.minimo} jogadas. Jogada errada foi recusada sem estragar nada, e o Desfazer voltou a jogada mais recente.`,
-    melhor: "<b>Cada estrutura no seu papel.</b> A fila garante a ordem de chegada da esteira; a pilha segura quem ainda não é a vez e guarda o histórico do Desfazer; a lista ligada simples basta para o cofre, que só é lido do início ao fim.",
-    depende: "A pilha funcionou porque só uma prova (E1) precisou esperar. Se várias provas tivessem de esperar e sair na mesma ordem em que entraram, a pilha inverteria essa ordem: aí o certo seria uma segunda fila. E, se fosse preciso percorrer o cofre de trás para a frente, a lista duplamente ligada seria a escolha."}),
+    resolveu: `As provas entraram na lista de custódia na ordem E2 → E4 → E1 → E6, sem pular a vez de ninguém; o mínimo é ${D.fase2.minimo} jogadas. Jogada errada foi recusada sem estragar nada, e o Desfazer voltou a jogada mais recente.`,
+    melhor: "<b>Cada estrutura no seu papel.</b> A fila garante a ordem de chegada da esteira; a pilha segura quem ainda não é a vez e guarda o histórico do Desfazer; a lista ligada simples basta para a custódia, que só é lida do início ao fim.",
+    depende: "A pilha funcionou porque só uma prova (E1) precisou esperar. Se várias provas tivessem de esperar e sair na mesma ordem em que entraram, a pilha inverteria essa ordem: aí o certo seria uma segunda fila. E, se fosse preciso percorrer a custódia de trás para a frente, a lista duplamente ligada seria a escolha."}),
   3: () => { const S = D.solver.mapa, b = S["BFS"], d = S["DFS (recursiva)"];
     return {conceito: "<b>Grafo</b> (locais ligados por corredores), <b>estado</b> (local + pistas + portas + energia) e <b>busca</b>: BFS em ondas, DFS em profundidade.",
       resolveu: `A trilha do lote foi refeita com ${b.acoes} passos, passando pela autenticação antes da validação. O caminho mais curto no desenho foi recusado, porque pulava a pista AUT.`,
@@ -588,8 +588,8 @@ function aprendiHTML(n, curto) {
     ${lin("🧩 Conceito:", A.conceito)}${curto ? "" : lin("🔗 Na auditoria de Verídia:", A.resolveu)}
     ${lin("🏆 A melhor escolha aqui:", A.melhor)}<div class="dep"><b>🤔 Mas depende…</b> ${A.depende}</div></div>`;
 }
-const MISSAO_CURTA = {1: "arrumar as 12 fichas na ordem da auditoria", 2: "pôr as provas no cofre na ordem E2 → E4 → E1 → E6", 3: "ir de A até F pegando as pistas SEQ e AUT",
-  4: "montar a memória em árvore e responder às salas", 5: "rodar a auditoria e abrir o Cofre", custos: "pegar SEQ e AUT e chegar a F gastando o mínimo de energia"};
+const MISSAO_CURTA = {1: "arrumar as 12 fichas na ordem da auditoria", 2: "pôr as provas na lista de custódia na ordem E2 → E4 → E1 → E6", 3: "ir de A até F pegando as pistas SEQ e AUT",
+  4: "organizar o Cofre dos Estados (a memória em árvore) e responder às salas", 5: "rodar a auditoria e abrir o Cofre de Verificação", custos: "pegar SEQ e AUT e chegar a F gastando o mínimo de energia (orçamento)"};
 function faixaFase(chave) { const f = $("#faixa"); if (!f) return; const n = String(chave).replace(/^f(\d)$/, "$1"), pr = PROBLEMA[n];
   if (!pr) { f.hidden = true; return; }
   f.hidden = false; f.innerHTML = `<b>${n === "custos" ? "Desafio extra" : "Fase " + n}</b> · 🧩 Problema: <b>${pr[0]}</b> · 🎯 ${MISSAO_CURTA[n]}`; }
@@ -783,16 +783,16 @@ TELAS.f2 = () => {
       <div class="caixa"><h3>🥞 Pilha de espera ${termo("pilha", "é uma pilha")}</h3><p class="legenda" style="margin:0">Só sai a de <b>cima</b>.</p><div id="f2-pilha"></div></div>
       <div class="caixa"><h3>🗑️ Arquivo morto ${termo("arquivo", "o que vai aqui?")}</h3><div id="f2-arq"></div></div>
     </div><div>
-      <div class="caixa"><h3>🔐 Cofre de custódia ${termo("lista", "é uma lista ligada")}</h3><p class="legenda" style="margin:0">Ordem exigida: <b>${F.alvo.join(" → ")}</b></p><div id="f2-cus"></div></div>
+      <div class="caixa"><h3>🔗 Lista de custódia ${termo("lista", "é uma lista ligada")}</h3><p class="legenda" style="margin:0">Ordem exigida: <b>${F.alvo.join(" → ")}</b></p><div id="f2-cus"></div></div>
       <div class="msg" id="f2-msg">Faça a primeira jogada.</div>
-      <div class="acoes-f2"><button class="btn" data-a="aceitar">✅ Pôr no cofre<small>a da frente da esteira entra no cofre</small></button>
+      <div class="acoes-f2"><button class="btn" data-a="aceitar">✅ Pôr na custódia<small>a da frente da esteira entra na custódia</small></button>
         <button class="btn" data-a="guardar">⏸️ Guardar na pilha<small>a da frente espera em cima da pilha</small></button>
         <button class="btn" data-a="arquivar">🗑️ Descartar<small>a da frente vai para o arquivo morto</small></button>
-        <button class="btn" data-a="liberar">⬆️ Tirar da pilha<small>a de cima da pilha entra no cofre</small></button></div>
+        <button class="btn" data-a="liberar">⬆️ Tirar da pilha<small>a de cima da pilha entra na custódia</small></button></div>
       <div><button class="btn sec" id="f2-dica">💡 Dica</button><button class="btn neutro" id="f2-desf">↶ Desfazer</button><button class="btn neutro" id="f2-rein">Recomeçar</button></div>
     </div></div>
     <details><summary>Regras completas (com os nomes usados no código)</summary><ul>
-      <li><b>Pôr no cofre</b> (aceitar): a 1ª da fila entra na custódia, se for a próxima esperada.</li>
+      <li><b>Pôr na custódia</b> (aceitar): a 1ª da fila entra na custódia, se for a próxima esperada.</li>
       <li><b>Guardar na pilha</b> (guardar): a 1ª da fila vai para o topo da pilha, se fizer parte da custódia e precisar sair antes de quem está no topo.</li>
       <li><b>Descartar</b> (arquivar): a 1ª da fila vai para o arquivo, se NÃO fizer parte da custódia.</li>
       <li><b>Tirar da pilha</b> (liberar): o topo da pilha entra na custódia, se for a próxima esperada.</li>
@@ -805,8 +805,8 @@ TELAS.f2 = () => {
     $("#f2-arq").innerHTML = fichas(e.arquivo);
     $("#f2-cus").innerHTML = e.custodia.length ? e.custodia.map(x => `<span class="ficha" data-ficha="${x}">${x}</span>`).join(" → ") : '<span class="vazia">(vazia)</span>';
     const frente = e.fila[0], des = frente && !F.alvo.includes(frente);
-    $("#f2-agora").innerHTML = "<b>O que fazer agora</b>" + (e.venceu ? `Cofre completo em ${S.acoes.length} jogadas (o mínimo é ${F.minimo}). Recomece para buscar 3 estrelas, ou siga em frente.<br>${botaoProxima("f2")}` :
-      `O cofre espera a <b style="display:inline">${e.esperado}</b>. Na frente da esteira está a ${frente || "—"}${des ? " (descartável)" : ""}${e.pilha.length ? `; em cima da pilha, a ${e.pilha[0]}` : ""}. ` +
+    $("#f2-agora").innerHTML = "<b>O que fazer agora</b>" + (e.venceu ? `Custódia completa em ${S.acoes.length} jogadas (o mínimo é ${F.minimo}). Recomece para buscar 3 estrelas, ou siga em frente.<br>${botaoProxima("f2")}` :
+      `A custódia espera a <b style="display:inline">${e.esperado}</b>. Na frente da esteira está a ${frente || "—"}${des ? " (descartável)" : ""}${e.pilha.length ? `; em cima da pilha, a ${e.pilha[0]}` : ""}. ` +
       (frente === e.esperado ? "Ela é a vez dela!" : e.pilha[0] === e.esperado ? "A de cima da pilha é a vez dela!" : des ? "Essa não é prova: o que fazer com ela?" : "Ela ainda não é a vez: onde ela pode esperar?"));
   };
   document.querySelectorAll("[data-a]").forEach(b => b.onclick = () => {
@@ -817,7 +817,7 @@ TELAS.f2 = () => {
     m.className = "msg " + (venceu ? "vitoria" : r.ok ? "ok" : "nao"); m.textContent = r.msg; deslizar($("#f2-area"), desenha);
     if (venceu) { const n = S.acoes.length, est = n === F.minimo && !S.erros ? 3 : n <= F.minimo + 2 && S.erros <= 2 ? 2 : 1;
       P.selos[1] = true; ganharEstrelas("f2", est);
-      carimbo("SELO 2", est, `Cofre de custódia montado em ${n} jogadas, com ${S.erros} tropeço(s). ${est === 3 ? "Igual ao mínimo que o computador acha!" : `Três estrelas = ${F.minimo} jogadas sem tropeço (o mínimo que o computador acha com a busca em largura).`}`, "f2"); }
+      carimbo("SELO 2", est, `Lista de custódia montada em ${n} jogadas, com ${S.erros} tropeço(s). ${est === 3 ? "Igual ao mínimo que o computador acha!" : `Três estrelas = ${F.minimo} jogadas sem tropeço (o mínimo que o computador acha com a busca em largura).`}`, "f2"); }
     salvar(); });
   $("#f2-dica").onclick = () => { const m = $("#f2-msg"); m.className = "msg dica"; m.textContent = F.estados[S.atual].dica; };
   $("#f2-desf").onclick = () => { const m = $("#f2-msg");
@@ -913,7 +913,7 @@ TELAS.custos = () => {
   const F = D.custos, S = P.mc, C = F.comparacao, PU = F.puro;
   $("#tela").innerHTML = `<div class="folha"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between"><h2 style="margin:0">${F.nome} ${pintaEstrelas(P.estrelas.custos)}</h2><span>${botaoCodigo("custos")}${botaoComoJogar("custos")}</span></div>
     ${trilhaAud("custos")}
-    ${pearl(`<b>Problema: trilha mais econômica.</b> ${LIGACAO.custos}`)}
+    ${pearl(`<b>Problema: rota mais barata.</b> ${LIGACAO.custos}`)}
     ${blocosPerfis("custos")}
     ${porTras(["energia", "bfs", "guloso", "dijkstra"])}
     ${P.mc.melhor !== null && P.mc.melhor !== undefined ? `<div class="linha-tips">${dicaClique("💡 O que aprendemos no desafio extra", aprendiHTML("custos"))}</div>` : ""}
@@ -987,9 +987,9 @@ TELAS.f4 = () => {
   let sala = S.k >= F.lacres.length ? 2 : 1;
   $("#tela").innerHTML = `<div class="folha">${cabecalho(4)}
     <div class="agora" id="f4-agora"></div>
-    <div class="abas" id="f4-abas"><button data-sala="1">🌳 Sala 1 · Guardar os códigos</button><button data-sala="2">📸 Sala 2 · Situação repetida?</button><button data-sala="3">🔎 Sala 3 · Procurar (extra)</button></div>
+    <div class="abas" id="f4-abas"><button data-sala="1">🌳 Sala 1 · Guardar os códigos</button><button data-sala="2">📸 Sala 2 · Situação repetida?</button><button data-sala="3">🔎 Sala 3 · Procurar um código (extra)</button></div>
     <div id="f4-sala1">
-      <p style="margin:4px 0">Cada código desce pela árvore: <b>menor vai para a esquerda, maior para a direita</b>. Se um lado ficar <b>2 andares mais alto</b> que o outro, a árvore gira para se equilibrar. ${termo("arvore", "por que árvore?")} ${termo("giro", "o que é o giro?")}</p>
+      <p style="margin:4px 0">O <b>Cofre dos Estados</b> é a memória do APURA-42: cada situação que ele examina ganha um <b>código</b> (um número), e o cofre guarda os códigos numa <b>árvore</b>. Cada código desce pela árvore: <b>menor vai para a esquerda, maior para a direita</b>. Se um lado ficar <b>2 andares mais alto</b> que o outro, a árvore gira para se equilibrar. ${termo("arvore", "por que árvore?")} ${termo("giro", "o que é o giro?")}</p>
       <div class="dois"><div>
         <div class="crt"><p class="legenda" style="color:#d9b98a;margin:4px">Antes do código entrar</p><svg id="f4-antes" style="max-height:230px"></svg></div>
         <div class="crt" style="margin-top:8px"><p class="legenda" style="color:#d9b98a;margin:4px">Depois (o novo código em laranja)</p><svg id="f4-depois" style="max-height:230px"></svg></div></div>
@@ -1019,7 +1019,7 @@ TELAS.f4 = () => {
     document.querySelectorAll("#f4-abas [data-sala]").forEach(b => { b.classList.toggle("sel", +b.dataset.sala === n); b.disabled = +b.dataset.sala === 2 && S.k < F.lacres.length; }); agora(); };
   document.querySelectorAll("#f4-abas [data-sala]").forEach(b => b.onclick = () => mostra(+b.dataset.sala));
   window.f4mostra = mostra;
-  const agora = () => $("#f4-agora").innerHTML = "<b>O que fazer agora</b>" + (venceu() ? `Cofre organizado! Siga em frente quando quiser.<br>${botaoProxima("f4")}` :
+  const agora = () => $("#f4-agora").innerHTML = "<b>O que fazer agora</b>" + (venceu() ? `Cofre dos Estados organizado! Siga em frente quando quiser.<br>${botaoProxima("f4")}` :
     S.k < F.lacres.length ? `Sala 1: o código ${F.lacres[S.k].codigo} vai entrar (${S.k + 1} de ${F.lacres.length}). Olhe a árvore “antes”, use o quadro “Para decidir” e dê seu palpite.` :
     sala === 2 ? "Sala 2: compare as duas situações do par (o que mudou está marcado) e escolha uma das 3 respostas." : `Sala 1 completa! <button class="btn" onclick="f4mostra(2)">Ir para a Sala 2 →</button>`);
   const sala1 = () => {
@@ -1027,7 +1027,7 @@ TELAS.f4 = () => {
         <button class="btn grande" onclick="f4mostra(2)">Ir para a Sala 2 →</button>`;
       desenhaAVL($("#f4-antes"), F.lacres[F.lacres.length - 1].antes); desenhaAVL($("#f4-depois"), F.lacres[F.lacres.length - 1].depois); return; }
     const q = F.lacres[S.k];
-    $("#f4-s1").innerHTML = `<div class="caixa"><b>Lacre ${S.k + 1} de ${F.lacres.length}: código ${q.codigo}.</b> O que vai acontecer ao guardá-lo?
+    $("#f4-s1").innerHTML = `<div class="caixa"><b>Código ${S.k + 1} de ${F.lacres.length}: ${q.codigo}.</b> O que vai acontecer ao guardá-lo?
       <div class="escolha">${F.opcoes.map(o => `<button data-v="${o}">${nomes[o]}</button>`).join("")}<button class="btn sec" id="f4-dica" style="min-height:0">💡 Dica</button></div></div>`;
     desenhaAVL($("#f4-antes"), q.antes); desenhaAVL($("#f4-depois"), null);
     $("#f4-dica").onclick = () => { const m = $("#f4-msg"); m.className = "msg dica";
@@ -1038,7 +1038,7 @@ TELAS.f4 = () => {
       const m = $("#f4-msg"); m.className = "msg " + (certo ? "ok" : "nao");
       m.textContent = (certo ? "Certo! " : `Aconteceu: ${nomes[q.rotacao]}. `) + q.explicacao; m.scrollIntoView({block: "nearest", behavior: "smooth"});
       S.k++; salvar(); agora();
-      $("#f4-s1").innerHTML = S.k < F.lacres.length ? `<button class="btn grande" id="f4-prox">Próximo lacre →</button>` : "";
+      $("#f4-s1").innerHTML = S.k < F.lacres.length ? `<button class="btn grande" id="f4-prox">Próximo código →</button>` : "";
       if (S.k < F.lacres.length) $("#f4-prox").onclick = () => { $("#f4-msg").className = "msg"; $("#f4-msg").textContent = ""; sala1(); };
       else { sala1(); conferir(); } });
   };
@@ -1073,7 +1073,7 @@ TELAS.f4 = () => {
       conferir(); agora(); }); };
   const conferir = () => { if (venceu() && !S.premiado) { S.premiado = true; P.selos[3] = true;
     const e = S.errosPares || 0, est = S.acertos >= 7 && !e ? 3 : S.acertos >= 5 && e <= 2 ? 2 : 1; ganharEstrelas("f4", est); salvar();
-    const m = $("#f4-msg"); m.className = "msg vitoria"; m.textContent = "O cofre reconheceu a memória organizada. Selo 4 conquistado!";
+    const m = $("#f4-msg"); m.className = "msg vitoria"; m.textContent = "O Cofre dos Estados reconheceu a memória organizada. Selo 4 conquistado!";
     carimbo("SELO 4", est, `${S.acertos} de ${F.lacres.length} palpites de giro certos; ${e} erro(s) nos pares. ${est === 3 ? "Memória impecável!" : "Três estrelas = 7 palpites certos e nenhum erro nos pares."}`, "f4"); } };
   // Sala 3: busca animada sobre a árvore final (o caminho vem do Python: F.consultas).
   const arvoreFinal = F.lacres[F.lacres.length - 1].depois, noCofre = F.lacres.map(l => l.codigo).sort((x, y) => x - y);
@@ -1121,8 +1121,8 @@ TELAS.f5 = () => {
       <div class="chk" style="font-family:var(--titulo);font-weight:800;font-size:19px;color:${ok ? "var(--verde)" : "var(--vermelho)"}">${ok ? "✔ CONSISTENTE" : "✘ NÃO CONSISTENTE"}</div></div>`; }
   function relatorio(alg) {
     const L = F.lotes[alg], e2 = D.fase2.estados[P.f2.atual], e3 = D.fase3.estados[P.f3.atual];
-    const tri = P.selos[1] && e2.venceu ? etapa("Etapa 2 — As provas no cofre (Fase 2)", true, "suas jogadas (cada uma aceita pelas regras)", P.f2.acoes.join(" → "), [["custódia E2 → E4 → E1 → E6, fila e pilha vazias", true]])
-      : etapa("Etapa 2 — As provas no cofre (Fase 2)", F.triagem_solver.ok, "solver (BFS)", F.triagem_solver.detalhe, F.triagem_solver.checagens);
+    const tri = P.selos[1] && e2.venceu ? etapa("Etapa 2 — As provas na custódia (Fase 2)", true, "suas jogadas (cada uma aceita pelas regras)", P.f2.acoes.join(" → "), [["custódia E2 → E4 → E1 → E6, fila e pilha vazias", true]])
+      : etapa("Etapa 2 — As provas na custódia (Fase 2)", F.triagem_solver.ok, "solver (BFS)", F.triagem_solver.detalhe, F.triagem_solver.checagens);
     const mapa = P.selos[2] && e3.venceu ? etapa("Etapa 3 — O caminho no mapa (Fase 3)", true, "sua trilha (cada movimento aceito pelas regras)", P.f3.trilha.join(" → "), [["chegou ao Centro de Validação com AUT, sem violar portas", true]])
       : etapa("Etapa 3 — O caminho no mapa (Fase 3)", F.mapa_solver.ok, "solver (BFS)", F.mapa_solver.detalhe, F.mapa_solver.checagens);
     const ok = L.ok && F.triagem_solver.ok && F.mapa_solver.ok;
@@ -1163,7 +1163,7 @@ const DISCURSO = [
     ["🧾", "Conferência final", "refizemos tudo do zero e conferimos cada passo."]]],
   ["💡 O que aprendemos", "Para cada problema, a melhor ferramenta <b>neste caso de Verídia</b> — e por que ela nem sempre é a melhor:", [
     ["🗂️", "Ordenar o lote", "aqui, o <b>Merge</b>: menos comparações e nunca piora. <i>Depende:</i> com lote embaralhado o Quick também vai bem; com lote já em ordem, ele fica lento como o Bubble."],
-    ["📦", "Guardar as provas", "<b>fila</b> para a ordem de chegada, <b>pilha</b> para quem espera e para o Desfazer, <b>lista ligada</b> para o cofre. <i>Depende:</i> se várias provas esperassem e saíssem na ordem de chegada, seria outra fila."],
+    ["📦", "Guardar as provas", "<b>fila</b> para a ordem de chegada, <b>pilha</b> para quem espera e para o Desfazer, <b>lista ligada</b> para a custódia. <i>Depende:</i> se várias provas esperassem e saíssem na ordem de chegada, seria outra fila."],
     ["🗺️", "Refazer o caminho", "a <b>BFS</b>: acha o caminho com menos passos. <i>Depende:</i> só porque todo passo custa o mesmo."],
     ["🧠", "Não repetir conferências", "a <b>AVL</b>: acha qualquer situação em poucos passos. <i>Depende:</i> com poucas situações, uma lista bastaria."],
     ["⚡", "Gastar menos orçamento", "o <b>Dijkstra</b>: menor custo total. <i>Depende:</i> se todo corredor custasse igual, a BFS bastava."],
@@ -1232,7 +1232,7 @@ TELAS.ajuda = () => {
       <tr><td>1. Arquivo Embaralhado</td><td>Montar a chave zona → seção → horário e ordenar com qualquer método</td></tr>
       <tr><td>2. Central de Triagem</td><td>Montar a custódia E2 → E4 → E1 → E6 (Guardar, Aceitar, Arquivar, Aceitar, Liberar, Arquivar, Aceitar)</td></tr>
       <tr><td>3. Mapa das Seções</td><td>Pegar SEQ em E e AUT em D antes de entrar em F (A → C → E → C → B → H → D → F)</td></tr>
-      <tr><td>4. Cofre dos Estados</td><td>Dar palpite nos 9 lacres e acertar os 4 pares</td></tr>
+      <tr><td>4. Cofre dos Estados</td><td>Dar palpite nos 9 códigos e acertar os 4 pares</td></tr>
       <tr><td>5. Auditoria Final</td><td>Escolher um método e ler o relatório</td></tr>
       <tr><td>Desafio extra (aula 11)</td><td>Chegar a F gastando a menor energia: 11 (A → B → C → E → C → B → H → D → F). Não dá selo.</td></tr></table>
     <p class="legenda" style="margin-top:12px">Como esta página funciona: o Python executou as regras reais do jogo e calculou todas as situações possíveis de cada fase, o resultado de cada jogada e a dica do solver (BFS) para cada situação. A página só consulta essas tabelas: as regras estão no código em <span class="codigo">jogo/</span>, não aqui. O progresso fica guardado neste navegador.</p>
@@ -1255,7 +1255,7 @@ TELAS.resultados = () => {
     <div class="caixa"><h3>Fase 1 — tentativas</h3>${P.f1.tentativas.length ? P.f1.tentativas.map(t => `${t[0]} por ${t[1]}: ${t[2]} comparações → ${t[3] ? "ACEITO" : "recusado"}`).join("<br>") : "(nenhuma)"}</div>
     <div class="caixa"><h3>Fase 2 — ações</h3>${P.f2.acoes.join(" → ") || "(nenhuma)"}</div>
     <div class="caixa"><h3>Fase 3 — trilha</h3>${P.f3.trilha.join(" → ")} (energia restante: ${D.fase3.estados[P.f3.atual].energia})</div>
-    <div class="caixa"><h3>Fase 4 — cofre</h3>${P.f4.k}/${D.fase4.lacres.length} lacres, ${P.f4.acertos} palpites certos; ${Object.values(P.f4.pares).filter(x => x === true).length}/${D.fase4.pares.length} pares certos</div>
+    <div class="caixa"><h3>Fase 4 — cofre</h3>${P.f4.k}/${D.fase4.lacres.length} códigos, ${P.f4.acertos} palpites certos; ${Object.values(P.f4.pares).filter(x => x === true).length}/${D.fase4.pares.length} pares certos</div>
     <div class="caixa"><h3>Fase 5 — auditoria</h3>${P.f5.feito ? (P.selos[4] ? "consistente" : "não consistente") : "não executada"}</div>
     <div class="caixa"><h3>Desafio extra — mapa com custos</h3>${P.mc.melhor === null ? "ainda não chegou a F" : `menor energia gasta: ${P.mc.melhor} (o Dijkstra gasta ${D.custos.otimo})`}</div>
     <h2 style="margin-top:22px">🧪 Testes automáticos</h2>

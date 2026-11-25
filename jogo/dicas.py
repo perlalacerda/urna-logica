@@ -117,9 +117,9 @@ def dica_fase3(f):
 # ---------------------------------------------------- Fase 4
 def orientacao_fase4(f):
     if f.venceu():
-        return "Cofre organizado. Volte (0) e vá para a Fase 5."
+        return "Cofre dos Estados organizado. Volte (0) e vá para a Fase 5."
     if not f.sala1_completa():
-        return f"Entre na Sala 1 (1) e insira os lacres: faltam {len(f.sequencia) - f.proximo}."
+        return f"Entre na Sala 1 (1) e insira os códigos: faltam {len(f.sequencia) - f.proximo}."
     if not f.sala2_completa():
         return "Sala 1 completa. Agora responda os pares da Sala 2 (2)."
     return "Volte (0)."
