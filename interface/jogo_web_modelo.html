@@ -172,7 +172,16 @@
   .aprendi table { border-collapse: collapse; margin: 6px 0; font-size: 16px; } .aprendi td, .aprendi th { border: 1px solid var(--borda); padding: 3px 8px; text-align: right; }
   .aprendi th:first-child, .aprendi td:first-child { text-align: left; } .aprendi td.melhor { font-weight: 800; color: var(--verde); }
   .veu .aprendi { max-width: 640px; margin: 12px auto; max-height: 46vh; overflow-y: auto; }
-  .missao-fase { font-size: 20px; } .linha-tips { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+  .missao-fase { font-size: 20px; }
+  .raios { color: #e0a100; letter-spacing: 1px; font-size: 20px; } .raios .vazio { opacity: .22; }
+  .energia-expl { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; background: #fff4e0; border-left: 5px solid var(--ambar); border-radius: 8px; padding: 8px 12px; margin: 6px 0; }
+  .cmp { border-collapse: collapse; margin: 6px 0; font-size: 18px; } .cmp td { padding: 4px 10px; border-bottom: 1px solid var(--borda); }
+  .cmp .igual { color: var(--verde); font-weight: 700; } .cmp .difere { color: var(--vermelho); font-weight: 700; } .cmp .mais { color: var(--petroleo2); font-weight: 700; }
+  .conclusao { font: 800 19px var(--titulo); margin-top: 6px; }
+  .busca-passos { font-size: 18px; line-height: 1.6; } .busca-passos .at { background: #ffe2b0; border-radius: 6px; padding: 0 6px; }
+  .botoes-cod { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; } .botoes-cod button { font: 700 18px var(--titulo); min-width: 54px; padding: 6px 10px; border-radius: 10px; border: 2px solid var(--petroleo); background: #eef6f4; cursor: pointer; }
+  .botoes-cod button.fora { border-style: dashed; background: #fff; } .botoes-cod button.sel { background: var(--petroleo); color: #fff; }
+  .codigo-links { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 6px 0 8px; } .codigo-links a { font-family: var(--maquina); font-size: 15px; } .linha-tips { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
   .linha-tips details.tip[open] { flex-basis: 100%; }
   .acoes-f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
   .acoes-f2 .btn { margin: 0; text-align: left; } .acoes-f2 .btn small { display: block; font: 400 15px "Segoe UI", system-ui, sans-serif; opacity: .95; margin-top: 2px; }
@@ -451,7 +460,8 @@ function blocoPerfil(k, fase) {
     <div>Para resolver o problema “<b>${pr[0].toLowerCase()}</b>”, o computador usa ${pr[2]}.</div>
     <div style="margin-top:6px"><b>E pra que serve isso no dia a dia?</b> ${T.vida}</div>
     ${dicaClique("E numa auditoria de verdade?", T.auditoria)}`;
-  if (k === "colega") return `<span class="cab">${ic} ${nome} · como validar em 1 minuto</span><ol>${T.validar().map(x => `<li>${x}</li>`).join("")}</ol>
+  if (k === "colega") return `<span class="cab">${ic} ${nome} · como validar em 1 minuto</span>
+    <div class="codigo-links">${botaoCodigo(fase)} <span>Arquivos no GitHub:</span> ${[...new Set((D.codigo[fase] || []).map(x => x.arquivo))].map(a => `<a href="${REPO}${a}" target="_blank" rel="noopener">${a}</a>`).join(" · ")}</div><ol>${T.validar().map(x => `<li>${x}</li>`).join("")}</ol>
     ${dicaClique("Testes que comprovam", T.testes.map(t => `<span class="codigo">${t}</span>`).join(" · ") + `<br>Lista completa, com arquivo e linha: <a href="${REPO.replace("/blob/main/", "")}/blob/main/docs/checklist-entrega.md" target="_blank" rel="noopener">matriz de inspeção</a>. O código da fase está no botão 🔧.`)}`;
   return `<span class="cab">${ic} ${nome} · conexão com as aulas</span><ul>${T.aulas.map(x => `<li>${x}</li>`).join("")}</ul>`;
 }
@@ -959,6 +969,7 @@ TELAS.custos = () => {
 
 /* ================= FASE 4 ================= */
 function desenhaAVL(svg, raiz, destaque) {
+  const marca = k => Array.isArray(destaque) ? destaque.includes(k) : k === destaque;
   svg.innerHTML = ""; if (!raiz) { svg.setAttribute("viewBox", "0 0 300 50"); svg.setAttribute("width", 300); svgEl("text", {x: 10, y: 32}, svg, "(cofre vazio)"); return; }
   const nos = []; let x = 0; (function io(n, d) { if (!n) return; io(n.e, d + 1); nos.push({n, x: x++, d}); io(n.d, d + 1); })(raiz, 0);
   const DX = 64, DY = 70, W = nos.length * DX + 40, H = (Math.max(...nos.map(o => o.d)) + 1) * DY + 30;
@@ -966,10 +977,11 @@ function desenhaAVL(svg, raiz, destaque) {
   const P2 = new Map(); nos.forEach(o => P2.set(o.n, {x: o.x * DX + 40, y: o.d * DY + 32}));
   nos.forEach(o => ["e", "d"].forEach(l => { if (o.n[l]) { const a = P2.get(o.n), b = P2.get(o.n[l]); svgEl("line", {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: "#6b5236", "stroke-width": 3}, svg); } }));
   nos.forEach(o => { const p = P2.get(o.n);
-    svgEl("circle", {cx: p.x, cy: p.y, r: 21, fill: o.n.k === destaque ? "#ffb347" : "#2a1d12", stroke: "#ffb347", "stroke-width": 2}, svg);
-    svgEl("text", {x: p.x, y: p.y + 6, "text-anchor": "middle", "font-weight": 700, "font-size": 17, style: o.n.k === destaque ? "fill:#15110c" : ""}, svg, o.n.k);
+    svgEl("circle", {cx: p.x, cy: p.y, r: 21, fill: marca(o.n.k) ? "#ffb347" : "#2a1d12", stroke: "#ffb347", "stroke-width": 2}, svg);
+    svgEl("text", {x: p.x, y: p.y + 6, "text-anchor": "middle", "font-weight": 700, "font-size": 17, style: marca(o.n.k) ? "fill:#15110c" : ""}, svg, o.n.k);
     svgEl("text", {x: p.x, y: p.y + 36, "text-anchor": "middle", "font-size": 12}, svg, `FB ${o.n.fb > 0 ? "+" : ""}${o.n.fb}`); });
 }
+const raios = (n, max) => "⚡".repeat(n) + `<span class="vazio">${"⚡".repeat(Math.max(0, max - n))}</span>`;
 TELAS.f4 = () => {
   const F = D.fase4, S = P.f4, nomes = {nenhuma: "➖ Não gira", RD: "↻ Giro à direita (RD)", RE: "↺ Giro à esquerda (RE)", RED: "⤵ Giro duplo E-D (RED)", RDE: "⤴ Giro duplo D-E (RDE)"};
   let sala = S.k >= F.lacres.length ? 2 : 1;
@@ -989,14 +1001,18 @@ TELAS.f4 = () => {
         ${dicaClique("O que é o FB embaixo dos nós?", "FB = altura da esquerda − altura da direita. Numa árvore equilibrada, fica entre −1 e +1. Se virar +2 ou −2, há giro.")}</div>
     </div></div></div>
     <div id="f4-sala2" style="display:none"><p>O computador anda pelo mapa da Fase 3 e o cofre anota onde ele já esteve, para não repetir caminho. ${termo("estado", "o que é uma situação?")}</p>
-      <p style="margin:6px 0"><b>Por que isso importa?</b> Se o computador explorasse de novo uma situação que já viu, andaria em círculos — é exatamente o problema desta fase. A chave do cofre é a situação inteira: 📍 local, 🔑 pistas, 🚪 portas e ⚡ energia. Compare:</p>
+      <p style="margin:6px 0"><b>Por que isso importa?</b> Se o computador explorasse de novo uma situação que já viu, andaria em círculos — é exatamente o problema desta fase. A chave do cofre é a situação inteira: 📍 local, 🔑 pistas, 🚪 portas e ⚡ energia.</p>
+      <div class="energia-expl"><div><b>⚡ Energia = quantos passos ainda dá para dar.</b><br>É o orçamento da auditoria: cada corredor gasta 1.</div>
+        <div><span class="raios">${raios(6, 10)}</span> 6 passos<br><span class="raios">${raios(4, 10)}</span> 4 passos: vai menos longe</div></div>
+      <p style="margin:6px 0">Três respostas possíveis:</p>
       <div class="regras-par">
         <div class="r1"><b class="t">😴 Nada de novo: não explorar</b>📍🔑🚪 iguais e a energia ⚡ igual (é o mesmo estado) ou menor (o que o novo faria, o antigo já fazia).</div>
         <div class="r2"><b class="t">⚡ Mesma, com mais energia: explorar</b>📍🔑🚪 iguais, mas agora sobra <b>mais</b> energia: dá para ir mais longe que da outra vez.</div>
         <div class="r3"><b class="t">🆕 São diferentes: explorar</b>Mudou o 📍 local, as 🔑 pistas ou as 🚪 portas. Mesmo lugar com pista nova é outra situação.</div></div>
       <div id="f4-s2"></div></div>
-    <div id="f4-sala3" style="display:none"><p>Procure um código no cofre e veja quantas comparações foram precisas: em cada andar, a árvore descarta um lado inteiro.</p>
-      <p>Digite um número de 0 a 100: <input id="f4-cod" type="number" min="0" max="100" style="font-size:18px;width:90px"> <button class="btn sec" id="f4-buscar">Procurar</button></p><div class="msg" id="f4-res"></div></div>
+    <div id="f4-sala3" style="display:none"><p>Clique num código e veja o cofre procurar: em cada andar, ele compara e <b>descarta um lado inteiro</b> da árvore.</p>
+      <div class="botoes-cod" id="f4-cods"></div><p class="legenda" style="margin:0">Contorno cheio = está no cofre · tracejado = não está.</p>
+      <div class="dois"><div class="crt"><svg id="f4-busca" style="max-height:260px"></svg></div><div><div class="busca-passos" id="f4-passos"></div><div class="msg" id="f4-res"></div></div></div></div>
     <div class="barra"><button class="btn neutro" id="f4-rein">Recomeçar a fase</button> ${voltar} <span class="legenda">Código: <span class="codigo">estruturas/avl.py</span> · <span class="codigo">jogo/fase4.py</span></span></div></div>`;
   const venceu = () => S.k >= F.lacres.length && F.pares.every((_, i) => S.pares[i] === true);
   const mostra = n => { sala = n; [1, 2, 3].forEach(i => $("#f4-sala" + i).style.display = i === n ? "" : "none");
@@ -1030,29 +1046,54 @@ TELAS.f4 = () => {
   const cartaoSit = (t, e, o) => { const dif = k => JSON.stringify(e[k]) !== JSON.stringify(o[k]) ? ' class="mudou"' : "";
     return `<div class="caixa sit" style="margin:0;border-style:solid"><h3>${t}</h3>
       <div${dif("pos")}>📍 <b>${e.pos}</b> — ${e.local}</div><div${dif("pistas")}>🔑 pistas: <b>${lista(e.pistas)}</b></div>
-      <div${dif("portas")}>🚪 portas abertas: <b>${lista(e.portas)}</b></div><div${dif("energia")}>⚡ energia: <b>${e.energia}</b></div></div>`; };
+      <div${dif("portas")}>🚪 portas abertas: <b>${lista(e.portas)}</b></div><div${dif("energia")}>⚡ energia: <span class="raios">${raios(e.energia, 10)}</span> <b>${e.energia}</b> passos</div></div>`; };
+  // A explicação de cada par em forma de quadro: o que ficou igual, o que mudou e a conclusão.
+  const comparaVisual = p => { const a = p.a, b = p.b, ig = k => JSON.stringify(a[k]) === JSON.stringify(b[k]);
+    const linha = (ic, nome, k) => `<tr><td>${ic} ${nome}</td><td class="${ig(k) ? "igual" : "difere"}">${ig(k) ? "✔ igual" : "✗ mudou"}</td></tr>`;
+    const en = b.energia === a.energia ? `<td class="igual">✔ igual (${b.energia})</td>` : b.energia < a.energia
+      ? `<td class="difere">↓ menos: ${b.energia} em vez de ${a.energia}</td>` : `<td class="mais">↑ mais: ${b.energia} em vez de ${a.energia}</td>`;
+    const conc = !p.resposta[0] ? "🆕 Algo mudou no local, nas pistas ou nas portas: é outra situação. <u>Explorar.</u>"
+      : p.resposta[1] ? "⚡ Mesma situação, mas agora sobram mais passos: dá para ir mais longe. <u>Explorar.</u>"
+      : "😴 Tudo o que o novo poderia fazer, o antigo já fazia, com mais passos. <u>Não explorar.</u>";
+    return `<table class="cmp">${linha("📍", "local", "pos")}${linha("🔑", "pistas", "pistas")}${linha("🚪", "portas", "portas")}<tr><td>⚡ energia</td>${en}</tr></table><div class="conclusao">${conc}</div>`; };
   let parAt = F.pares.findIndex((_, i) => S.pares[i] !== true); if (parAt < 0) parAt = 0;
   const sala2 = () => { const p = F.pares[parAt], i = parAt, feito = S.pares[i] === true;
     $("#f4-s2").innerHTML = `<div class="par-nav">${F.pares.map((_, k) => `<button data-ir="${k}" class="${k === i ? "sel" : ""} ${S.pares[k] === true ? "ok" : ""}">Par ${k + 1}${S.pares[k] === true ? " ✔" : ""}</button>`).join("")}</div>
       <div class="caixa"><b>Par ${i + 1} de ${F.pares.length}:</b> o computador chegou a uma situação. Ele já viu uma parecida. Explora ou não?
       <div class="dois" style="margin:8px 0">${cartaoSit("🗄️ O cofre já viu", p.a, p.b)}${cartaoSit("🆕 Chegou agora", p.b, p.a)}</div>
       <div class="escolha"><button data-r="mesma">😴 Nada de novo: não explorar</button><button data-r="melhor">⚡ Mesma, com mais energia: explorar</button><button data-r="outra">🆕 São diferentes: explorar</button></div>
-      <div class="msg" id="par-msg" style="min-height:0">${feito ? "✔ " + p.explicacao : ""}</div>
+      <div class="msg" id="par-msg" style="min-height:0">${feito ? "✔ Certo!" + comparaVisual(p) : ""}</div>
       ${feito && i < F.pares.length - 1 ? `<button class="btn grande" data-ir="${i + 1}">Próximo par →</button>` : ""}</div>`;
     document.querySelectorAll("#f4-s2 [data-ir]").forEach(b => b.onclick = () => { parAt = +b.dataset.ir; sala2(); });
     document.querySelectorAll("#f4-s2 [data-r]").forEach(b => b.onclick = () => {
       const certo = {mesma: [true, false], melhor: [true, true], outra: [false, true]}[b.dataset.r].join() === p.resposta.join();
       S.pares[i] = certo; if (!certo) S.errosPares = (S.errosPares || 0) + 1; salvar();
-      if (certo) { sala2(); $("#par-msg").className = "msg ok"; $("#par-msg").textContent = "Certo! " + p.explicacao; }
-      else { const m = $("#par-msg"); m.className = "msg nao"; m.textContent = "Não é isso. " + p.explicacao; }
+      if (certo) { sala2(); $("#par-msg").className = "msg ok"; }
+      else { const m = $("#par-msg"); m.className = "msg nao"; m.innerHTML = "Ainda não. Compare item por item:" + comparaVisual(p); }
       conferir(); agora(); }); };
   const conferir = () => { if (venceu() && !S.premiado) { S.premiado = true; P.selos[3] = true;
     const e = S.errosPares || 0, est = S.acertos >= 7 && !e ? 3 : S.acertos >= 5 && e <= 2 ? 2 : 1; ganharEstrelas("f4", est); salvar();
     const m = $("#f4-msg"); m.className = "msg vitoria"; m.textContent = "O cofre reconheceu a memória organizada. Selo 4 conquistado!";
     carimbo("SELO 4", est, `${S.acertos} de ${F.lacres.length} palpites de giro certos; ${e} erro(s) nos pares. ${est === 3 ? "Memória impecável!" : "Três estrelas = 7 palpites certos e nenhum erro nos pares."}`, "f4"); } };
-  $("#f4-buscar").onclick = () => { const k = Math.round(+$("#f4-cod").value), r = F.consultas[k], m = $("#f4-res");
-    if (r === undefined || $("#f4-cod").value === "") { m.className = "msg nao"; m.textContent = "Digite um número de 0 a 100."; return; }
-    m.className = "msg " + (r.achou ? "ok" : ""); m.textContent = `Caminho na árvore: ${r.caminho.join(" → ")}\n${r.achou ? "ENCONTRADO" : "NÃO está no cofre"} após ${r.comparacoes} comparação(ões). A árvore tem ${F.altura_final + 1} andares: nunca são precisas mais de ${F.altura_final + 1} comparações — numa lista sem ordem, poderiam ser todas as ${F.lacres.length}.`; };
+  // Sala 3: busca animada sobre a árvore final (o caminho vem do Python: F.consultas).
+  const arvoreFinal = F.lacres[F.lacres.length - 1].depois, noCofre = F.lacres.map(l => l.codigo).sort((x, y) => x - y);
+  const foraDoCofre = [10, 60, 95].filter(k => !noCofre.includes(k) && F.consultas[k]);
+  $("#f4-cods").innerHTML = [...noCofre, ...foraDoCofre].sort((x, y) => x - y).map(k => `<button data-k="${k}" class="${noCofre.includes(k) ? "" : "fora"}">${k}</button>`).join("");
+  desenhaAVL($("#f4-busca"), arvoreFinal);
+  let timer = null;
+  document.querySelectorAll("#f4-cods [data-k]").forEach(b => b.onclick = () => {
+    const k = +b.dataset.k, r = F.consultas[k]; clearTimeout(timer);
+    document.querySelectorAll("#f4-cods [data-k]").forEach(x => x.classList.toggle("sel", x === b));
+    const passos = r.caminho.map(c => c === k ? `<b>${k} = ${c}</b> → achou! ✅` : k < c ? `${k} &lt; ${c} → desce para a <b>esquerda</b> ↙` : `${k} &gt; ${c} → desce para a <b>direita</b> ↘`);
+    if (!r.achou) passos.push("lugar vazio → <b>não está no cofre</b> ❌");
+    $("#f4-res").className = "msg"; $("#f4-res").textContent = "";
+    let i = 0; const anda = () => {
+      desenhaAVL($("#f4-busca"), arvoreFinal, r.caminho.slice(0, Math.min(i + 1, r.caminho.length)));
+      $("#f4-passos").innerHTML = passos.slice(0, i + 1).map((t, j) => `<div class="${j === i ? "at" : ""}">${j + 1}. ${t}</div>`).join("");
+      if (++i < passos.length) timer = setTimeout(anda, 900);
+      else { const m = $("#f4-res"); m.className = "msg " + (r.achou ? "ok" : "");
+        m.textContent = `${r.comparacoes} comparação(ões). A árvore tem ${F.altura_final + 1} andares: nunca são precisas mais de ${F.altura_final + 1} — numa lista sem ordem, poderiam ser todas as ${F.lacres.length}.`; } };
+    anda(); });
   $("#f4-rein").onclick = () => { P.f4 = {k: 0, acertos: 0, palpites: [], pares: {}, errosPares: 0}; salvar(); ir("f4"); };
   sala1(); sala2(); mostra(sala);
 };
