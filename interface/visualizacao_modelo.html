@@ -663,18 +663,18 @@ S.push({ html: `
   </div>` });
 
 S.push({ html: `
-  <div class="rotulo">Anexo 4 · sua vez</div><h2>Os lacres do cofre: a árvore vai girar?</h2>
-  ${falaAud("Vamos guardar os códigos dos lacres <b>70, 50, 40, 80, 90, 15, 25, 45, 42</b>, um de cada vez. Antes de cada um, dê seu palpite: a árvore vai precisar girar?")}
+  <div class="rotulo">Anexo 4 · sua vez</div><h2>Os códigos no Cofre dos Estados: a árvore vai girar?</h2>
+  ${falaAud("Cada situação examinada vira um código. Vamos guardar os códigos <b>70, 50, 40, 80, 90, 15, 25, 45, 42</b>, um de cada vez. Antes de cada um, dê seu palpite: a árvore vai precisar girar?")}
   <div class="caixa"><h3 id="v-titulo"></h3>
     <div id="v-botoes"><button class="btn" data-v="nenhuma">Não gira</button><button class="btn" data-v="RD">Gira à direita (RD)</button>
       <button class="btn" data-v="RE">Gira à esquerda (RE)</button><button class="btn" data-v="RED">Giro duplo E-D</button><button class="btn" data-v="RDE">Giro duplo D-E</button></div>
-    <button class="btn sec" id="v-prox" style="display:none">Próximo lacre →</button> <button class="btn neutro" id="v-rein">Recomeçar</button></div>
+    <button class="btn sec" id="v-prox" style="display:none">Próximo código →</button> <button class="btn neutro" id="v-rein">Recomeçar</button></div>
   ${falaApura("Dica: só gira quando um lado fica 2 andares mais alto que o outro.", "pensando", "v-fala")}
   <div class="dois"><div class="crt"><div class="tit">Cofre antes</div><svg id="v-antes"></svg></div><div class="crt"><div class="tit">Cofre depois</div><svg id="v-depois"></svg></div></div>`,
   montar() {
     let k = 0, acertos = 0;
     const mostra = () => { const q = AV.quadros[k];
-      $("#v-titulo").textContent = k < AV.quadros.length ? `Lacre ${k + 1} de ${AV.quadros.length}: código ${q.codigo}` : "";
+      $("#v-titulo").textContent = k < AV.quadros.length ? `Código ${k + 1} de ${AV.quadros.length}: ${q.codigo}` : "";
       desenhaAVL($("#v-antes"), q.antes, null); $("#v-depois").innerHTML = ""; $("#v-depois").setAttribute("viewBox", "0 0 10 10");
       document.querySelectorAll("[data-v]").forEach(b => b.disabled = false); $("#v-prox").style.display = "none"; };
     document.querySelectorAll("[data-v]").forEach(b => b.onclick = () => { const q = AV.quadros[k], certo = b.dataset.v === q.rotacao; acertos += certo;
@@ -683,7 +683,7 @@ S.push({ html: `
       document.querySelectorAll("[data-v]").forEach(x => x.disabled = true);
       if (k < AV.quadros.length - 1) $("#v-prox").style.display = "inline-block";
       else apuraReage("v-fala", `Cofre organizado! Você acertou ${acertos} de ${AV.quadros.length}. Vimos os quatro giros: RD, RE, E-D e D-E.`, "feliz"); });
-    $("#v-prox").onclick = () => { k++; mostra(); apuraReage("v-fala", "Próximo lacre. Qual seu palpite?", "pensando"); };
+    $("#v-prox").onclick = () => { k++; mostra(); apuraReage("v-fala", "Próximo código. Qual seu palpite?", "pensando"); };
     $("#v-rein").onclick = () => { k = 0; acertos = 0; mostra(); apuraReage("v-fala", "Cofre esvaziado. Vamos de novo!", "normal"); };
     mostra();
   } });

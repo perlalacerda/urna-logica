@@ -43,7 +43,7 @@ LINHAS = [
     ("Pilha (LIFO)", "Aula 06", ["estruturas.pilha:Pilha.push", "estruturas.pilha:Pilha.pop"],
      "Fase 2 (pilha de espera, Desfazer); DFS com pilha", ["test_estruturas:TestPilha.test_pop_vazia_nao_corrompe", "test_fases:TestFase2.test_desfazer_lifo"], "5"),
     ("Fila (FIFO)", "Aula 06", ["estruturas.fila:Fila.enqueue", "estruturas.fila:Fila.dequeue"],
-     "Fase 2 (esteira de chegada); BFS", ["test_estruturas:TestFila.test_ordem_fifo"], "5"),
+     "Fase 2 (fila de chegada); BFS", ["test_estruturas:TestFila.test_ordem_fifo"], "5"),
     ("Regras da Fase 2 como funções", "Enunciado, Fase 2", ["jogo.fase2:regra_aceitar", "jogo.fase2:regra_guardar", "jogo.fase2:regra_arquivar", "jogo.fase2:regra_liberar"],
      "Fase 2 (os quatro botões)", ["test_fases:TestRegrasFase2.test_regra_guardar", "test_fases:TestFase2.test_jogada_invalida_nao_altera_estado"], "2"),
     ("Grafo por lista de adjacência", "Aula 09", ["estruturas.grafo:Grafo.adicionar_aresta", "estruturas.grafo:Grafo.vizinhos", "jogo.fase3:construir_mapa"],

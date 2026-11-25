@@ -12,7 +12,7 @@ O que a disciplina avalia (estruturas e algoritmos) está em duas pastas. O rest
 | `estruturas/` | estruturas de dados (o essencial) | 915 |
 | `algoritmos/` | algoritmos (o essencial) | 957 |
 | `jogo/` | regras das fases | 1531 |
-| `interface/` | telas (terminal, navegador, visualização) | 1395 |
+| `interface/` | telas (terminal, navegador, visualização) | 1413 |
 | `testes/` | testes automáticos | 1500 |
 
 ## Matriz
@@ -28,7 +28,7 @@ O que a disciplina avalia (estruturas e algoritmos) está em duas pastas. O rest
 | 7 | Contagem de operações (análise assintótica) | Aulas 03 e 04 | [`Contador — algoritmos/ordenacao.py:38`](../algoritmos/ordenacao.py#L38)<br>[`medir_ordenacao — experimentos.py:33`](../experimentos.py#L33) | Fase 1 (placar e tabela de 500 fichas) | [`test_contadores_bubble`](../testes/test_ordenacao.py#L44) | 8 |
 | 8 | Lista ligada com cabeça | Aula 06, slides 17–23 | [`ListaLigada.inserir_fim — estruturas/lista_ligada.py:96`](../estruturas/lista_ligada.py#L96)<br>[`ListaLigada.remover — estruturas/lista_ligada.py:123`](../estruturas/lista_ligada.py#L123) | Fase 2 (cofre de custódia); listas de adjacência | [`test_remover_ultimo_atualiza_ponteiro`](../testes/test_estruturas.py#L123) | 5 |
 | 9 | Pilha (LIFO) | Aula 06 | [`Pilha.push — estruturas/pilha.py:32`](../estruturas/pilha.py#L32)<br>[`Pilha.pop — estruturas/pilha.py:44`](../estruturas/pilha.py#L44) | Fase 2 (pilha de espera, Desfazer); DFS com pilha | [`test_pop_vazia_nao_corrompe`](../testes/test_estruturas.py#L44)<br>[`test_desfazer_lifo`](../testes/test_fases.py#L114) | 5 |
-| 10 | Fila (FIFO) | Aula 06 | [`Fila.enqueue — estruturas/fila.py:33`](../estruturas/fila.py#L33)<br>[`Fila.dequeue — estruturas/fila.py:55`](../estruturas/fila.py#L55) | Fase 2 (esteira de chegada); BFS | [`test_ordem_fifo`](../testes/test_estruturas.py#L69) | 5 |
+| 10 | Fila (FIFO) | Aula 06 | [`Fila.enqueue — estruturas/fila.py:33`](../estruturas/fila.py#L33)<br>[`Fila.dequeue — estruturas/fila.py:55`](../estruturas/fila.py#L55) | Fase 2 (fila de chegada); BFS | [`test_ordem_fifo`](../testes/test_estruturas.py#L69) | 5 |
 | 11 | Regras da Fase 2 como funções | Enunciado, Fase 2 | [`regra_aceitar — jogo/fase2.py:62`](../jogo/fase2.py#L62)<br>[`regra_guardar — jogo/fase2.py:72`](../jogo/fase2.py#L72)<br>[`regra_arquivar — jogo/fase2.py:83`](../jogo/fase2.py#L83)<br>[`regra_liberar — jogo/fase2.py:90`](../jogo/fase2.py#L90) | Fase 2 (os quatro botões) | [`test_regra_guardar`](../testes/test_fases.py#L74)<br>[`test_jogada_invalida_nao_altera_estado`](../testes/test_fases.py#L103) | 2 |
 | 12 | Grafo por lista de adjacência | Aula 09 | [`Grafo.adicionar_aresta — estruturas/grafo.py:43`](../estruturas/grafo.py#L43)<br>[`Grafo.vizinhos — estruturas/grafo.py:75`](../estruturas/grafo.py#L75)<br>[`construir_mapa — jogo/fase3.py:68`](../jogo/fase3.py#L68) | Fase 3 (o mapa) | [`test_mapa_do_jogo_atende_o_enunciado`](../testes/test_grafo_busca.py#L56) | 3.2 |
 | 13 | BFS da aula (cores, d, π) | Aula 09, slides 71–73 | [`bfs — algoritmos/busca_grafo.py:22`](../algoritmos/busca_grafo.py#L22) | Fase 3 ("E o caminho mais curto?") | [`test_bfs_distancias_da_aula`](../testes/test_grafo_busca.py#L65) | 6.2 |

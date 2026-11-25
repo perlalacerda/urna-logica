@@ -151,7 +151,7 @@ jogada das tabelas em Python e confere que o resultado é idêntico. Essa aborda
     estr = [
         ["Lista ligada com cabeça", "<code>estruturas/lista_ligada.py</code>", "inserir no início/fim O(1) (ponteiro para o último); buscar e remover O(n)", "custódia; listas de adjacência"],
         ["Pilha dinâmica", "<code>estruturas/pilha.py</code>", "push, pop, peek O(1); pop vazia devolve (False, None)", "pilha de espera; desfazer; DFS com pilha"],
-        ["Fila dinâmica", "<code>estruturas/fila.py</code>", "enqueue, dequeue O(1)", "esteira da Fase 2; BFS"],
+        ["Fila dinâmica", "<code>estruturas/fila.py</code>", "enqueue, dequeue O(1)", "fila de chegada da Fase 2; BFS"],
         ["Árvore AVL", "<code>estruturas/avl.py</code>", "inserir, buscar O(log n); rotações O(1); altura da vazia = −1", "visitados do solver; Fase 4"],
         ["Heap binário de mínimo", "<code>estruturas/heap.py</code>", "inserir, extrair mínimo, diminuir chave O(log n)", "Dijkstra (desafio extra)"],
         ["Grafo", "<code>estruturas/grafo.py</code>", "vizinhos O(grau); pesos w(u, v) ≥ 0", "mapa das Fases 3 e extra"],

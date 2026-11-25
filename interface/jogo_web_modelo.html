@@ -301,7 +301,7 @@ const GLOSS = {
     "", "Dividir e conquistar: T(n) = 2·T(n/2) + n, o que dá O(n log n). Aula 04."],
   quick: ["⚡", "Quick Sort (o pivô)", "Escolhe uma ficha como pivô e separa: menores de um lado, maiores do outro; repete em cada lado. Costuma ser o mais rápido.<br><b>Exemplo:</b> 4 1 3 2 com pivô 2 → menores: [1]; maiores: [4 3] → arruma cada lado → <b>1 2 3 4</b>.",
     "", "Partição de Lomuto com o último elemento como pivô. Caso médio O(n log n); pior caso O(n²), com o vetor já ordenado ou invertido, ou com muitas chaves iguais. Aula 04."],
-  fila: ["📥", "Esteira de chegada (fila)", "A esteira da Fase 2: as provas chegam uma atrás da outra e só a da frente pode sair. Quem chegou primeiro sai primeiro.",
+  fila: ["📥", "Fila de chegada", "A fila de chegada da Fase 2: as provas chegam uma atrás da outra e só a da frente pode sair. Quem chegou primeiro sai primeiro.",
     "", "Fila = FIFO (primeiro a entrar, primeiro a sair). Inserir no fim e remover do início: O(1). Aula 06. É também a estrutura da BFS."],
   pilha: ["🥞", "Pilha de espera (pilha)", "A pilha de espera da Fase 2: a prova que você guarda por último fica em cima e é a primeira a sair. O botão Desfazer funciona igual: desfaz primeiro a jogada mais recente.",
     "", "Pilha = LIFO (último a entrar, primeiro a sair). Empilhar e desempilhar no topo: O(1). Aula 06. O botão Desfazer e a DFS usam pilha."],
@@ -378,7 +378,7 @@ const cartoesMetodos = (sel, extra) => `<div class="metodos">${["bubble", "merge
     <span class="tit">${GLOSS[k][0]} ${GLOSS[k][1].split(" (")[0]}</span>${METODO[k]}${extra ? `<span class="legenda">${extra(k)}</span>` : ""}</button>`).join("")}</div>`;
 const TUT = {
   f1: ["🗂️", "Fase 1 — O Arquivo Embaralhado", ["As 12 fichas das seções chegaram fora de ordem.", "Monte a regra de arrumação clicando nas peças: <b>zona → seção → horário</b>.", "Escolha um jeito de arrumar (cada um explica como trabalha) e clique em <b>Ordenar</b>: veja as fichas se mexerem.", "A auditoria aceita ou mostra, em vermelho, onde a ordem quebrou."]],
-  f2: ["📦", "Fase 2 — A Central de Triagem", ["As provas chegam pela <b>📥 esteira</b>: só a da frente pode sair.", "Ponha na <b>🔗 lista de custódia</b> na ordem <b>E2 → E4 → E1 → E6</b>.", "Prova que ainda não é a vez espera na <b>🥞 pilha</b> (só a de cima sai). Cópias descartáveis vão para o <b>🗑️ arquivo morto</b>.", "Errou? <b>Desfazer</b>. Menos jogadas = mais estrelas."]],
+  f2: ["📦", "Fase 2 — A Central de Triagem", ["As provas chegam pela <b>📥 fila de chegada</b>: só a da frente pode sair.", "Ponha na <b>🔗 lista de custódia</b> na ordem <b>E2 → E4 → E1 → E6</b>.", "Prova que ainda não é a vez espera na <b>🥞 pilha</b> (só a de cima sai). Cópias descartáveis vão para o <b>🗑️ arquivo morto</b>.", "Errou? <b>Desfazer</b>. Menos jogadas = mais estrelas."]],
   f3: ["🗺️", "Fase 3 — O Mapa das Seções", ["Você é o 🕵️. Clique num <b>local verde</b> para andar até ele.", "Siga a lista de tarefas: pegue a pista <b>🔑 SEQ</b> (em E) e depois a <b>🔑 AUT</b> (em D).", "As portas 🔒 só abrem com a pista certa: H pede SEQ; F pede AUT.", "Cada passo gasta ⚡ 1 de energia — o orçamento de ações da equipe (você tem 10). Travou? 💡 Dica acende o próximo local."]],
   f4: ["🔐", "Fase 4 — O Cofre dos Estados", ["<b>Sala 1:</b> os códigos entram numa árvore — menor à esquerda, maior à direita.", "Antes de cada código, <b>adivinhe</b> se a árvore fica torta e precisa girar. O quadro “Para decidir” ensina a ver.", "<b>Sala 2:</b> diga se duas situações do mapa são a mesma para a memória do computador.", "Terminou as duas salas? Selo 4!"]],
   f5: ["🧾", "Fase 5 — A Auditoria Final", ["Escolha um jeito de arrumar o lote (os cartões explicam cada um).", "Assista à auditoria conferir o lote, a triagem e o mapa, item por item.", "Onde você jogou, ela confere as <b>suas</b> jogadas.", "Com os 5 selos, o Cofre de Verificação abre."]],
@@ -413,13 +413,13 @@ const PERFIL_TXT = {
       "<b>Aula 04</b> (slides 31–37): Quick Sort com Lomuto → terceiro método (usamos <code>p..q−1</code>; ver o teste do slide).",
       "<b>Aulas 03 e 04</b>: contar operações → o placar e a tabela de 500 fichas (n² × n log n).",
       "<b>Chave composta</b> → o enigma desta fase: montar a regra peça por peça."]},
-  f2: {vida: "🍽️ <b>Fila da cantina:</b> quem chega primeiro é atendido primeiro — é a <b>fila</b> (a esteira). A <b>pilha</b> de bandejas: a última que você põe em cima é a primeira que sai. E o <b>Ctrl+Z</b> desfaz a última coisa que você fez: também é uma pilha.",
+  f2: {vida: "🍽️ <b>Fila da cantina:</b> quem chega primeiro é atendido primeiro — é a <b>fila</b> de chegada. A <b>pilha</b> de bandejas: a última que você põe em cima é a primeira que sai. E o <b>Ctrl+Z</b> desfaz a última coisa que você fez: também é uma pilha.",
     auditoria: "Toda prova precisa de <b>cadeia de custódia</b>: o registro da ordem em que cada documento foi recebido e guardado. Se a ordem se perde, ninguém consegue provar que a prova não foi trocada no caminho — e ela deixa de valer.",
     validar: () => ["Com E1 na frente, clique <b>Pôr na custódia</b>: recusado (a custódia espera E2) e nada muda.",
       "Guarde E1 na pilha e tente <b>Guardar</b> outra: a regra recusa quem ficaria por cima de alguém que precisa sair antes.",
       "Faça duas jogadas e clique <b>Desfazer</b> duas vezes: volta a mais recente primeiro (o histórico é uma pilha)."],
     testes: ["test_jogada_invalida_nao_altera_estado", "test_desfazer_lifo", "test_solver_resolve_fase2"],
-    aulas: ["<b>Aula 06</b> — fila (FIFO) → a esteira de chegada.", "<b>Aula 06</b> — pilha (LIFO) → a pilha de espera e o botão Desfazer.",
+    aulas: ["<b>Aula 06</b> — fila (FIFO) → a fila de chegada.", "<b>Aula 06</b> — pilha (LIFO) → a pilha de espera e o botão Desfazer.",
       "<b>Aula 06</b> (slides 17–23) — lista ligada com cabeça → a lista de custódia. O ponteiro para o último (inserir no fim em O(1)) é acréscimo da equipe."]},
   f3: {vida: "🗺️ <b>Waze e GPS:</b> aplicativos de rota tratam a cidade como um mapa de pontos ligados por ruas — um <b>grafo</b> — e procuram um caminho. Rua bloqueada é como a porta trancada daqui: o caminho mais curto no desenho nem sempre é permitido.",
     auditoria: "Para refazer a trilha de um documento, é preciso passar pelos lugares na ordem certa: não adianta chegar à validação sem antes passar pela autenticação. O computador testa os caminhos possíveis e devolve um que obedece a todas as regras — e o mais curto deles.",
@@ -519,13 +519,13 @@ function ir(tela) { telaAtual = tela; TELAS[tela](); window.scrollTo(0, 0); dese
 const voltar = '<button class="btn neutro" onclick="ir(\'menu\')">← Voltar ao menu</button>';
 const NARRA = {
   1: "Chegaram 12 fichas com os registros das seções de Verídia, mas vieram <b>embaralhadas</b>! Para conferir, a auditoria precisa delas em ordem: primeiro pela <b>zona eleitoral</b>, depois pela <b>seção</b> (a sala onde se vota) e, se empatar, pelo <b>horário</b>. Você monta a regra; o computador arruma.",
-  2: "As provas da apuração estão chegando pela esteira. Elas precisam entrar na lista de custódia numa <b>ordem exata</b>: E2, E4, E1, E6. Se a ordem quebrar, a prova não vale. Algumas são cópias descartáveis; outras precisam esperar a vez numa pilha.",
+  2: "As provas da apuração estão chegando pela fila de chegada. Elas precisam entrar na lista de custódia numa <b>ordem exata</b>: E2, E4, E1, E6. Se a ordem quebrar, a prova não vale. Algumas são cópias descartáveis; outras precisam esperar a vez numa pilha.",
   3: "A trilha entre as seções se partiu. Você vai da Central de Auditoria (A) até o Centro de Validação (F). Só que há <b>portas trancadas</b>: cada uma pede uma pista que está em outro canto do mapa. Pegue as pistas antes!",
   4: "O computador da CIV está andando em círculos, visitando o mesmo lugar várias vezes. Vamos organizar a memória dele num <b>cofre em forma de árvore</b>, para ele lembrar rápido onde já esteve.",
   5: "Hora da verdade! A auditoria vai <b>refazer tudo</b> o que você fez e conferir, passo a passo, se cada jogada obedeceu às regras. Se tudo bater, o Cofre de Verificação abre."};
 // O problema de cada fase em poucas palavras; a história completa fica na capa.
 const PROBLEMA = {1: ["Arquivo embaralhado", "As 12 fichas das seções chegaram fora de ordem. Sem ordem, não dá para conferir nada.", "a <b>ordenação</b> com uma <b>chave composta</b>: arrumar por uma regra (primeiro zona, depois seção, depois horário)"],
-  2: ["Provas fora de ordem", "As provas chegam pela esteira e precisam entrar na lista de custódia numa ordem exata. Se a ordem quebrar, a prova não vale.", "a <b>fila</b> (quem chega primeiro sai primeiro), a <b>pilha</b> (o último que entra sai primeiro) e a <b>lista ligada</b> (uma corrente em ordem)"],
+  2: ["Provas fora de ordem", "As provas chegam pela fila de chegada e precisam entrar na lista de custódia numa ordem exata. Se a ordem quebrar, a prova não vale.", "a <b>fila</b> (quem chega primeiro sai primeiro), a <b>pilha</b> (o último que entra sai primeiro) e a <b>lista ligada</b> (uma corrente em ordem)"],
   3: ["Trilha partida", "O caminho entre as seções se partiu e há portas trancadas. É preciso achar uma rota que obedeça a todas as regras.", "o <b>grafo</b> (um mapa de pontos ligados) e a <b>busca em largura</b> (explorar em ondas para achar o caminho mais curto)"],
   4: ["Computador andando em círculos", "O computador da CIV visita o mesmo lugar várias vezes porque não lembra onde já esteve.", "a <b>árvore equilibrada</b> (AVL): uma memória em que cada pergunta descarta um lado inteiro da árvore"],
   5: ["Conferência final", "Ninguém deve acreditar no resultado sem ver a prova. A auditoria refaz cada passo e confere as regras.", "a <b>integração</b> de tudo: ordenação, fila, pilha, grafo, busca e árvore conferindo umas às outras"],
@@ -561,7 +561,7 @@ const APRENDI = {
       depende: `Com o lote embaralhado, o Quick também vai bem (${fmt(L.aleatoria.quick)} comparações) e costuma ser o mais rápido no relógio. Mas, se o lote já chegar em ordem ou invertido, ele cai para ${fmt(L.ordenada.quick)}, igual ao Bubble. Com só 12 fichas, qualquer método serve; o Bubble ajuda a entender a ideia, mas não aguenta lotes grandes.`}; },
   2: () => ({conceito: "<b>Fila</b> (o primeiro que chega sai primeiro), <b>pilha</b> (o último que entra sai primeiro) e <b>lista ligada</b> (uma corrente que cresce no fim).",
     resolveu: `As provas entraram na lista de custódia na ordem E2 → E4 → E1 → E6, sem pular a vez de ninguém; o mínimo é ${D.fase2.minimo} jogadas. Jogada errada foi recusada sem estragar nada, e o Desfazer voltou a jogada mais recente.`,
-    melhor: "<b>Cada estrutura no seu papel.</b> A fila garante a ordem de chegada da esteira; a pilha segura quem ainda não é a vez e guarda o histórico do Desfazer; a lista ligada simples basta para a custódia, que só é lida do início ao fim.",
+    melhor: "<b>Cada estrutura no seu papel.</b> A fila garante a ordem de chegada; a pilha segura quem ainda não é a vez e guarda o histórico do Desfazer; a lista ligada simples basta para a custódia, que só é lida do início ao fim.",
     depende: "A pilha funcionou porque só uma prova (E1) precisou esperar. Se várias provas tivessem de esperar e sair na mesma ordem em que entraram, a pilha inverteria essa ordem: aí o certo seria uma segunda fila. E, se fosse preciso percorrer a custódia de trás para a frente, a lista duplamente ligada seria a escolha."}),
   3: () => { const S = D.solver.mapa, b = S["BFS"], d = S["DFS (recursiva)"];
     return {conceito: "<b>Grafo</b> (locais ligados por corredores), <b>estado</b> (local + pistas + portas + energia) e <b>busca</b>: BFS em ondas, DFS em profundidade.",
@@ -779,13 +779,13 @@ TELAS.f2 = () => {
     <div class="agora" id="f2-agora"></div>
     ${dicaClique("As provas que chegam (quais são descartáveis?)", Object.entries(F.evidencias).map(([k, v]) => `<span class="ficha">${k}</span> ${v}${F.alvo.includes(k) ? "" : " · <b>🗑️ descartável</b>"}`).join("<br>"))}
     <div class="dois" id="f2-area"><div>
-      <div class="caixa"><h3>📥 Esteira de chegada ${termo("fila", "é uma fila")}</h3><p class="legenda" style="margin:0">Só sai a da <b>frente</b> (a da esquerda, em destaque).</p><div id="f2-fila"></div></div>
+      <div class="caixa"><h3>📥 Fila de chegada ${termo("fila", "o que é uma fila?")}</h3><p class="legenda" style="margin:0">Só sai a da <b>frente</b> (a da esquerda, em destaque).</p><div id="f2-fila"></div></div>
       <div class="caixa"><h3>🥞 Pilha de espera ${termo("pilha", "é uma pilha")}</h3><p class="legenda" style="margin:0">Só sai a de <b>cima</b>.</p><div id="f2-pilha"></div></div>
       <div class="caixa"><h3>🗑️ Arquivo morto ${termo("arquivo", "o que vai aqui?")}</h3><div id="f2-arq"></div></div>
     </div><div>
       <div class="caixa"><h3>🔗 Lista de custódia ${termo("lista", "é uma lista ligada")}</h3><p class="legenda" style="margin:0">Ordem exigida: <b>${F.alvo.join(" → ")}</b></p><div id="f2-cus"></div></div>
       <div class="msg" id="f2-msg">Faça a primeira jogada.</div>
-      <div class="acoes-f2"><button class="btn" data-a="aceitar">✅ Pôr na custódia<small>a da frente da esteira entra na custódia</small></button>
+      <div class="acoes-f2"><button class="btn" data-a="aceitar">✅ Pôr na custódia<small>a da frente da fila entra na custódia</small></button>
         <button class="btn" data-a="guardar">⏸️ Guardar na pilha<small>a da frente espera em cima da pilha</small></button>
         <button class="btn" data-a="arquivar">🗑️ Descartar<small>a da frente vai para o arquivo morto</small></button>
         <button class="btn" data-a="liberar">⬆️ Tirar da pilha<small>a de cima da pilha entra na custódia</small></button></div>
@@ -806,7 +806,7 @@ TELAS.f2 = () => {
     $("#f2-cus").innerHTML = e.custodia.length ? e.custodia.map(x => `<span class="ficha" data-ficha="${x}">${x}</span>`).join(" → ") : '<span class="vazia">(vazia)</span>';
     const frente = e.fila[0], des = frente && !F.alvo.includes(frente);
     $("#f2-agora").innerHTML = "<b>O que fazer agora</b>" + (e.venceu ? `Custódia completa em ${S.acoes.length} jogadas (o mínimo é ${F.minimo}). Recomece para buscar 3 estrelas, ou siga em frente.<br>${botaoProxima("f2")}` :
-      `A custódia espera a <b style="display:inline">${e.esperado}</b>. Na frente da esteira está a ${frente || "—"}${des ? " (descartável)" : ""}${e.pilha.length ? `; em cima da pilha, a ${e.pilha[0]}` : ""}. ` +
+      `A custódia espera a <b style="display:inline">${e.esperado}</b>. Na frente da fila está a ${frente || "—"}${des ? " (descartável)" : ""}${e.pilha.length ? `; em cima da pilha, a ${e.pilha[0]}` : ""}. ` +
       (frente === e.esperado ? "Ela é a vez dela!" : e.pilha[0] === e.esperado ? "A de cima da pilha é a vez dela!" : des ? "Essa não é prova: o que fazer com ela?" : "Ela ainda não é a vez: onde ela pode esperar?"));
   };
   document.querySelectorAll("[data-a]").forEach(b => b.onclick = () => {

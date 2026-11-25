@@ -12,7 +12,7 @@ MAPA (grafo NÃO orientado: os corredores valem nos dois sentidos)
     D        Unidade Leste          F, H          guarda a pista AUT
     E        Unidade Oeste          C             guarda a pista SEQ (beco: só se sai por C)
     F        Centro de Validação    D, G          destino; porta exige AUT
-    G        Galeria de Lacres      C, F, I       rota alternativa até F
+    G        Depósito de Urnas      C, F, I       rota alternativa até F
     H        Arquivo Oeste          B, D          porta exige SEQ
     I        Sala de Cópias         B, G
 
@@ -52,7 +52,7 @@ LOCAIS = {
     "D": "Unidade Leste",
     "E": "Unidade Oeste",
     "F": "Centro de Validação",
-    "G": "Galeria de Lacres",
+    "G": "Depósito de Urnas",
     "H": "Arquivo Oeste",
     "I": "Sala de Cópias",
 }
