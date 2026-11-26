@@ -43,11 +43,7 @@ As **regras** do jogo existem uma vez só, em `jogo/`. O jogador, o solver, os t
 | Navegador, sem internet | Dois cliques em `jogo.html` (ou `jogar_navegador.bat`). |
 | Terminal | `python jogo.py` (ou `jogar.bat`). Python 3.10 ou superior. |
 
-## Respostas prontas para perguntas prováveis
 
-- **"E se trocasse a DFS por um algoritmo guloso?"** — O guloso escolhe o passo que parece melhor e nunca volta atrás. No desafio extra (mapa com custos), o guloso "corredor mais barato" **trava sem chegar** (`test_guloso_trava`). A DFS volta atrás quando trava, por isso acha uma solução se ela existir; a BFS acha a de **menos passos**; o Dijkstra, a de **menor custo**.
-- **"Programação dinâmica deixaria o jogo mais eficiente?"** — O solver usa uma ideia parecida, com ressalva: a AVL de visitados **poda** o trabalho repetido — um estado com chave já vista (posição, pistas, portas e energia) não é expandido de novo (`test_estados_repetidos_nao_sao_expandidos`), e a melhoria opcional de dominância descarta também a mesma situação com menos energia (`test_dominancia_poda_e_mantem_a_solucao`). Não é memorização no sentido da PD, porque não guarda o resultado de um subproblema para reusar. Mochila e Fibonacci não têm encaixe natural nas regras do jogo.
-- **"A BFS acha o caminho de menor custo?"** — Só se todos os passos custarem o mesmo. Com custos diferentes, a BFS gasta 15 de energia e o Dijkstra, 11 (`test_bfs_menos_movimentos_mais_energia`).
 
 ## Documentos
 
