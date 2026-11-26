@@ -302,5 +302,3 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 
 ---
 
-
-| O que acontece com jogada inválida? | É recusada com explicação; nenhum dado muda (testado em todas as fases). |
