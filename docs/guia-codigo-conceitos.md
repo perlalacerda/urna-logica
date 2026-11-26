@@ -302,24 +302,5 @@ jogo.py ──► interface/terminal.py ──► jogo/fase1..fase5.py ──►
 
 ---
 
-## Parte 4 — Perguntas prováveis e respostas curtas
 
-| Pergunta | Resposta |
-|---|---|
-| Por que BFS no solver? | Queremos a rota com menos movimentos; como cada movimento custa 1, a BFS garante isso. |
-| A BFS acha o menor custo? | Só se todas as ações custarem o mesmo. Com pesos diferentes, não: no mapa com custos, a BFS gasta 15 e o Dijkstra, 11. |
-| Por que o Dijkstra é guloso e mesmo assim acerta? | Escolhe sempre o menor d[u] e não volta atrás. Com pesos ≥ 0, nenhum caminho por examinar fica mais barato que d[u]. |
-| Por que o guloso "corredor mais barato" falha? | Olha só o próximo passo, não o custo desde a origem; no mapa com custos, volta à Central e trava. |
-| Por que heap no Dijkstra? | O Extrai-Min sai em O(log n) em vez de O(n). Total O((V + E) log V) com heap; O(V²) com vetor. |
-| O Dijkstra do jogo é igual ao do slide? | O método é o mesmo. A diferença: o grafo de estados não está pronto na memória, então Q começa com o estado inicial e os estados entram no heap quando são descobertos. O do slide, literal, está em `dijkstra()` e é testado com o exemplo da aula. |
-| Por que AVL e não lista para os visitados? | Na lista, cada consulta custa O(n); na AVL, O(log n). O solver consulta a cada estado gerado. |
-| A energia está na chave? | Sim, como pede o enunciado (8.1, Etapa 7). A dominância é uma melhoria opcional: descarta a mesma configuração com menos energia, que nunca é melhor, e reduz os expandidos sem mudar o mínimo da BFS. |
-| Dois estados na mesma posição são iguais? | Não, se as pistas ou portas forem diferentes: permitem ações diferentes (C sem SEQ × C com SEQ). |
-| Por que lista com cabeça? | Simplifica inserção e remoção no início; mesma complexidade (aula 06). |
-| Por que simplesmente ligada? | A custódia só é percorrida para a frente; um ponteiro basta. |
-| Por que lista de adjacência? | Grafo esparso; BFS/DFS em O(V + E). |
-| O Quick Sort do slide funciona? | Com `p..q`, entra em laço quando o pivô é o maior; usamos `p..q−1`, e há teste demonstrando. |
-| Por que o id no fim da chave? | Merge (da aula) e Quick não são estáveis; o id torna a ordem final única. |
-| A resposta está escrita no código? | Não. As regras são funções; o solver explora estados a partir delas. A Fase 5 reexecuta as jogadas do jogador e recusa trilhas inválidas (ex.: A-C-G-F). |
-| Como sei que a AVL está balanceada? | `eh_avl()` confere todos os nós; o teste verifica após cada inserção. Altura 13 com 10.000 nós. |
 | O que acontece com jogada inválida? | É recusada com explicação; nenhum dado muda (testado em todas as fases). |
