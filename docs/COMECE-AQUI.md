@@ -30,10 +30,10 @@ As **regras** do jogo existem uma vez só, em `jogo/`. O jogador, o solver, os t
 
 ## Rota de avaliação sugerida (10 minutos)
 
-1. **Testes** — `rodar_testes.bat` (Windows) ou `python -m unittest discover -s testes -t .` → deve terminar em **OK** (157 testes).
+1. **Testes** — `rodar_testes.bat` (Windows) ou `python -m unittest discover -s testes -t .` → deve terminar em **OK** (158 testes).
 2. **Jogar uma fase** — no jogo, **▶ Começar**. A Fase 1 leva cerca de 2 minutos; todas as fases podem ser abertas pelo menu, sem jogar as anteriores.
 3. **Solver** — no menu, **Resolver**: BFS, DFS recursiva e DFS com pilha nas Fases 2 e 3, com caminho, estados expandidos, repetidos barrados, fronteira máxima e árvore de busca.
-4. **Olhando o código** — nas Fases 1, 3 e 4, o botão **🔍 Olhando o código** reproduz a execução real, linha a linha: Bubble, Merge e Quick (Fase 1), BFS da aula, BFS e DFS do solver (Fase 3) e a inserção na AVL com as quatro rotações (Fase 4). A gravação é feita pelo próprio Python (`interface/olhando_codigo.py`, com `sys.settrace`), e `testes/test_olhando_codigo.py` confere que cada linha acesa é a do arquivo real.
+4. **Olhando o código** — nas Fases 1 a 4, o botão **🔍 Olhando o código** reproduz a execução real, linha a linha: Bubble, Merge e Quick (Fase 1), uma partida da triagem com fila, pilha, lista ligada e Desfazer (Fase 2), BFS da aula, BFS e DFS do solver (Fase 3) e a inserção na AVL com as quatro rotações (Fase 4). A gravação é feita pelo próprio Python (`interface/olhando_codigo.py`, com `sys.settrace`), e `testes/test_olhando_codigo.py` confere que cada linha acesa é a do arquivo real.
 5. **Conferir um algoritmo** — escolha uma linha da [matriz](checklist-entrega.md), clique na função e compare o comentário com o slide citado.
 
 ## Critérios de avaliação (seção 17 do enunciado) — onde conferir
@@ -46,7 +46,7 @@ Os critérios e os pesos são os do enunciado. A coluna "Onde conferir" aponta a
 | Estruturas de dados | 20 | `estruturas/` (lista ligada com nó cabeça, pilha, fila); registros em vetor em `jogo/registros.py` (Fase 1); fila, pilha e lista de custódia na Fase 2 (`jogo/fase2.py`). Testes: `testes/test_estruturas.py` |
 | Algoritmos | 20 | `algoritmos/ordenacao.py` (Bubble, Merge, Quick), `algoritmos/busca_grafo.py` (BFS e DFS da aula), `algoritmos/solver.py` (BFS, DFS recursiva e DFS com pilha, com as mesmas regras do jogador). Comparações em `docs/metricas.md`. Testes: `testes/test_ordenacao.py`, `testes/test_grafo_busca.py` |
 | Grafo, estados e AVL | 20 | `estruturas/grafo.py` (lista de adjacência); estado e chave em `jogo/fase3.py` (`chave_estado` inclui a energia, enunciado 8.1); `estruturas/avl.py` com as quatro rotações; Fase 4 (`jogo/fase4.py`); relatório, seção 5.1. Testes: `test_chave_inclui_energia`, `test_estados_repetidos_nao_sao_expandidos` |
-| Testes e análise técnica | 15 | 157 testes com casos-limite e integração jogador × solver; `experimentos.py` mede e grava `docs/metricas.md`; complexidade no relatório (seção 8) |
+| Testes e análise técnica | 15 | 158 testes com casos-limite e integração jogador × solver; `experimentos.py` mede e grava `docs/metricas.md`; complexidade no relatório (seção 8) |
 | Criatividade, narrativa e experiência | 15 | Cada fase é um elo da auditoria de Verídia, narrado pela Miss Pearl, com quadro "O que aprendemos" e o "depende"; três perfis (estudante, colega, professora); Audiência Pública (`visualizacao.html`) |
 | Relatório e curadoria de IAG | 10 | `docs/relatorio-tecnico.pdf`; decisões marcadas [EP] ou [Equipe] em `docs/decisoes.md`; registro de uso de IA (seção 14.4) acompanha a entrega |
 | Bônus (seção 18) | +30 | Mapas gerados por seed com verificação de solução (`jogo/cenarios.py`); visualização animada (`visualizacao.html`); heap de mínimo próprio usado no Dijkstra do desafio extra (`estruturas/heap.py`, `algoritmos/dijkstra.py`); piloto da Fase 3 em Phaser (`phaser/`) |

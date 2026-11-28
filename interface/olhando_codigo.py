@@ -535,3 +535,231 @@ def gravar_avl(sequencia):
 def dados_motor_fase4():
     from jogo.fase4 import SEQUENCIA_LACRES
     return {"algoritmos": {"avl": gravar_avl(SEQUENCIA_LACRES)}}
+
+
+# ============================================================ FASE 2: fila, pilha e lista ligada
+class RastreadorVarios(Rastreador):
+    """Como o Rastreador, mas acompanha vários arquivos; cada passo diz de qual arquivo é a linha."""
+
+    def __init__(self, arquivos, anotar, max_passos=MAX_PASSOS):
+        self.arquivos = {os.path.abspath(a): open(a, encoding="utf-8").read().split("\n") for a in arquivos}
+        self.anotar, self.passos, self.max_passos = anotar, [], max_passos
+
+    def _trace(self, frame, evento, arg):
+        arq = os.path.abspath(frame.f_code.co_filename)
+        if arq not in self.arquivos:
+            return None
+        if evento == "line" and len(self.passos) < self.max_passos:
+            texto = self.arquivos[arq][frame.f_lineno - 1].strip()
+            if texto and not texto.startswith("#"):
+                p = self.anotar(frame, frame.f_lineno, texto.split("  #")[0].strip())
+                if p is not None:
+                    p["linha"], p["arq"] = frame.f_lineno, _rel(arq)
+                    self.passos.append(p)
+        return self._trace
+
+
+def codigo_de_varios(funcoes):
+    """Como codigo_de, com o arquivo de cada linha (números de linha se repetem entre arquivos)."""
+    linhas = []
+    for f in funcoes:
+        arq = _rel(inspect.getsourcefile(f))
+        linhas.append([None, f"# {arq}", arq])
+        linhas += [[n, t, arq] for n, t in codigo_de([f]) if n is not None]
+    return linhas
+
+
+def gravar_fase2():
+    from estruturas import fila as m_fila, pilha as m_pilha, lista_ligada as m_lista
+    from jogo import fase2 as m_f2
+    f = m_f2.Fase2()
+    JOGADAS = ["aceitar", "guardar", "aceitar", "arquivar", "aceitar", "desfazer", "aceitar", "liberar", "arquivar", "aceitar"]
+    atual = {"j": "", "n": 0}
+    PERMITIDAS = {"executar", "validar", "desfazer", "regra_aceitar", "regra_guardar", "regra_arquivar", "regra_liberar",
+                  "dequeue", "push", "pop", "peek", "inserir_fim"}
+    PULAR_SE_DENTRO = {"_restaurar", "estado", "venceu"}
+
+    def anotar(frame, linha, texto):
+        fn = frame.f_code.co_name
+        if fn not in PERMITIDAS:
+            return None
+        g = frame.f_back
+        while g is not None:
+            if g.f_code.co_name in PULAR_SE_DENTRO:
+                return None
+            g = g.f_back
+        L = _locais(frame)
+        eu = L.get("self")
+        quem = ("a fila de chegada" if eu is f.fila else "a pilha de espera" if eu is f.pilha
+                else "a pilha do Desfazer" if eu is f.historico else "a lista de custódia" if eu is f.custodia else "")
+        onde = set(f.fila.para_lista()) | set(f.pilha.para_lista()) | set(f.custodia.percorrer()) | set(f.arquivo)
+        passo = {"triagem": {"fila": f.fila.para_lista(), "pilha": f.pilha.para_lista(), "custodia": f.custodia.percorrer(),
+                             "arquivo": list(f.arquivo), "historico": len(f.historico), "alvo": list(f.alvo),
+                             "transito": [x for x in f.entrada if x not in onde]},   # já saiu de uma estrutura e ainda não entrou na outra
+                 "jogada": atual["j"], "cont": [atual["n"], len(f.historico)], "did": "", "tec": ""}
+        acao, e, frente, topo = L.get("acao"), L.get("e"), None, None
+        ok_f, frente = f.fila.peek()
+        ok_p, topo = f.pilha.peek()
+        t = texto
+        # ----- jogo/fase2.py -----
+        if fn == "executar":
+            if t.startswith("ok, motivo = self.validar(acao)"):
+                passo["did"] = f"Jogada pedida: {acao}. Antes de mexer em qualquer coisa, confere se ela é permitida agora."
+                passo["tec"] = f"validar('{acao}')"
+            elif t.startswith("if not ok:"):
+                ok = L.get("ok")
+                passo["did"] = "A jogada é permitida? " + ("Sim." if ok else "Não.")
+                passo["tec"] = f"ok = {ok}"
+            elif t.startswith("return False, \"Movimento recusado"):
+                passo["did"] = f"Jogada recusada: {L.get('motivo')} Nada foi alterado."
+                passo["tec"] = "return False (estado intacto)"
+            elif t.startswith("self.historico.push(self.estado())"):
+                passo["did"] = "Antes de mudar o jogo, tira uma 'foto' do estado e guarda na pilha do Desfazer."
+                passo["tec"] = "historico.push(estado())"
+            elif t.startswith("_, e = self.fila.dequeue()"):
+                passo["did"] = f"Tira {frente} da frente da fila de chegada."
+                passo["tec"] = "e ← fila.dequeue()"
+            elif t.startswith("_, e = self.pilha.pop()"):
+                passo["did"] = f"Tira {topo} do topo da pilha de espera."
+                passo["tec"] = "e ← pilha.pop()"
+            elif t.startswith("self.custodia.inserir_fim(e)"):
+                passo["did"] = f"Liga {e} no fim da lista de custódia."
+                passo["tec"] = f"custodia.inserir_fim('{e}')"
+            elif t.startswith("self.pilha.push(e)"):
+                passo["did"] = f"Põe {e} no topo da pilha de espera: ele vai esperar a vez dele."
+                passo["tec"] = f"pilha.push('{e}')"
+            elif t.startswith("self.arquivo.append(e)"):
+                passo["did"] = f"{e} não faz parte da custódia: vai para o arquivo morto."
+                passo["tec"] = f"arquivo.append('{e}')"
+            elif t.startswith("if self.venceu()"):
+                passo["did"] = "A custódia está completa, na ordem E2 → E4 → E1 → E6?"
+                passo["tec"] = "venceu()?"
+            else:
+                return None
+        elif fn == "validar":
+            if t.startswith("ok, frente = self.fila.peek()"):
+                passo["did"] = "Olha quem está na frente da fila, sem tirar ninguém."
+                passo["tec"] = "fila.peek()"
+            elif t.startswith("ok, topo = self.pilha.peek()"):
+                passo["did"] = "Olha quem está no topo da pilha, sem tirar ninguém."
+                passo["tec"] = "pilha.peek()"
+            elif t.startswith("return regra_"):
+                regra = t.split("return ")[1].split("(")[0]
+                passo["did"] = {"regra_aceitar": "Aplica a regra R1 (pôr na custódia).", "regra_guardar": "Aplica a regra R2 (guardar na pilha).",
+                                "regra_arquivar": "Aplica a regra R3 (descartar no arquivo).", "regra_liberar": "Aplica a regra R4 (tirar da pilha para a custódia)."}[regra]
+                passo["tec"] = t.replace("return ", "")
+            else:
+                return None
+        elif fn.startswith("regra_"):
+            if t.startswith("esperado = proximo_esperado"):
+                passo["did"] = f"Qual prova a custódia espera agora? A ordem é {' → '.join(f.alvo)}."
+                passo["tec"] = "esperado = próximo da ordem"
+            elif t.startswith("if evidencia == esperado"):
+                ev, es = L.get("evidencia"), L.get("esperado")
+                passo["did"] = f"A prova da frente ({ev}) é a esperada ({es})? " + ("Sim." if ev == es else "Não.")
+                passo["tec"] = f"{ev} == {es}?"
+            elif t.startswith("if topo == esperado"):
+                passo["did"] = f"O topo da pilha ({L.get('topo')}) é a prova esperada ({L.get('esperado')})?"
+                passo["tec"] = f"{L.get('topo')} == {L.get('esperado')}?"
+            elif t.startswith("if evidencia not in alvo") or t.startswith("if evidencia in alvo"):
+                ev = L.get("evidencia")
+                passo["did"] = f"{ev} faz parte da custódia? " + ("Sim." if ev in f.alvo else "Não: é cópia ou rascunho.")
+                passo["tec"] = f"{ev} in alvo? {ev in f.alvo}"
+            elif t.startswith("return True"):
+                passo["did"] = "Regra cumprida: a jogada pode ser feita."
+                passo["tec"] = "return True"
+            elif t.startswith("return False"):
+                passo["did"] = "Regra não cumprida: a jogada vai ser recusada, com o motivo."
+                passo["tec"] = "return False, motivo"
+            else:
+                return None
+        elif fn == "desfazer":
+            if t.startswith("ok, anterior = self.historico.pop()"):
+                passo["did"] = "Desfazer: tira a foto mais recente da pilha do Desfazer (a última que entrou é a primeira que sai)."
+                passo["tec"] = "anterior ← historico.pop()"
+            elif t.startswith("self._restaurar(anterior)"):
+                passo["did"] = "Volta o jogo inteiro para essa foto: fila, pilha e custódia como estavam antes da última jogada."
+                passo["tec"] = "_restaurar(anterior)"
+            else:
+                return None
+        # ----- estruturas -----
+        elif fn == "dequeue":
+            if t.startswith("i = self.inicio.chave"):
+                passo["did"] = f"Pega o valor do primeiro nó da fila: {eu.inicio.chave}."
+            elif t.startswith("self.inicio = self.inicio.prox"):
+                passo["did"] = "O início da fila passa a ser o nó seguinte: o primeiro saiu (FIFO)."
+            elif t.startswith("if self.inicio is None:") and L.get("i") is not None:
+                passo["did"] = "A fila ficou vazia? Se sim, o final também passa a ser vazio."
+            else:
+                return None
+            passo["tec"] = t
+        elif fn in ("push", "pop", "peek") and quem and eu is not f.fila:
+            if fn == "push" and t.startswith("x.prox = self.topo"):
+                passo["did"] = f"Em {quem}: o novo nó aponta para o antigo topo."
+            elif fn == "push" and t.startswith("self.topo = x"):
+                passo["did"] = f"Em {quem}: o novo nó vira o topo."
+            elif fn == "pop" and t.startswith("t = self.topo.chave"):
+                passo["did"] = f"Em {quem}: pega o valor do topo."
+            elif fn == "pop" and t.startswith("self.topo = self.topo.prox"):
+                passo["did"] = f"Em {quem}: o topo passa a ser o nó de baixo. O último que entrou saiu primeiro (LIFO)."
+            elif fn == "peek" and t.startswith("return True, self.topo.chave"):
+                passo["did"] = f"Em {quem}: o topo é {eu.topo.chave}."
+            elif fn == "peek" and t.startswith("return False, None"):
+                passo["did"] = f"{quem.capitalize()} está vazia."
+            else:
+                return None
+            passo["tec"] = t
+        elif fn == "peek":
+            if t.startswith("return True, self.inicio.chave"):
+                passo["did"] = f"A frente da fila é {eu.inicio.chave}."
+            elif t.startswith("return False, None"):
+                passo["did"] = "A fila está vazia."
+            else:
+                return None
+            passo["tec"] = t
+        elif fn == "inserir_fim":
+            if t.startswith("x = No(chave)"):
+                passo["did"] = f"Cria um nó novo para {L.get('chave')}."
+            elif t.startswith("if self.ultimo is None"):
+                passo["did"] = "A custódia está vazia? Se sim, o nó entra logo depois do nó cabeça."
+            elif t.startswith("self.cabeca.prox = x"):
+                passo["did"] = "O nó cabeça passa a apontar para o novo nó: ele é o primeiro da custódia."
+            elif t.startswith("self.ultimo.prox = x"):
+                passo["did"] = f"O último nó ({eu.ultimo.chave}) passa a apontar para o novo: a corrente cresce no fim."
+            elif t.startswith("self.ultimo = x"):
+                passo["did"] = "Atualiza o ponteiro do último nó, para a próxima inserção ser direta (O(1))."
+            else:
+                return None
+            passo["tec"] = t
+        else:
+            return None
+        return passo
+
+    def partida():
+        for j in JOGADAS:
+            atual["n"] += 1
+            atual["j"] = f"Jogada {atual['n']}: " + {"aceitar": "Pôr na custódia", "guardar": "Guardar na pilha", "arquivar": "Descartar",
+                                                       "liberar": "Tirar da pilha", "desfazer": "Desfazer"}[j]
+            if j == "desfazer":
+                f.desfazer()
+            else:
+                f.executar(j)
+
+    tr = RastreadorVarios([m_f2.__file__, m_fila.__file__, m_pilha.__file__, m_lista.__file__], anotar, max_passos=500)
+    tr.rodar(partida)
+    tr.passos.append({"linha": None, "fim": True, "jogada": "Fim da partida",
+                      "triagem": {"fila": f.fila.para_lista(), "pilha": f.pilha.para_lista(), "custodia": f.custodia.percorrer(),
+                                  "arquivo": list(f.arquivo), "historico": len(f.historico), "alvo": list(f.alvo)},
+                      "cont": [len(JOGADAS), len(f.historico)],
+                      "did": f"Custódia completa: {' → '.join(f.custodia.percorrer())}. Foram {len(JOGADAS)} jogadas, contando uma recusada e um Desfazer.",
+                      "tec": "venceu() = " + str(f.venceu())})
+    F2, Fi, Pi, Li = m_f2.Fase2, m_fila.Fila, m_pilha.Pilha, m_lista.ListaLigada
+    return {"varios": True, "passos": tr.passos, "rotulos": ["Jogada", "Fotos na pilha do Desfazer"],
+            "codigo": codigo_de_varios([F2.executar, F2.validar, F2.desfazer, m_f2.regra_aceitar, m_f2.regra_guardar,
+                                        m_f2.regra_arquivar, m_f2.regra_liberar, Fi.dequeue, Fi.peek, Pi.push, Pi.pop, Pi.peek, Li.inserir_fim]),
+            "arquivo": "jogo/fase2.py e estruturas/",
+            "nota": "Uma partida curta: uma jogada recusada, a solução e um Desfazer no meio. Cada operação na fila, na pilha e na lista ligada é a do código real."}
+
+
+def dados_motor_fase2():
+    return {"algoritmos": {"triagem": gravar_fase2()}}

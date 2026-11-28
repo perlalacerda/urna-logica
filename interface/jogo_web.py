@@ -415,8 +415,8 @@ def gerar_dados():
 
 def dados_motor():
     """"Olhando o código": gravações da execução real, linha a linha (interface/olhando_codigo.py)."""
-    from interface.olhando_codigo import dados_motor_fase1, dados_motor_fase3, dados_motor_fase4
-    return {"f1": dados_motor_fase1(Fase1().registros, CRITERIOS["auditoria"]), "f3": dados_motor_fase3(),
+    from interface.olhando_codigo import dados_motor_fase1, dados_motor_fase2, dados_motor_fase3, dados_motor_fase4
+    return {"f1": dados_motor_fase1(Fase1().registros, CRITERIOS["auditoria"]), "f2": dados_motor_fase2(), "f3": dados_motor_fase3(),
             "f4": dados_motor_fase4()}
 
 

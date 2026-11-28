@@ -68,3 +68,20 @@ class TestOlhandoCodigoBuscaEAVL(unittest.TestCase):
         fim = self.f4["avl"]["passos"][-1]
         self.assertEqual(fim["tec"], "rotações: RD em 70, RE em 70, RED em 40, RDE em 40")
         self.assertEqual(fim["cont"], [9, 4])
+
+
+class TestOlhandoCodigoFase2(unittest.TestCase):
+    def test_partida_gravada_termina_na_custodia_certa(self):
+        from interface.olhando_codigo import dados_motor_fase2
+        G = dados_motor_fase2()["algoritmos"]["triagem"]
+        fim = G["passos"][-1]["triagem"]
+        self.assertEqual(fim["custodia"], ["E2", "E4", "E1", "E6"])
+        self.assertEqual((fim["fila"], fim["pilha"]), ([], []))
+        textos = [p["did"] for p in G["passos"]]
+        self.assertTrue(any("Jogada recusada: A custódia espera E2" in t for t in textos))     # R1 recusa E1
+        self.assertTrue(any(t.startswith("Desfazer: tira a foto") for t in textos))
+        mostradas = {(a, n): t for n, t, a in G["codigo"] if n}
+        for p in G["passos"][:-1]:
+            fonte = open(p["arq"], encoding="utf-8").read().split("\n")
+            self.assertIn((p["arq"], p["linha"]), mostradas)
+            self.assertEqual(fonte[p["linha"] - 1].rstrip(), mostradas[(p["arq"], p["linha"])].rstrip())
