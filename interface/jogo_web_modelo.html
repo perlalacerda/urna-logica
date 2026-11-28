@@ -63,6 +63,7 @@
   .gloss .camada-t.eleicao { color: var(--petroleo2); }
   .selo { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-family: var(--titulo); font-weight: 700;
           background: #4a3a2a; color: #9c8a73; border: 2px solid #6b5236; font-size: 15px; }
+  .selo.gamer { text-decoration: none; border-style: dashed; font-size: 18px; margin-left: 6px; cursor: pointer; } .selo.gamer:hover { box-shadow: 0 0 10px rgba(255,179,71,.6); }
   .selo.ok { background: radial-gradient(circle at 35% 35%, #f19a5c, var(--laranja2)); color: #fff6e4; border-color: var(--ambar); box-shadow: 0 0 10px rgba(255,179,71,.5); }
   main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
   .folha { background: var(--papel); border-radius: 8px; padding: 22px 26px; box-shadow: 0 8px 0 #1d120a; margin-bottom: 18px; }
@@ -642,7 +643,8 @@ function deslizar(raiz, redesenhar) {
     e.style.transition = "none"; e.style.transform = `translate(${dx}px, ${dy}px)`; e.getBoundingClientRect();
     e.style.transition = ""; e.style.transform = ""; });
 }
-function desenharSelos() { $("#selos").innerHTML = P.selos.map((s, i) => `<span class="selo${s ? " ok" : ""}" title="Selo ${i + 1}">${s ? "✔" : i + 1}</span>`).join(""); }
+function desenharSelos() { $("#selos").innerHTML = P.selos.map((s, i) => `<span class="selo${s ? " ok" : ""}" title="Selo ${i + 1}">${s ? "✔" : i + 1}</span>`).join("")
+  + `<a class="selo gamer" href="${LINK_GAMER}" target="_blank" rel="noopener" title="Desafio gamer: a Fase 3 em Phaser (piloto). As regras vêm do Python; o Phaser só desenha.">🎮</a>`; }
 
 let telaAtual = "menu";
 function ir(tela) { telaAtual = tela; TELAS[tela](); window.scrollTo(0, 0); desenharSelos(); faixaFase(tela); marcarSom(); marcarPerfil(); if (TUT[tela]) tutorial(tela); }
@@ -802,9 +804,6 @@ TELAS.menu = () => {
     <div class="cartao" style="margin-top:14px;border-style:dashed"><h3>Desafio extra · Aula 11 (algoritmos gulosos) ${P.mc.melhor === D.custos.otimo ? "✔" : ""} ${pintaEstrelas(P.estrelas.custos)}</h3>
       <b>O Mapa com Custos</b><p class="legenda">O mesmo mapa da Fase 3, mas cada corredor gasta uma energia diferente. O atalho é o caminho mais barato? Compare BFS, guloso e Dijkstra.</p>
       <button class="btn sec" onclick="ir('custos')">Jogar o desafio</button></div>
-    <div class="cartao" style="margin-top:14px;border-style:dashed"><h3>🎮 Desafio gamer · versão em Phaser (piloto)</h3>
-      <b>Miss Pearl e as Portas Trancadas</b><p class="legenda">A Fase 3 com cara de videogame: a Miss Pearl anda pelas salas, as portas tremem quando estão trancadas e as pistas soltam confete. As regras são as mesmas do jogo, calculadas pelo Python; o Phaser (biblioteca de jogos em JavaScript) só desenha e anima.</p>
-      <a class="btn sec" href="${LINK_GAMER}" target="_blank" rel="noopener">🎮 Abrir o desafio gamer</a></div>
     <div class="barra">
       <button class="btn sec grande" onclick="ir('solver')">Resolver (o computador joga)</button>
       <button class="btn neutro grande" onclick="ir('ajuda')">Como jogar</button>
