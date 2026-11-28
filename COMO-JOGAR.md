@@ -38,4 +38,4 @@ Nada quebra o jogo: uma jogada errada é recusada com explicação e não muda n
 - **4 Resultados:** o que você já fez em cada fase.
 - **5 Visualização:** abre no navegador a apresentação animada da investigação.
 
-**Para conferir o código:** `rodar_testes.bat` roda os 148 testes automáticos (deve terminar em `OK`). O código está organizado em `estruturas/` (lista, pilha, fila, AVL, heap, grafo), `algoritmos/` (ordenações, BFS, DFS, solver, Dijkstra), `jogo/` (regras das fases) e `interface/` (telas). Cada função traz no comentário o pseudocódigo da aula correspondente.
+**Para conferir o código:** `rodar_testes.bat` roda os 151 testes automáticos (deve terminar em `OK`). O código está organizado em `estruturas/` (lista, pilha, fila, AVL, heap, grafo), `algoritmos/` (ordenações, BFS, DFS, solver, Dijkstra), `jogo/` (regras das fases) e `interface/` (telas). Cada função traz no comentário o pseudocódigo da aula correspondente.
