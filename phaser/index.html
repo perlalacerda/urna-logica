@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Urna Lógica · Fase 3 em Phaser</title>
+<style>
+  :root { --fundo: #150f0a; }
+  html, body { margin: 0; height: 100%; background: var(--fundo); color: #f6ead0; font-family: system-ui, Segoe UI, Arial, sans-serif; }
+  #jogo { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+  #girar { display: none; position: fixed; inset: 0; background: var(--fundo); align-items: center; justify-content: center; text-align: center; font-size: 22px; padding: 24px; }
+  @media (orientation: portrait) and (max-width: 700px) { #girar { display: flex; } }
+</style>
+</head>
+<body>
+<div id="jogo"></div>
+<div id="girar">📱↻ Gire o celular para jogar deitado.</div>
+<!-- Phaser 3.80.1 (biblioteca de jogos em JavaScript), copiado para esta pasta: funciona sem internet. -->
+<script src="phaser.min.js"></script>
+<!-- Dados da Fase 3 gerados pelo Python (interface/phaser_web.py): regras, situações e dicas. -->
+<script src="dados.js"></script>
+<script>
+/* =====================================================================
+   URNA LÓGICA · FASE 3 — O MAPA DAS SEÇÕES (versão Phaser)
+
+   Esta página NÃO tem regras do jogo. Ela só consulta window.D3:
+     D3.estados[i]  = uma situação (posição, pistas, portas, energia)
+     .movs[v]       = o que acontece ao tentar ir para v: {ok, msg, destino}
+     .dica          = a próxima jogada sugerida pela BFS do Python
+   Tudo isso é calculado por jogo/fase3.py e pelo solver.
+   ===================================================================== */
+const D = window.D3;
+const L = 1100, A = 640;                                  // tamanho lógico da tela
+const COR = { papel: 0xf6ead0, tinta: 0x2a1d12, petroleo: 0x1f6f6a, petroleo2: 0x2f9e94, laranja: 0xe07a2c,
+              ambar: 0xf2b33d, verde: 0x3fa45b, vermelho: 0xd2483c, corredor: 0x3c2d1f, sala: 0x2a1f15 };
+const TXT = { fonte: "system-ui, Segoe UI, Arial, sans-serif" };
+const px = v => ({ x: 105 + (v.x - 90) * 1.04, y: 150 + (v.y - 130) * 1.02 });   // posição na tela
+const V = {}; D.vertices.forEach(v => V[v.id] = v);
+const FALA_INICIO = "As fichas e as provas já estão em ordem. Agora preciso refazer, local por local, o caminho que o lote percorreu: da Central de Auditoria (A) ao Centro de Validação (F). O lote só vale se passou pela conferência de sequência (pista SEQ) e pela autenticação (pista AUT). 3º elo da trilha: o caminho do lote entre os locais.";
+
+// ---------- som curto (sem arquivos de áudio) ----------
+let somLigado = true, ctxAudio = null;
+function bip(freq, dur = 0.12, tipo = "sine", vol = 0.08) {
+  if (!somLigado) return;
+  try { ctxAudio = ctxAudio || new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctxAudio.createOscillator(), g = ctxAudio.createGain(); o.type = tipo; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, ctxAudio.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, ctxAudio.currentTime + dur);
+    o.connect(g); g.connect(ctxAudio.destination); o.start(); o.stop(ctxAudio.currentTime + dur); } catch (e) {}
+}
+const som = { passo: () => bip(520, .08, "triangle"), pista: () => [660, 880, 1100].forEach((f, i) => setTimeout(() => bip(f, .12), i * 90)),
+              nao: () => bip(160, .25, "sawtooth", .06), vitoria: () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => bip(f, .18), i * 130)) };
+
+// ---------- botão de texto reutilizável ----------
+function botao(cena, x, y, w, rotulo, cor, acao) {
+  const c = cena.add.container(x, y);
+  const fundo = cena.add.rectangle(0, 0, w, 44, cor).setStrokeStyle(2, 0x000000, .35).setOrigin(0, .5);
+  const t = cena.add.text(w / 2, 0, rotulo, { fontFamily: TXT.fonte, fontSize: "18px", fontStyle: "bold", color: "#fff" }).setOrigin(.5);
+  c.add([fundo, t]); c.setSize(w, 44);
+  fundo.setInteractive({ useHandCursor: true }).on("pointerdown", acao)
+    .on("pointerover", () => fundo.setAlpha(.85)).on("pointerout", () => fundo.setAlpha(1));
+  return c;
+}
+
+class Mapa extends Phaser.Scene {
+  constructor() { super("mapa"); }
+
+  create() {
+    this.textures.addImage("pearl", window.IMG_PEARL);
+    this.cameras.main.setBackgroundColor("#150f0a");
+    this.desenhaCabecalho();
+    this.desenhaMapa();
+    this.desenhaPainel();
+    this.desenhaFala();
+    this.pearl = this.add.image(0, 0, "pearl").setDisplaySize(58, 70).setDepth(20);
+    this.reiniciar(true);
+    this.abertura();
+  }
+
+  // ======================= desenho fixo =======================
+  desenhaCabecalho() {
+    this.add.text(24, 18, "URNA LÓGICA · VERÍDIA 2042", { fontFamily: TXT.fonte, fontSize: "14px", color: "#c9b48f", letterSpacing: 2 });
+    this.add.text(24, 38, "Fase 3 — O Mapa das Seções", { fontFamily: TXT.fonte, fontSize: "26px", fontStyle: "bold", color: "#f6ead0" });
+    this.add.text(410, 46, "🎯 ir de A até F pegando as pistas SEQ e AUT", { fontFamily: TXT.fonte, fontSize: "17px", color: "#f2b33d" });
+    this.somBt = this.add.text(L - 24, 24, "🔊 som", { fontFamily: TXT.fonte, fontSize: "16px", color: "#c9b48f" }).setOrigin(1, 0)
+      .setInteractive({ useHandCursor: true }).on("pointerdown", () => { somLigado = !somLigado; this.somBt.setText(somLigado ? "🔊 som" : "🔇 som"); });
+  }
+
+  desenhaMapa() {
+    const g = this.add.graphics();
+    this.corredores = {};                                  // "A-B" -> gráfico do corredor (para acender)
+    D.arestas.forEach(([u, v]) => {
+      const a = px(V[u]), b = px(V[v]), linha = this.add.graphics();
+      linha.lineStyle(12, COR.corredor, 1).lineBetween(a.x, a.y, b.x, b.y);
+      this.corredores[[u, v].sort().join("-")] = { linha, a, b };
+    });
+    this.rastro = this.add.graphics();                     // o caminho já andado
+    this.salas = {};
+    D.vertices.forEach(v => {
+      const p = px(v), c = this.add.container(p.x, p.y);
+      const brilho = this.add.rectangle(0, 0, 150, 66, COR.ambar, 0).setStrokeStyle(4, COR.ambar, 0);
+      const caixa = this.add.rectangle(0, 0, 138, 56, COR.sala).setStrokeStyle(3, COR.petroleo);
+      const letra = this.add.text(-58, 0, v.id, { fontFamily: TXT.fonte, fontSize: "26px", fontStyle: "bold", color: "#f2b33d" }).setOrigin(0, .5);
+      const nome = this.add.text(-30, 0, v.nome.replace(" de ", " de\n").replace(/ (Norte|Sul|Leste|Oeste|Urnas|Cópias|Validação|Auditoria)$/, "\n$1"),
+        { fontFamily: TXT.fonte, fontSize: "13px", color: "#f6ead0", lineSpacing: -2 }).setOrigin(0, .5);
+      c.add([brilho, caixa, letra, nome]);
+      if (v.pista) c.add(this.selo(0, -38, "🔑 " + v.pista, COR.ambar, "#2a1d12"));
+      let cadeado = null;
+      if (v.porta) { cadeado = this.selo(0, -38, "🔒 exige " + v.porta, COR.vermelho, "#ffffff"); c.add(cadeado); }
+      caixa.setInteractive({ useHandCursor: true }).on("pointerdown", () => this.tentar(v.id));
+      this.salas[v.id] = { c, caixa, brilho, cadeado };
+    });
+  }
+
+  selo(x, y, texto, cor, corTexto) {
+    const c = this.add.container(x, y);
+    const t = this.add.text(0, 0, texto, { fontFamily: TXT.fonte, fontSize: "13px", fontStyle: "bold", color: corTexto }).setOrigin(.5);
+    const r = this.add.rectangle(0, 0, t.width + 14, 22, cor).setStrokeStyle(1, 0x000000, .3);
+    c.add([r, t]); c.r = r; c.t = t; return c;
+  }
+
+  desenhaPainel() {
+    const x0 = 795;
+    this.add.rectangle(x0 - 15, 88, 320, 420, 0x231910).setOrigin(0).setStrokeStyle(2, 0x5a4530);
+    const t = (y, s, tam = 16, cor = "#c9b48f", negrito = false) => this.add.text(x0, y, s, { fontFamily: TXT.fonte, fontSize: tam + "px", color: cor, fontStyle: negrito ? "bold" : "", wordWrap: { width: 290 } });
+    t(98, "A SITUAÇÃO AGORA (o estado)", 13, "#c9b48f", true);
+    this.txEstado = t(120, "", 17, "#f6ead0", true);
+    t(150, "⚡ Energia — orçamento de ações", 14);
+    this.barra = this.add.graphics();
+    t(196, "🔑 Pistas coletadas", 14); this.txPistas = t(216, "", 17, "#f2b33d", true);
+    t(244, "🚪 Portas abertas", 14); this.txPortas = t(264, "", 17, "#7fd4a0", true);
+    t(292, "👣 Caminho até aqui", 14); this.txCaminho = t(312, "", 16, "#f6ead0");
+    botao(this, x0, 380, 140, "💡 Dica", COR.petroleo, () => this.dica());
+    botao(this, x0 + 150, 380, 140, "↶ Desfazer", 0x6b5236, () => this.desfazer());
+    botao(this, x0, 432, 140, "↺ Recomeçar", 0x6b5236, () => this.reiniciar());
+    botao(this, x0 + 150, 432, 140, "🧪 Atalho?", COR.laranja, () => this.testaAtalho());
+    t(470, "Clique numa sala vizinha para andar.", 13, "#c9b48f");
+  }
+
+  desenhaFala() {
+    this.add.rectangle(20, 520, L - 40, 104, 0x1f3b38).setOrigin(0).setStrokeStyle(2, COR.petroleo2);
+    this.add.image(64, 572, "pearl").setDisplaySize(64, 78);
+    this.quem = this.add.text(110, 530, "MISS PEARL · AUDITORA-CHEFE DA CIV", { fontFamily: TXT.fonte, fontSize: "13px", fontStyle: "bold", color: "#f2b33d" });
+    this.txFala = this.add.text(110, 550, "", { fontFamily: TXT.fonte, fontSize: "17px", color: "#f6ead0", wordWrap: { width: L - 160 }, lineSpacing: 3 });
+  }
+
+  // ======================= estado =======================
+  get e() { return D.estados[this.i]; }
+
+  reiniciar(silencio) {
+    this.i = 0; this.pilha = []; this.passos = ["A"]; this.vistos = { A: ["-"] }; this.acabou = false;
+    this.pearl.setPosition(px(V.A).x, px(V.A).y - 58);
+    this.atualiza();
+    if (!silencio) this.fala("Recomeçamos na Central de Auditoria, com o orçamento cheio.");
+  }
+
+  atualiza() {
+    const e = this.e;
+    this.txEstado.setText(`(${e.pos}, {${e.pistas.join(", ")}}, {${e.portas.join(", ")}}, ${e.energia})`);
+    this.barra.clear();
+    for (let k = 0; k < 10; k++) {
+      this.barra.fillStyle(k < e.energia ? COR.ambar : 0x3a2c1e, 1).fillRoundedRect(795 + k * 29, 172, 24, 16, 4);
+    }
+    this.txPistas.setText(e.pistas.length ? e.pistas.join("  ") : "nenhuma");
+    this.txPortas.setText(e.portas.length ? e.portas.join("  ") : "nenhuma");
+    this.txCaminho.setText(this.passos.join(" → ") + `\n(${this.passos.length - 1} passos)`);
+    // portas: cadeado fica verde e aberto quando a pista certa já está na mão
+    D.vertices.filter(v => v.porta).forEach(v => {
+      const s = this.salas[v.id].cadeado, tem = e.pistas.includes(v.porta);
+      s.r.setFillStyle(tem ? COR.verde : COR.vermelho); s.t.setText((tem ? "🔓 " : "🔒 exige ") + v.porta); s.r.width = s.t.width + 14;
+    });
+    // vizinhos clicáveis pulsam
+    this.tweens.killTweensOf(D.vertices.map(v => this.salas[v.id].brilho));
+    D.vertices.forEach(v => { const b = this.salas[v.id].brilho; b.setStrokeStyle(4, COR.ambar, 0); b.setScale(1); });
+    if (!this.acabou) Object.keys(e.movs).forEach(v => {
+      const b = this.salas[v].brilho; b.setStrokeStyle(4, e.movs[v].ok ? COR.petroleo2 : COR.vermelho, .9);
+      this.tweens.add({ targets: b, scale: 1.06, duration: 600, yoyo: true, repeat: -1 });
+    });
+    this.desenhaRastro();
+  }
+
+  desenhaRastro() {
+    this.rastro.clear(); this.rastro.lineStyle(6, COR.laranja, .9);
+    for (let k = 1; k < this.passos.length; k++) {
+      const a = px(V[this.passos[k - 1]]), b = px(V[this.passos[k]]); this.rastro.lineBetween(a.x, a.y, b.x, b.y);
+    }
+  }
+
+  fala(html, quem = "pearl") {
+    this.quem.setText(quem === "apura" ? "APURA-42 · O COMPUTADOR DA CIV" : "MISS PEARL · AUDITORA-CHEFE DA CIV");
+    this.quem.setColor(quem === "apura" ? "#7fd4d0" : "#f2b33d");
+    this.txFala.setText(html);
+  }
+
+  // ======================= jogadas =======================
+  tentar(v) {
+    if (this.acabou || this.andando) return;
+    const e = this.e, m = e.movs[v];
+    if (!m) {                                               // não é vizinho: regra da adjacência
+      som.nao(); this.tremer(v);
+      return this.fala(v === e.pos ? "Já estou aqui." : `Não há corredor de ${e.pos} até ${v}. Só dá para ir às salas vizinhas (as que estão piscando).`);
+    }
+    if (!m.ok) { som.nao(); this.tremer(v); return this.fala("🚫 " + m.msg); }
+    this.pilha.push(this.i);                                // desfazer = pilha (LIFO)
+    const antes = e, depois = D.estados[m.destino];
+    this.andando = true;
+    const alvo = px(V[v]);
+    this.tweens.add({ targets: this.pearl, x: alvo.x, y: alvo.y - 58, duration: 380, ease: "Sine.easeInOut",
+      onUpdate: (tw) => this.pearl.setAngle(Math.sin(tw.progress * Math.PI * 4) * 6),
+      onComplete: () => { this.pearl.setAngle(0); this.andando = false; this.chegou(antes, depois, m.msg); } });
+    som.passo();
+  }
+
+  chegou(antes, depois, msg) {
+    this.i = D.estados.indexOf(depois); this.passos.push(depois.pos);
+    const chave = depois.pistas.join(",") || "-", ja = this.vistos[depois.pos] || [];
+    let extra = "";
+    if (ja.length && !ja.includes(chave))                   // mesmo local, outra situação
+      extra = `\n💡 Já estive em ${depois.pos}, mas agora com pistas {${depois.pistas.join(", ")}}. Mesmo local, situação diferente: é outro estado.`;
+    this.vistos[depois.pos] = [...ja, chave];
+    if (depois.pistas.length > antes.pistas.length) { som.pista(); this.festa(px(V[depois.pos]), COR.ambar); }
+    this.atualiza();
+    this.fala(msg + extra);
+    if (depois.venceu) this.vitoria();
+  }
+
+  desfazer() {
+    if (this.andando || !this.pilha.length) return this.fala("Não há jogada para desfazer.");
+    this.acabou = false; this.i = this.pilha.pop(); this.passos.pop();
+    const p = px(V[this.e.pos]); this.pearl.setPosition(p.x, p.y - 58);
+    this.atualiza(); this.fala("Jogada desfeita: voltei para a situação anterior (a última guardada na pilha).");
+  }
+
+  dica() {
+    if (this.acabou) return;
+    const m = this.e.dica.match(/ir para ([A-I])/);
+    this.fala("🤖 " + this.e.dica, "apura");
+    if (m) { const b = this.salas[m[1]].brilho; b.setStrokeStyle(6, COR.laranja, 1); this.tweens.add({ targets: b, scale: 1.15, duration: 250, yoyo: true, repeat: 3 }); }
+  }
+
+  testaAtalho() {                                          // o "caminho curto" do desenho: A-C-G-F
+    if (this.andando) return;
+    const rota = D.curto, g = this.add.graphics().setDepth(15);
+    g.lineStyle(8, 0xffffff, .55);
+    for (let k = 1; k < rota.length; k++) { const a = px(V[rota[k - 1]]), b = px(V[rota[k]]); g.lineBetween(a.x, a.y, b.x, b.y); }
+    this.fala(`O caminho mais curto no desenho é ${rota.join(" → ")}: só ${rota.length - 1} corredores. Mas ele chega em F sem a pista AUT — a porta do Centro de Validação não abre. Mais curto não é o mesmo que válido!`);
+    this.tremer("F"); som.nao();
+    this.tweens.add({ targets: g, alpha: 0, delay: 2200, duration: 600, onComplete: () => g.destroy() });
+  }
+
+  tremer(v) { const c = this.salas[v].c; this.tweens.add({ targets: c, x: c.x + 6, duration: 50, yoyo: true, repeat: 3 }); }
+
+  festa(p, cor) {
+    for (let k = 0; k < 18; k++) {
+      const s = this.add.rectangle(p.x, p.y, 7, 7, k % 2 ? cor : COR.laranja).setDepth(30), ang = Math.random() * Math.PI * 2, r = 50 + Math.random() * 60;
+      this.tweens.add({ targets: s, x: p.x + Math.cos(ang) * r, y: p.y + Math.sin(ang) * r, alpha: 0, angle: 180, duration: 700, onComplete: () => s.destroy() });
+    }
+  }
+
+  // ======================= abertura e vitória =======================
+  abertura() {
+    const c = this.add.container(0, 0).setDepth(50);
+    c.add(this.add.rectangle(0, 0, L, A, 0x000000, .78).setOrigin(0).setInteractive());
+    c.add(this.add.rectangle(L / 2, A / 2, 760, 400, 0x231910).setStrokeStyle(3, COR.ambar));
+    c.add(this.add.image(L / 2 - 290, A / 2 - 40, "pearl").setDisplaySize(130, 156));
+    c.add(this.add.text(L / 2 - 200, A / 2 - 170, "Fase 3 — O Mapa das Seções", { fontFamily: TXT.fonte, fontSize: "28px", fontStyle: "bold", color: "#f2b33d" }));
+    c.add(this.add.text(L / 2 - 200, A / 2 - 125, FALA_INICIO, { fontFamily: TXT.fonte, fontSize: "18px", color: "#f6ead0", wordWrap: { width: 520 }, lineSpacing: 4 }));
+    c.add(this.add.text(L / 2 - 200, A / 2 + 85, "Como jogar: clique numa sala vizinha. 🔒 = porta trancada; 🔑 = pista.\nCada passo gasta 1 de energia (o orçamento de ações).", { fontFamily: TXT.fonte, fontSize: "15px", color: "#c9b48f", wordWrap: { width: 520 } }));
+    c.add(botao(this, L / 2 - 90, A / 2 + 160, 180, "▶ Começar", COR.laranja, () => {
+      c.destroy(); bip(660); this.fala("Estou na Central de Auditoria (A). As salas que piscam são vizinhas: clique numa delas. Travou? Peça uma 💡 Dica ao APURA-42.");
+    }));
+  }
+
+  vitoria() {
+    this.acabou = true; som.vitoria(); this.festa(px(V.F), COR.verde); this.atualiza();
+    const n = this.passos.length - 1, S = D.solver, estrelas = n === S.bfs.acoes ? 3 : n <= S.bfs.acoes + 2 ? 2 : 1;
+    this.time.delayedCall(700, () => {
+      const c = this.add.container(0, 0).setDepth(50);
+      c.add(this.add.rectangle(0, 0, L, A, 0x000000, .8).setOrigin(0).setInteractive());
+      c.add(this.add.rectangle(L / 2, A / 2, 860, 520, 0x231910).setStrokeStyle(3, COR.verde));
+      c.add(this.add.text(L / 2, 70, `SELO 3 CONQUISTADO  ${"★".repeat(estrelas)}${"☆".repeat(3 - estrelas)}`, { fontFamily: TXT.fonte, fontSize: "30px", fontStyle: "bold", color: "#7fd4a0" }).setOrigin(.5, 0));
+      c.add(this.add.text(L / 2, 112, `Caminho do lote refeito em ${n} passos: ${this.passos.join(" → ")}  (o mínimo é ${S.bfs.acoes}).`, { fontFamily: TXT.fonte, fontSize: "17px", color: "#f6ead0", wordWrap: { width: 800 }, align: "center" }).setOrigin(.5, 0));
+      const linhas = [
+        ["🧩 Conceito:", "grafo (locais ligados por corredores), estado (local + pistas + portas + energia) e busca: BFS em ondas, DFS em profundidade."],
+        ["🔗 Na auditoria:", "a trilha do lote foi refeita passando pela autenticação antes da validação. O atalho do desenho foi recusado, porque pulava a pista AUT."],
+        ["🏆 Melhor escolha aqui:", `BFS. Como todo passo custa o mesmo, ela garante o caminho com menos passos: ${S.bfs.acoes}. A DFS achou um de ${S.dfs.acoes}.`],
+        ["🤔 Mas depende…", `a BFS só garante o menor caminho porque todo passo custa 1. Se os corredores custarem diferente, ela erra a conta (é o desafio extra, com o Dijkstra). A DFS guarda menos coisas ao mesmo tempo (fronteira ${S.dfs.fronteira} × ${S.bfs.fronteira}), mas não garante o caminho mais curto.`]];
+      let y = 165;
+      c.add(this.add.text(L / 2 - 400, y, "💡 O que aprendemos na Fase 3", { fontFamily: TXT.fonte, fontSize: "21px", fontStyle: "bold", color: "#f2b33d" })); y += 38;
+      linhas.forEach(([r, s]) => { const t = this.add.text(L / 2 - 400, y, r + " " + s, { fontFamily: TXT.fonte, fontSize: "17px", color: "#f6ead0", wordWrap: { width: 800 }, lineSpacing: 3 });
+        c.add(t); y += t.height + 12; });
+      c.add(botao(this, L / 2 - 200, A - 70, 180, "↺ Jogar de novo", COR.laranja, () => { c.destroy(); this.reiniciar(); }));
+      c.add(botao(this, L / 2 + 20, A - 70, 200, "🤖 Ver a rota da BFS", COR.petroleo, () => { c.destroy(); this.mostraRota(S.bfs.rota); }));
+    });
+  }
+
+  mostraRota(rota) {                                       // anima a rota encontrada pelo solver
+    this.reiniciar(true); this.acabou = true;
+    this.fala(`🤖 A rota da BFS: ${rota.join(" → ")}. Ela passa duas vezes por C: na primeira sem pistas, na segunda com SEQ.`, "apura");
+    const anda = k => {
+      if (k >= rota.length) { this.acabou = false; return; }
+      const m = this.e.movs[rota[k]], p = px(V[rota[k]]);
+      this.tweens.add({ targets: this.pearl, x: p.x, y: p.y - 58, duration: 420, onComplete: () => {
+        this.i = m.destino; this.passos.push(rota[k]); this.atualiza(); som.passo(); this.time.delayedCall(250, () => anda(k + 1)); } });
+    };
+    this.time.delayedCall(500, () => anda(1));
+  }
+}
+
+// a figura da Miss Pearl vem embutida em dados.js (funciona até abrindo o arquivo direto, sem servidor)
+window.IMG_PEARL = new Image();
+window.IMG_PEARL.onload = () => window.jogo = new Phaser.Game({
+  type: Phaser.AUTO, parent: "jogo", width: L, height: A, backgroundColor: "#150f0a",
+  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH }, scene: [Mapa] });
+window.IMG_PEARL.src = window.MISS_PEARL;
+</script>
+</body>
+</html>

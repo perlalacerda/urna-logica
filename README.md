@@ -6,6 +6,8 @@ Jogo de lógica e investigação com dados **inteiramente fictícios**. Verídia
 
 **Jogar online, sem instalar nada:** <https://perlalacerda.github.io/urna-logica/>
 
+**Versão em Phaser (piloto, Fase 3):** <https://perlalacerda.github.io/urna-logica/phaser/> — o mesmo mapa com a Miss Pearl andando pelas salas. A página só desenha: as regras, as 160 situações e as dicas são geradas pelo Python (`python -m interface.phaser_web`).
+
 **Vai avaliar? Comece por [docs/COMECE-AQUI.md](docs/COMECE-AQUI.md)** — rota de 10 minutos, [matriz de inspeção](docs/checklist-entrega.md) (conteúdo → aula → arquivo:linha → teste) e [relatório técnico em PDF](docs/relatorio-tecnico.pdf).
 
 **Primeira vez jogando? Leia [COMO-JOGAR.md](COMO-JOGAR.md)** — uma página com as teclas e o caminho de cada fase.
