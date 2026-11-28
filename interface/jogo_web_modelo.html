@@ -525,6 +525,8 @@ const botaoCodigo = chave => `<button class="btn sec" onclick="verCodigo('${chav
 /* ================= OLHANDO O CÓDIGO =================
    Reproduz a gravação feita pelo Python (interface/olhando_codigo.py): a cada passo, a linha que o
    Python executou de verdade, o estado do vetor naquele instante e os contadores. Nada aqui é simulado. */
+// Desafio gamer (pasta phaser/): no GitHub Pages e no computador o link é relativo; dentro do Claude, vai para o GitHub Pages.
+const LINK_GAMER = (location.protocol === "file:" || location.hostname.endsWith("github.io")) ? "phaser/index.html" : "https://perlalacerda.github.io/urna-logica/phaser/";
 const NOMES_ALG = {triagem: "Uma partida da triagem", avl: "Inserção na AVL", bubble: "Bubble Sort", merge: "Merge Sort", quick: "Quick Sort", bfs_aula: "BFS da aula (só o mapa)", bfs: "BFS do solver", dfs: "DFS recursiva do solver"};
 // mini-mapa da Fase 3 para as buscas: cores da BFS da aula, local atual (u) e local examinado (v)
 function miniMapa(m) {
@@ -731,7 +733,7 @@ function cabecalho(n) {
     ${blocosPerfis("f" + n)}
     <p class="missao-fase"><b>🎯 Sua missão:</b> ajudar a Miss Pearl a ${c.missao.charAt(0).toLowerCase() + c.missao.slice(1)}</p>
     ${porTras(BASTIDOR[n])}
-    <div class="linha-tips">${P.selos[n - 1] ? dicaClique("💡 O que aprendemos nesta fase", aprendiHTML(n)) : ""}${dicaClique("A história desta fase", NARRA[n])}${dicaClique("O texto original do enunciado", `<div class="doc">${fase.abertura}</div>`)}</div>`;
+    <div class="linha-tips">${n === 3 ? `<details class="tip"><summary onclick="event.preventDefault();window.open(LINK_GAMER,'_blank')">🎮 Jogar esta fase no modo gamer</summary></details>` : ""}${P.selos[n - 1] ? dicaClique("💡 O que aprendemos nesta fase", aprendiHTML(n)) : ""}${dicaClique("A história desta fase", NARRA[n])}${dicaClique("O texto original do enunciado", `<div class="doc">${fase.abertura}</div>`)}</div>`;
 }
 
 /* ================= MENU ================= */
@@ -800,6 +802,9 @@ TELAS.menu = () => {
     <div class="cartao" style="margin-top:14px;border-style:dashed"><h3>Desafio extra · Aula 11 (algoritmos gulosos) ${P.mc.melhor === D.custos.otimo ? "✔" : ""} ${pintaEstrelas(P.estrelas.custos)}</h3>
       <b>O Mapa com Custos</b><p class="legenda">O mesmo mapa da Fase 3, mas cada corredor gasta uma energia diferente. O atalho é o caminho mais barato? Compare BFS, guloso e Dijkstra.</p>
       <button class="btn sec" onclick="ir('custos')">Jogar o desafio</button></div>
+    <div class="cartao" style="margin-top:14px;border-style:dashed"><h3>🎮 Desafio gamer · versão em Phaser (piloto)</h3>
+      <b>Miss Pearl e as Portas Trancadas</b><p class="legenda">A Fase 3 com cara de videogame: a Miss Pearl anda pelas salas, as portas tremem quando estão trancadas e as pistas soltam confete. As regras são as mesmas do jogo, calculadas pelo Python; o Phaser (biblioteca de jogos em JavaScript) só desenha e anima.</p>
+      <a class="btn sec" href="${LINK_GAMER}" target="_blank" rel="noopener">🎮 Abrir o desafio gamer</a></div>
     <div class="barra">
       <button class="btn sec grande" onclick="ir('solver')">Resolver (o computador joga)</button>
       <button class="btn neutro grande" onclick="ir('ajuda')">Como jogar</button>

@@ -81,6 +81,8 @@ class Mapa extends Phaser.Scene {
     this.add.text(24, 18, "URNA LÓGICA · VERÍDIA 2042", { fontFamily: TXT.fonte, fontSize: "14px", color: "#c9b48f", letterSpacing: 2 });
     this.add.text(24, 38, "Fase 3 — O Mapa das Seções", { fontFamily: TXT.fonte, fontSize: "26px", fontStyle: "bold", color: "#f6ead0" });
     this.add.text(410, 46, "🎯 ir de A até F pegando as pistas SEQ e AUT", { fontFamily: TXT.fonte, fontSize: "17px", color: "#f2b33d" });
+    this.add.text(L - 110, 24, "← jogo principal", { fontFamily: TXT.fonte, fontSize: "16px", color: "#f2b33d" }).setOrigin(1, 0)
+      .setInteractive({ useHandCursor: true }).on("pointerdown", () => { window.location.href = "../jogo.html"; });
     this.somBt = this.add.text(L - 24, 24, "🔊 som", { fontFamily: TXT.fonte, fontSize: "16px", color: "#c9b48f" }).setOrigin(1, 0)
       .setInteractive({ useHandCursor: true }).on("pointerdown", () => { somLigado = !somLigado; this.somBt.setText(somLigado ? "🔊 som" : "🔇 som"); });
   }
