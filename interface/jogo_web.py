@@ -410,7 +410,13 @@ def gerar_dados():
             "capitulos": narrativa.CAPITULOS,
             "fase1": dados_fase1(), "fase2": dados_fase2(), "fase3": dados_fase3(),
             "fase4": dados_fase4(), "fase5": dados_fase5(), "solver": dados_solver(),
-            "custos": dados_mapa_custos(), "codigo": dados_codigo()}
+            "custos": dados_mapa_custos(), "codigo": dados_codigo(), "motor": dados_motor()}
+
+
+def dados_motor():
+    """"Olhando o código": gravações da execução real, linha a linha (interface/olhando_codigo.py)."""
+    from interface.olhando_codigo import dados_motor_fase1
+    return {"f1": dados_motor_fase1(Fase1().registros, CRITERIOS["auditoria"])}
 
 
 def gerar_html(caminho="jogo.html", com_testes=False):

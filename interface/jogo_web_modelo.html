@@ -173,6 +173,35 @@
   .aprendi th:first-child, .aprendi td:first-child { text-align: left; } .aprendi td.melhor { font-weight: 800; color: var(--verde); }
   .veu .aprendi { max-width: 640px; margin: 12px auto; max-height: 46vh; overflow-y: auto; }
   .missao-fase { font-size: 20px; }
+  /* ---------- Olhando o código ---------- */
+  .motor { background: var(--papel); color: var(--tinta); border-radius: 14px; width: min(1240px, 96vw); max-height: 94vh; overflow: auto; padding: 14px 18px; text-align: left; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+  .motor .topo { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+  .motor .topo h2 { margin: 0; font-size: 24px; }
+  .motor .sub { font-size: 16px; color: var(--tinta2); margin: 4px 0 8px; }
+  .motor .grade { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr) minmax(0, 1fr); gap: 12px; }
+  @media (max-width: 980px) { .motor .grade { grid-template-columns: 1fr; } }
+  .motor .col { background: #fffaf0; border: 2px solid var(--borda); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+  .motor .col h3 { margin: 0 0 8px; font-size: 16px; letter-spacing: .04em; text-transform: uppercase; color: var(--tinta2); }
+  .motor .regs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .motor .reg { border: 2px solid var(--borda); border-radius: 8px; padding: 4px 6px; background: #fff; font-size: 14px; line-height: 1.25; transition: background .2s, border-color .2s; }
+  .motor .reg b { font-family: var(--maquina); font-size: 14px; } .motor .reg small { display: block; color: var(--tinta2); font-size: 12px; }
+  .motor .reg.na-faixa { border-color: var(--petroleo2); background: #e4f3f1; }
+  .motor .reg.foco { border-color: var(--laranja2); background: #ffe2b0; }
+  .motor .reg.fora { opacity: .45; }
+  .motor .reg.velho { border-style: dashed; opacity: .55; }
+  .motor .reg.vazio { border-style: dashed; color: var(--tinta2); background: transparent; }
+  .motor .legenda-m { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; margin: 8px 0 0; color: var(--tinta2); }
+  .motor .legenda-m i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; border: 2px solid; }
+  .motor .cod { position: relative; font-family: var(--maquina); font-size: 13.5px; background: #1d1611; color: #f2e6cc; border-radius: 8px; padding: 6px 0; max-height: 390px; overflow: auto; white-space: pre; }
+  .motor .cod div { padding: 0 10px; } .motor .cod span.n { display: inline-block; width: 34px; color: #8f7a5c; user-select: none; }
+  .motor .cod div.at { background: #f2b33d; color: #1d1611; font-weight: 700; } .motor .cod div.at span.n { color: #1d1611; }
+  .motor .expl-d { background: #fff4e0; border-left: 5px solid var(--ambar); border-radius: 8px; padding: 8px 10px; font-size: 18px; line-height: 1.45; }
+  .motor .expl-t { font-family: var(--maquina); font-size: 13.5px; background: #f1ebdd; border-radius: 8px; padding: 8px 10px; margin-top: 8px; white-space: pre-wrap; }
+  .motor .cont { display: flex; gap: 8px; margin-top: 8px; } .motor .cont div { flex: 1; background: #fff; border: 2px solid var(--borda); border-radius: 8px; text-align: center; padding: 4px; font-size: 13px; }
+  .motor .cont b { display: block; font-size: 22px; font-family: var(--titulo); }
+  .motor .ctrl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+  .motor .ctrl select { font-size: 16px; padding: 4px; }
+  .motor .ctrl .passo { margin-left: auto; font: 700 16px var(--titulo); }
   .raios { color: #e0a100; letter-spacing: 1px; font-size: 20px; } .raios .vazio { opacity: .22; }
   .energia-expl { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; background: #fff4e0; border-left: 5px solid var(--ambar); border-radius: 8px; padding: 8px 12px; margin: 6px 0; }
   .cmp { border-collapse: collapse; margin: 6px 0; font-size: 18px; } .cmp td { padding: 4px 10px; border-bottom: 1px solid var(--borda); }
@@ -486,7 +515,68 @@ function marcarPerfil() { const b = $("#perfil-btn"); if (!b) return; const k = 
 // "Ver o código desta fase": o código Python que roda a fase, copiado do arquivo quando a página foi gerada.
 const REPO = "https://github.com/perlalacerda/urna-logica/blob/main/";
 const esc = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const botaoCodigo = chave => `<button class="btn sec" onclick="verCodigo('${chave}')">🔧 Ver o código desta fase</button>`;
+const botaoCodigo = chave => `<button class="btn sec" onclick="verCodigo('${chave}')">🔧 Ver o código desta fase</button>`
+  + (D.motor && D.motor[chave] ? ` <button class="btn" onclick="abrirMotor('${chave}')">🔍 Olhando o código</button>` : "");
+
+/* ================= OLHANDO O CÓDIGO =================
+   Reproduz a gravação feita pelo Python (interface/olhando_codigo.py): a cada passo, a linha que o
+   Python executou de verdade, o estado do vetor naquele instante e os contadores. Nada aqui é simulado. */
+const NOMES_ALG = {bubble: "Bubble Sort", merge: "Merge Sort", quick: "Quick Sort"};
+function abrirMotor(chave, alg) {
+  const M = D.motor[chave], algs = Object.keys(M.algoritmos);
+  alg = alg || algs[0];
+  const G = M.algoritmos[alg], ps = G.passos;
+  let k = 0, timer = null, vel = 800;
+  document.querySelectorAll(".veu.motor-veu").forEach(v => v.remove());
+  const v = document.createElement("div"); v.className = "veu motor-veu";
+  v.innerHTML = `<div class="motor" role="dialog" aria-label="Olhando o código">
+    <div class="topo"><h2>🔍 Olhando o código · ${NOMES_ALG[alg]}</h2>
+      <div class="escolha">${algs.map(a => `<button data-alg="${a}" class="${a === alg ? "sel" : ""}">${NOMES_ALG[a]}</button>`).join("")}</div></div>
+    <p class="sub">O Python de verdade, linha a linha: os ${M.n} primeiros registros do lote de ${M.total}, ordenados pela regra da auditoria (zona → seção → horário → id). A linha acesa é a que o Python executou naquele instante.</p>
+    <div class="grade">
+      <div class="col"><h3>Registros no vetor A</h3><div class="regs" id="m-regs"></div>
+        <div id="m-aux"></div>
+        <div class="legenda-m"><span><i style="border-color:var(--laranja2);background:#ffe2b0"></i>em foco agora</span><span><i style="border-color:var(--petroleo2);background:#e4f3f1"></i>trecho em análise</span>${alg === "merge" ? `<span><i style="border-style:dashed;border-color:var(--borda)"></i>valor antigo, ainda vai ser sobrescrito</span>` : ""}</div></div>
+      <div class="col"><h3>Código Python real</h3><div class="sub" style="margin:0 0 6px;font-size:13px">Arquivo <code>${G.arquivo}</code> · <span id="m-lin"></span></div><div class="cod" id="m-cod"></div></div>
+      <div class="col"><h3>Entenda o passo</h3><div class="expl-d" id="m-did"></div><div class="expl-t" id="m-tec"></div>
+        <div class="cont"><div>Comparações<b id="m-comp">0</b></div><div>Movimentações<b id="m-mov">0</b></div></div></div>
+    </div>
+    <div class="ctrl"><button class="btn neutro" id="m-ant">◀ Anterior</button><button class="btn" id="m-play">▶ Reproduzir</button>
+      <button class="btn neutro" id="m-prox">Próximo ▶</button><button class="btn neutro" id="m-rei">↺ Reiniciar</button>
+      <label>Velocidade <select id="m-vel"><option value="1500">lenta</option><option value="800" selected>normal</option><option value="300">rápida</option></select></label>
+      <span class="passo" id="m-passo"></span><button class="btn sec" id="m-fecha">Fechar</button></div></div>`;
+  document.body.appendChild(v);
+  $("#m-cod").innerHTML = G.codigo.map(([n, t]) => n === null ? `<div><span class="n">⋯</span></div>` : `<div data-l="${n}"><span class="n">${n}</span>${esc(t)}</div>`).join("");
+  const reg = id => { const r = G.registros[id]; return r ? `<b>${id}</b><small>z${r[0]} · s${r[1]} · ${r[2]}</small>` : `<b>${id}</b>`; };
+  const mostra = () => {
+    const p = ps[k], f = p.faixa, foco = new Set(p.destaque || []), velho = new Set(p.antigos || []);
+    $("#m-regs").innerHTML = p.vetor.map((id, i) => `<div class="reg ${foco.has(i) ? "foco" : velho.has(i) ? "velho" : f && i >= f[0] && i <= f[1] ? "na-faixa" : f ? "fora" : ""}"><small>posição ${i}</small>${reg(id)}</div>`).join("");
+    const af = new Set(p.auxDestaque || []);
+    $("#m-aux").innerHTML = p.aux ? `<h3 style="margin:10px 0 6px">Vetor auxiliar B</h3><div class="regs">${p.aux.map((id, i) => id ? `<div class="reg ${af.has(i) ? "foco" : ""}"><small>B[${i}]</small>${reg(id)}</div>` : `<div class="reg vazio"><small>B[${i}]</small>—</div>`).join("")}</div>` : "";
+    $("#m-did").textContent = p.did; $("#m-tec").textContent = p.tec;
+    $("#m-comp").textContent = p.comp; $("#m-mov").textContent = p.mov;
+    $("#m-passo").textContent = `Passo ${k + 1} de ${ps.length}`;
+    $("#m-lin").textContent = p.linha ? `linha ${p.linha}` : "execução concluída";
+    const cod = $("#m-cod"); cod.querySelectorAll(".at").forEach(x => x.classList.remove("at"));
+    const at = cod.querySelector(`[data-l="${p.linha}"]`);
+    if (at) { at.classList.add("at"); const alvo = at.offsetTop - cod.clientHeight / 2; cod.scrollTop = Math.max(0, alvo); }
+    $("#m-ant").disabled = k === 0; $("#m-prox").disabled = k === ps.length - 1;
+  };
+  const para = () => { clearInterval(timer); timer = null; $("#m-play").textContent = "▶ Reproduzir"; };
+  const toca = () => { if (k === ps.length - 1) k = 0; $("#m-play").textContent = "⏸ Pausar";
+    timer = setInterval(() => { if (k < ps.length - 1) { k++; mostra(); } else para(); }, vel); };
+  $("#m-play").onclick = () => timer ? para() : toca();
+  $("#m-prox").onclick = () => { para(); if (k < ps.length - 1) { k++; mostra(); } };
+  $("#m-ant").onclick = () => { para(); if (k > 0) { k--; mostra(); } };
+  $("#m-rei").onclick = () => { para(); k = 0; mostra(); };
+  $("#m-vel").onchange = e => { vel = +e.target.value; if (timer) { para(); toca(); } };
+  const fecha = () => { para(); document.removeEventListener("keydown", tecla); v.remove(); };
+  const tecla = e => { if (e.key === "Escape") fecha(); else if (e.key === "ArrowRight") $("#m-prox").click(); else if (e.key === "ArrowLeft") $("#m-ant").click(); };
+  document.addEventListener("keydown", tecla);
+  $("#m-fecha").onclick = fecha;
+  v.querySelectorAll("[data-alg]").forEach(b => b.onclick = () => { para(); document.removeEventListener("keydown", tecla); abrirMotor(chave, b.dataset.alg); });
+  mostra();
+}
 function verCodigo(chave) {
   const L = D.codigo[chave], v = document.createElement("div"); v.className = "veu";
   v.innerHTML = `<div class="tut larga"><div class="rotulo">Por baixo do capô</div><h2>🔧 O código que roda esta fase</h2>
