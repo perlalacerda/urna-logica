@@ -521,7 +521,18 @@ const botaoCodigo = chave => `<button class="btn sec" onclick="verCodigo('${chav
 /* ================= OLHANDO O CÓDIGO =================
    Reproduz a gravação feita pelo Python (interface/olhando_codigo.py): a cada passo, a linha que o
    Python executou de verdade, o estado do vetor naquele instante e os contadores. Nada aqui é simulado. */
-const NOMES_ALG = {bubble: "Bubble Sort", merge: "Merge Sort", quick: "Quick Sort"};
+const NOMES_ALG = {avl: "Inserção na AVL", bubble: "Bubble Sort", merge: "Merge Sort", quick: "Quick Sort", bfs_aula: "BFS da aula (só o mapa)", bfs: "BFS do solver", dfs: "DFS recursiva do solver"};
+// mini-mapa da Fase 3 para as buscas: cores da BFS da aula, local atual (u) e local examinado (v)
+function miniMapa(m) {
+  const V = D.fase3.vertices, P = {}; V.forEach(v => P[v.id] = v);
+  const COR = {branco: ["#ffffff", "#2a1d12"], cinza: ["#b9b2a6", "#2a1d12"], preto: ["#2a1d12", "#ffffff"]};
+  const linhas = D.fase3.arestas.map(([a, b]) => `<line x1="${P[a].x}" y1="${P[a].y}" x2="${P[b].x}" y2="${P[b].y}" stroke="#8f7a5c" stroke-width="5"/>`).join("");
+  const nos = V.map(v => { const c = m.cores ? COR[m.cores[v.id]] || COR.branco : ["#fffaf0", "#2a1d12"];
+    const anel = v.id === m.u ? "#e07a2c" : v.id === m.v ? "#2f9e94" : "#5a4530", larg = v.id === m.u || v.id === m.v ? 7 : 2;
+    const dd = m.d && m.d[v.id] !== undefined ? `<text x="${v.x}" y="${v.y + 46}" text-anchor="middle" font-size="20" fill="#5a4530">d=${m.d[v.id] === null ? "∞" : m.d[v.id]}</text>` : "";
+    return `<circle cx="${v.x}" cy="${v.y}" r="27" fill="${c[0]}" stroke="${anel}" stroke-width="${larg}"/><text x="${v.x}" y="${v.y + 8}" text-anchor="middle" font-size="24" font-weight="700" fill="${c[1]}">${v.id}</text>${dd}`; }).join("");
+  return `<svg viewBox="50 90 650 425" style="width:100%;height:auto;max-height:240px">${linhas}${nos}</svg>`;
+}
 function abrirMotor(chave, alg) {
   const M = D.motor[chave], algs = Object.keys(M.algoritmos);
   alg = alg || algs[0];
@@ -532,14 +543,14 @@ function abrirMotor(chave, alg) {
   v.innerHTML = `<div class="motor" role="dialog" aria-label="Olhando o código">
     <div class="topo"><h2>🔍 Olhando o código · ${NOMES_ALG[alg]}</h2>
       <div class="escolha">${algs.map(a => `<button data-alg="${a}" class="${a === alg ? "sel" : ""}">${NOMES_ALG[a]}</button>`).join("")}</div></div>
-    <p class="sub">O Python de verdade, linha a linha: os ${M.n} primeiros registros do lote de ${M.total}, ordenados pela regra da auditoria (zona → seção → horário → id). A linha acesa é a que o Python executou naquele instante.</p>
+    <p class="sub">${G.nota ? G.nota + " " : `Os ${M.n} primeiros registros do lote de ${M.total}, ordenados pela regra da auditoria (zona → seção → horário → id). `}A linha acesa é a que o Python executou naquele instante.</p>
     <div class="grade">
-      <div class="col"><h3>Registros no vetor A</h3><div class="regs" id="m-regs"></div>
+      <div class="col"><h3>${ps[0].vetor ? "Registros no vetor A" : ps[0].arvore !== undefined ? "O Cofre dos Estados (árvore AVL)" : "O mapa e a estrutura"}</h3><div class="regs" id="m-regs" ${ps[0].vetor ? "" : 'style="display:block"'}></div>
         <div id="m-aux"></div>
-        <div class="legenda-m"><span><i style="border-color:var(--laranja2);background:#ffe2b0"></i>em foco agora</span><span><i style="border-color:var(--petroleo2);background:#e4f3f1"></i>trecho em análise</span>${alg === "merge" ? `<span><i style="border-style:dashed;border-color:var(--borda)"></i>valor antigo, ainda vai ser sobrescrito</span>` : ""}</div></div>
+        <div class="legenda-m">${ps[0].vetor ? "" : ps[0].arvore !== undefined ? `<span><i style="border-color:#ffb347;background:#ffb347"></i>nó em foco agora</span><span>h = altura · FB = fator de balanceamento</span>` : `<span><i style="border-color:#e07a2c"></i>local atual (u)</span><span><i style="border-color:#2f9e94"></i>local examinado (v)</span>${G.passos.some(p => p.mapa && p.mapa.cores) ? `<span><i style="border-color:#5a4530;background:#b9b2a6"></i>cinza = na fila</span><span><i style="border-color:#5a4530;background:#2a1d12"></i>preto = terminado</span>` : ""}`}</div><div class="legenda-m" style="${ps[0].vetor ? "" : "display:none"}"><span><i style="border-color:var(--laranja2);background:#ffe2b0"></i>em foco agora</span><span><i style="border-color:var(--petroleo2);background:#e4f3f1"></i>trecho em análise</span>${alg === "merge" ? `<span><i style="border-style:dashed;border-color:var(--borda)"></i>valor antigo, ainda vai ser sobrescrito</span>` : ""}</div></div>
       <div class="col"><h3>Código Python real</h3><div class="sub" style="margin:0 0 6px;font-size:13px">Arquivo <code>${G.arquivo}</code> · <span id="m-lin"></span></div><div class="cod" id="m-cod"></div></div>
       <div class="col"><h3>Entenda o passo</h3><div class="expl-d" id="m-did"></div><div class="expl-t" id="m-tec"></div>
-        <div class="cont"><div>Comparações<b id="m-comp">0</b></div><div>Movimentações<b id="m-mov">0</b></div></div></div>
+        <div class="cont"><div>${(G.rotulos || ["Comparações"])[0]}<b id="m-comp">0</b></div><div>${(G.rotulos || [, "Movimentações"])[1]}<b id="m-mov">0</b></div></div></div>
     </div>
     <div class="ctrl"><button class="btn neutro" id="m-ant">◀ Anterior</button><button class="btn" id="m-play">▶ Reproduzir</button>
       <button class="btn neutro" id="m-prox">Próximo ▶</button><button class="btn neutro" id="m-rei">↺ Reiniciar</button>
@@ -550,11 +561,23 @@ function abrirMotor(chave, alg) {
   const reg = id => { const r = G.registros[id]; return r ? `<b>${id}</b><small>z${r[0]} · s${r[1]} · ${r[2]}</small>` : `<b>${id}</b>`; };
   const mostra = () => {
     const p = ps[k], f = p.faixa, foco = new Set(p.destaque || []), velho = new Set(p.antigos || []);
+    if (p.arvore !== undefined) {
+      const pec = p.pecas || [];
+      $("#m-regs").innerHTML = `<div class="sub" style="margin:0 0 2px;font-size:13px">${p.fim ? "O cofre no fim" : "O cofre antes desta inserção"}</div>
+        <svg id="m-arv" style="width:100%;height:auto;max-height:${pec.length ? 130 : 260}px"></svg>
+        ${pec.length ? `<div class="sub" style="margin:8px 0 2px;font-size:13px">A parte em trabalho agora${pec.length > 1 ? " (peças soltas no meio do giro)" : ""}</div>
+        <div style="display:flex;gap:8px;align-items:flex-start">${pec.map((x, i) => `<div style="flex:1;min-width:0"><svg id="m-pec${i}" style="width:100%;height:auto;max-height:170px"></svg><div class="legenda-m" style="margin:0">${esc(x[0])}</div></div>`).join("")}</div>` : ""}`;
+      desenhaAVL($("#m-arv"), p.arvore, p.fim ? null : undefined);
+      pec.forEach((x, i) => desenhaAVL($("#m-pec" + i), x[1], p.foco));
+    } else if (!p.vetor) {
+      const E = p.estrutura || {itens: []}, mostra12 = E.itens.slice(0, 12);
+      $("#m-regs").innerHTML = miniMapa(p.mapa || {}) + (E.nome ? `<h3 style="margin:8px 0 6px">${E.nome}</h3><div style="display:flex;flex-wrap:wrap;gap:5px">${mostra12.length ? mostra12.map((x, i) => `<span class="reg ${i === 0 ? "foco" : ""}" style="padding:3px 8px;font-family:var(--maquina);font-size:13px">${esc(x)}</span>`).join("") : `<span class="reg vazio" style="padding:3px 8px">vazia</span>`}${E.itens.length > 12 ? `<span style="align-self:center">+${E.itens.length - 12}</span>` : ""}</div>` : "");
+    } else
     $("#m-regs").innerHTML = p.vetor.map((id, i) => `<div class="reg ${foco.has(i) ? "foco" : velho.has(i) ? "velho" : f && i >= f[0] && i <= f[1] ? "na-faixa" : f ? "fora" : ""}"><small>posição ${i}</small>${reg(id)}</div>`).join("");
     const af = new Set(p.auxDestaque || []);
     $("#m-aux").innerHTML = p.aux ? `<h3 style="margin:10px 0 6px">Vetor auxiliar B</h3><div class="regs">${p.aux.map((id, i) => id ? `<div class="reg ${af.has(i) ? "foco" : ""}"><small>B[${i}]</small>${reg(id)}</div>` : `<div class="reg vazio"><small>B[${i}]</small>—</div>`).join("")}</div>` : "";
     $("#m-did").textContent = p.did; $("#m-tec").textContent = p.tec;
-    $("#m-comp").textContent = p.comp; $("#m-mov").textContent = p.mov;
+    const cc = p.cont || [p.comp, p.mov]; $("#m-comp").textContent = cc[0] ?? "—"; $("#m-mov").textContent = cc[1] ?? "—";
     $("#m-passo").textContent = `Passo ${k + 1} de ${ps.length}`;
     $("#m-lin").textContent = p.linha ? `linha ${p.linha}` : "execução concluída";
     const cod = $("#m-cod"); cod.querySelectorAll(".at").forEach(x => x.classList.remove("at"));

@@ -231,3 +231,307 @@ def dados_motor_fase1(registros, chave, n=8):
     amostra = list(registros)[:n]
     return {"n": n, "total": len(registros),
             "algoritmos": {alg: gravar_ordenacao(amostra, alg, chave) for alg in ("bubble", "merge", "quick")}}
+
+
+# ============================================================ FASE 3: busca no mapa
+def _rotulo_estado(e):
+    pos, pistas, portas, energia = e
+    return f"{pos} {{{','.join(pistas)}}} ⚡{energia}"
+
+
+def gravar_bfs_aula():
+    """BFS da aula 09 no grafo do mapa (sem pistas nem portas): cores, distâncias e a fila Q."""
+    from algoritmos import busca_grafo
+    from jogo.fase3 import construir_mapa
+    G = construir_mapa()
+    NOMES = {busca_grafo.BRANCO: "branco", busca_grafo.CINZA: "cinza", busca_grafo.PRETO: "preto"}
+
+    def anotar(frame, linha, texto):
+        if frame.f_code.co_name != "bfs":
+            return None
+        L = _locais(frame)
+        cor, d, Q, u, v = L.get("cor") or {}, L.get("d") or {}, L.get("Q"), L.get("u"), L.get("v")
+        fila = Q.para_lista() if Q is not None and hasattr(Q, "para_lista") else []
+        dist = {k: (None if x == busca_grafo.INFINITO else x) for k, x in d.items()}
+        passo = {"mapa": {"u": u, "v": v, "cores": {k: NOMES.get(x, "branco") for k, x in cor.items()}, "d": dist},
+                 "estrutura": {"nome": "Fila Q (o primeiro a entrar é o primeiro a sair)", "itens": list(fila)},
+                 "cont": [sum(1 for x in cor.values() if x == busca_grafo.PRETO), len(fila)], "did": "", "tec": ""}
+        if texto.startswith("for u in G.vertices()"):
+            passo["did"] = "Prepara todos os locais: brancos (ainda não descobertos), com distância infinita."
+            passo["tec"] = "cor[u] ← BRANCO; d[u] ← ∞; π[u] ← NULL"
+        elif texto.startswith("cor[u], d[u], pi[u]"):
+            return None
+        elif texto.startswith("cor[s], d[s], pi[s]"):
+            passo["did"] = "A Central de Auditoria (A) é o ponto de partida: fica cinza (descoberta) e com distância 0."
+            passo["tec"] = "cor[s] ← CINZA; d[s] ← 0; π[s] ← NULL"
+        elif texto.startswith("Q = Fila()"):
+            passo["did"] = "Cria a fila vazia."
+            passo["tec"] = "Q ← ∅"
+        elif texto.startswith("Q.enqueue(s)"):
+            passo["did"] = "Põe A na fila."
+            passo["tec"] = "enqueue(Q, s)"
+        elif texto.startswith("while not Q.esta_vazia()"):
+            passo["did"] = "Enquanto houver alguém na fila, a busca continua." if fila else "A fila esvaziou: todos os locais alcançáveis foram visitados."
+            passo["tec"] = f"Q ≠ ∅? {'sim' if fila else 'não — fim'}"
+        elif texto.startswith("_, u = Q.dequeue()"):
+            passo["did"] = f"Tira da frente da fila o próximo local: {fila[0] if fila else '—'}."
+            passo["tec"] = f"u ← dequeue(Q) = {fila[0] if fila else '—'}"
+        elif texto.startswith("ordem.append(u)"):
+            return None
+        elif texto.startswith("for v in G.vizinhos(u)"):
+            passo["did"] = f"Olha os vizinhos de {u}: {', '.join(G.vizinhos(u))}." if u else ""
+            passo["tec"] = f"para cada v em Adj[{u}]"
+        elif texto.startswith("if cor[v] == BRANCO") and v:
+            branco = cor.get(v) == busca_grafo.BRANCO
+            passo["did"] = f"{v} ainda não foi descoberto? " + ("Sim: vai entrar na fila." if branco else "Não: já foi descoberto, segue.")
+            passo["tec"] = f"cor[{v}] = {NOMES.get(cor.get(v))}"
+        elif texto.startswith("cor[v] = CINZA") and v:
+            passo["did"] = f"{v} acaba de ser descoberto: fica cinza."
+            passo["tec"] = f"cor[{v}] ← CINZA"
+        elif texto.startswith("d[v] = d[u] + 1") and v:
+            passo["did"] = f"{v} está a um corredor a mais que {u}: distância {dist.get(u, 0) + 1}."
+            passo["tec"] = f"d[{v}] ← d[{u}] + 1 = {dist.get(u, 0) + 1}"
+        elif texto.startswith("pi[v] = u") and v:
+            passo["did"] = f"Anota que chegou a {v} vindo de {u} (é assim que o caminho é refeito depois)."
+            passo["tec"] = f"π[{v}] ← {u}"
+        elif texto.startswith("Q.enqueue(v)") and v:
+            passo["did"] = f"{v} entra no fim da fila."
+            passo["tec"] = f"enqueue(Q, {v})"
+        elif texto.startswith("cor[u] = PRETO") and u:
+            passo["did"] = f"Todos os vizinhos de {u} foram vistos: {u} fica preto (terminado)."
+            passo["tec"] = f"cor[{u}] ← PRETO"
+        elif texto.startswith("return d, pi"):
+            passo["did"] = "Fim: cada local tem sua distância em corredores a partir de A."
+            passo["tec"] = "d = " + ", ".join(f"{k}:{x}" for k, x in sorted(dist.items()))
+        else:
+            return None
+        return passo
+
+    tr = Rastreador(busca_grafo.__file__, anotar)
+    tr.rodar(busca_grafo.bfs, G, "A")
+    return {"arquivo": _rel(busca_grafo.__file__), "codigo": codigo_de([busca_grafo.bfs]), "passos": tr.passos,
+            "rotulos": ["Locais terminados (pretos)", "Tamanho da fila"],
+            "nota": "BFS da aula no grafo do mapa: só os corredores, sem pistas nem portas. Mostra as distâncias em corredores a partir de A."}
+
+
+def gravar_busca_solver(qual):
+    """BFS ou DFS recursiva do solver no espaço de estados da Fase 3 (com pistas, portas e energia)."""
+    from algoritmos import solver
+    from jogo.fase3 import ProblemaMapa
+    func, nomes = {"bfs": (solver.bfs, ("bfs",)), "dfs": (solver.dfs_recursiva, ("dfs_recursiva", "visita"))}[qual]
+
+    def anotar(frame, linha, texto):
+        if frame.f_code.co_name not in nomes or texto.startswith("r.") or texto.startswith("r, inicio"):
+            return None
+        L = _locais(frame)
+        u, v = L.get("u"), L.get("v")
+        if qual == "bfs":
+            Q = L.get("Q")
+            itens = [_rotulo_estado(e) for e in Q.para_lista()] if Q is not None else []
+            nome = "Fila Q de situações"
+        else:
+            itens = [_rotulo_estado(e) for e in reversed(L.get("chamadas") or [])]
+            nome = "Pilha de chamadas (o topo é o primeiro)"
+        passo = {"mapa": {"u": u[0] if u else None, "v": v[0] if v else None},
+                 "estrutura": {"nome": nome, "itens": itens},
+                 "cont": [len(itens), None], "did": "", "tec": ""}
+        U, V = (_rotulo_estado(u) if u else "—"), (_rotulo_estado(v) if v else "—")
+        if texto.startswith("s = problema.estado_inicial()"):
+            passo["did"] = "A situação inicial: na Central de Auditoria (A), sem pistas, com 10 de energia."
+            passo["tec"] = "s ← (A, {}, {}, 10)"
+        elif texto.startswith("visitados.marcar(s)"):
+            passo["did"] = "Guarda a situação inicial na memória (a AVL de visitados)."
+            passo["tec"] = "marca s na AVL"
+        elif texto.startswith("Q = Fila()") or texto.startswith("Q.enqueue(s)"):
+            passo["did"] = "Cria a fila e põe nela a situação inicial." if texto.startswith("Q.enqueue") else "Cria a fila vazia."
+            passo["tec"] = texto
+        elif texto.startswith("while not Q.esta_vazia()"):
+            passo["did"] = "Enquanto houver situações na fila, a busca continua."
+            passo["tec"] = f"Q ≠ ∅? {'sim' if itens else 'não'}"
+        elif texto.startswith("_, u = Q.dequeue()"):
+            passo["did"] = f"Tira da frente da fila a próxima situação: {itens[0] if itens else '—'}."
+            passo["tec"] = "u ← dequeue(Q)"
+        elif texto.startswith("chamadas.append(u)"):
+            passo["did"] = f"Entra na situação {U}: ela vai para o topo da pilha de chamadas."
+            passo["tec"] = f"visita({U})"
+        elif texto.startswith("if problema.eh_objetivo(u)"):
+            achou = u is not None and u[0] == "F"
+            passo["did"] = f"Chegou ao Centro de Validação (F)? " + ("Sim! Achou o caminho." if achou else "Ainda não.")
+            passo["tec"] = f"u = {U}; objetivo? {'sim' if achou else 'não'}"
+        elif texto.startswith("for acao, v, _ in problema.sucessores(u)"):
+            passo["did"] = f"Gera as próximas situações a partir de {U}, pelas regras do jogo (corredor, porta, energia)."
+            passo["tec"] = "para cada sucessor v de u"
+        elif texto.startswith("if visitados.eh_repetido(v)"):
+            passo["did"] = f"A situação {V} já está na memória? A AVL responde."
+            passo["tec"] = f"chave = ({', '.join(map(str, v))})" if v else ""
+        elif texto.startswith("continue"):
+            passo["did"] = f"{V} é repetida: não explora de novo."
+            passo["tec"] = "repetido → continue"
+        elif texto.startswith("visitados.marcar(v)"):
+            passo["did"] = f"{V} é nova: guarda na memória."
+            passo["tec"] = "marca v na AVL"
+        elif texto.startswith("pais[v] = (u, acao)"):
+            passo["did"] = f"Anota que {V} veio de {U}, para refazer o caminho no fim."
+            passo["tec"] = "π[v] ← u"
+        elif texto.startswith("Q.enqueue(v)"):
+            passo["did"] = f"{V} entra no fim da fila."
+            passo["tec"] = "enqueue(Q, v)"
+        elif texto.startswith("achado = visita(v, profundidade + 1)"):
+            passo["did"] = f"Mergulha em {V}: chamada recursiva (a pilha cresce)."
+            passo["tec"] = "visita(v)  ← chamada recursiva"
+        elif texto.startswith("if achado is not None"):
+            passo["did"] = "A chamada de baixo achou o objetivo? Se sim, devolve a resposta para cima."
+            passo["tec"] = "condição de retorno"
+        elif texto.startswith("return u"):
+            passo["did"] = "Achou o Centro de Validação: devolve a situação final."
+            passo["tec"] = "caso-base 1: objetivo"
+        elif texto.startswith("chamadas.pop()"):
+            passo["did"] = f"Nenhum caminho saindo de {U} chega a F: beco sem saída, volta atrás."
+            passo["tec"] = "caso-base 2: desempilha"
+        elif texto.startswith("return achado"):
+            passo["did"] = "Repassa a resposta para a chamada de cima."
+            passo["tec"] = "return achado"
+        else:
+            return None
+        return passo
+
+    tr = Rastreador(solver.__file__, anotar)
+    res = tr.rodar(func, ProblemaMapa())
+    cortado = len(tr.passos) >= MAX_PASSOS
+    caminho = " → ".join(e[0] for _, e in res.caminho)
+    tr.passos.append({"linha": None, "fim": True, "mapa": {"u": "F", "v": None}, "estrutura": {"nome": "", "itens": []},
+                      "cont": [res.expandidos, res.repetidos],
+                      "did": (f"(A gravação mostra as primeiras {MAX_PASSOS} linhas.) " if cortado else "") +
+                             f"Resultado: {res.numero_acoes()} passos, {caminho}. Explorou {res.expandidos} situações e barrou {res.repetidos} repetidas.",
+                      "tec": f"{res.algoritmo}: expandidos={res.expandidos}, repetidos={res.repetidos}, fronteira máxima={res.maior_fronteira}"})
+    funcs = [solver.bfs] if qual == "bfs" else [solver.dfs_recursiva]
+    return {"arquivo": _rel(solver.__file__), "codigo": codigo_de(funcs), "passos": tr.passos,
+            "rotulos": ["Na fila" if qual == "bfs" else "Na pilha", "Repetidos (no fim)"],
+            "nota": ("BFS do solver, a que o jogo usa: cada situação é (local, pistas, portas, energia)."
+                     if qual == "bfs" else "DFS recursiva do solver: mergulha fundo e volta atrás nos becos sem saída.")}
+
+
+def dados_motor_fase3():
+    return {"algoritmos": {"bfs_aula": gravar_bfs_aula(), "bfs": gravar_busca_solver("bfs"), "dfs": gravar_busca_solver("dfs")}}
+
+
+# ============================================================ FASE 4: AVL
+def gravar_avl(sequencia):
+    """Inserção real dos códigos na AVL (estruturas/avl.py), com a árvore desenhada a cada passo."""
+    from estruturas import avl as mod
+    from interface.visualizacao import arvore_para_dict
+    T = mod.ArvoreAVL()
+    estado = {"antes": None}
+
+    def contem(n, alvo):
+        return n is not None and (n is alvo or contem(n.esq, alvo) or contem(n.dir, alvo))
+
+    NOMES = {"RD": "rotação à direita (RD)", "RE": "rotação à esquerda (RE)",
+             "RED": "rotação dupla esquerda-direita (RED)", "RDE": "rotação dupla direita-esquerda (RDE)"}
+
+    def anotar(frame, linha, texto):
+        fn = frame.f_code.co_name
+        if fn not in ("inserir", "_insere", "_rotacao_direita", "_rotacao_esquerda",
+                      "_rotacao_esquerda_direita", "_rotacao_direita_esquerda"):
+            return None
+        L = _locais(frame)
+        x, r, p = L.get("chave"), L.get("r"), L.get("p")
+        no = r if isinstance(r, mod.NoAVL) else p if isinstance(p, mod.NoAVL) else None
+        if fn == "inserir" and texto.startswith("self.raiz = self._insere"):
+            estado["antes"] = arvore_para_dict(T.raiz)          # o cofre completo, antes desta inserção
+        # a parte em trabalho: no meio de um giro os ponteiros ficam soltos, então mostramos as peças
+        pecas = []
+        if fn.startswith("_rotacao_") and isinstance(p, mod.NoAVL):
+            topo = L.get("u") or L.get("y")
+            if isinstance(topo, mod.NoAVL):
+                pecas.append([f"subárvore de {topo.chave}", arvore_para_dict(topo)])
+            if not (isinstance(topo, mod.NoAVL) and contem(topo, p)):
+                pecas.append([f"subárvore de {p.chave}", arvore_para_dict(p)])
+        elif fn == "_insere" and isinstance(r, mod.NoAVL):
+            pecas.append([f"subárvore de {r.chave}", arvore_para_dict(r)])
+        passo = {"arvore": estado["antes"], "pecas": pecas, "foco": no.chave if no else None,
+                 "cont": [T.quantidade, sum(T.rotacoes.values())], "did": "", "tec": ""}
+        fb = (mod.altura(no.esq) - mod.altura(no.dir)) if no else None
+        if fn == "inserir":
+            if not texto.startswith("self.raiz = self._insere"):
+                return None
+            passo["did"] = f"Vai guardar o código {x} no cofre. Começa pela raiz e desce."
+            passo["tec"] = f"raiz ← insere(raiz, {x})"
+        elif texto.startswith("if r is None"):
+            vazio = r is None
+            passo["did"] = "Chegou a um lugar vazio da árvore? " + ("Sim: o código fica aqui." if vazio else f"Não: está no nó {r.chave}.")
+            passo["tec"] = f"r = {'NULL' if vazio else r.chave}"
+        elif texto.startswith("return NoAVL("):
+            passo["did"] = f"Cria o nó {x} como folha (altura 0)."
+            passo["tec"] = "caso-base: novo nó"
+        elif texto.startswith("if chave == r.chave") and r:
+            passo["did"] = f"{x} já está no cofre? " + ("Sim: nada muda." if x == r.chave else "Não.")
+            passo["tec"] = f"{x} == {r.chave}? {'sim' if x == r.chave else 'não'}"
+        elif texto.startswith("if chave < r.chave") and r:
+            esq = x < r.chave
+            passo["did"] = f"{x} é menor que {r.chave}? " + ("Sim: desce para a esquerda." if esq else "Não: desce para a direita.")
+            passo["tec"] = f"{x} < {r.chave}? {'sim' if esq else 'não'}"
+        elif texto.startswith("r.esq = self._insere") and r:
+            passo["did"] = f"Chamada recursiva: insere {x} na subárvore esquerda de {r.chave}."
+            passo["tec"] = f"r.esq ← insere(r.esq, {x})"
+        elif texto.startswith("r.dir = self._insere") and r:
+            passo["did"] = f"Chamada recursiva: insere {x} na subárvore direita de {r.chave}."
+            passo["tec"] = f"r.dir ← insere(r.dir, {x})"
+        elif texto.startswith("if altura(r.esq) - altura(r.dir) ==") and r:
+            alvo = 2 if "== 2" in texto else -2
+            passo["did"] = f"Voltando da recursão, confere o equilíbrio de {r.chave}: fator de balanceamento = {fb}. " + ("Desequilibrou: precisa girar." if fb == alvo else "Está equilibrado.")
+            passo["tec"] = f"FB({r.chave}) = hE − hD = {fb}"
+        elif texto.startswith("if chave < r.esq.chave") and r:
+            reta = x < r.esq.chave
+            passo["did"] = f"O código {x} entrou " + ("à esquerda do filho esquerdo: formato de reta → rotação simples." if reta else "à direita do filho esquerdo: formato de curva → rotação dupla.")
+            passo["tec"] = f"{x} < {r.esq.chave}? {'sim (RD)' if reta else 'não (RED)'}"
+        elif texto.startswith("if chave > r.dir.chave") and r:
+            reta = x > r.dir.chave
+            passo["did"] = f"O código {x} entrou " + ("à direita do filho direito: formato de reta → rotação simples." if reta else "à esquerda do filho direito: formato de curva → rotação dupla.")
+            passo["tec"] = f"{x} > {r.dir.chave}? {'sim (RE)' if reta else 'não (RDE)'}"
+        elif texto.startswith("r = self._rotacao_") and r:
+            tipo = {"direita(r)": "RD", "esquerda(r)": "RE", "esquerda_direita(r)": "RED", "direita_esquerda(r)": "RDE"}[texto.split("#")[0].strip().split("_rotacao_")[1]]
+            passo["did"] = f"Aplica a {NOMES[tipo]} no nó {r.chave}."
+            passo["tec"] = f"r ← {tipo}({r.chave})"
+        elif texto.startswith("r.h = max(") and r:
+            passo["did"] = f"Atualiza a altura de {r.chave}."
+            passo["tec"] = f"h({r.chave}) ← max(hE, hD) + 1 = {max(mod.altura(r.esq), mod.altura(r.dir)) + 1}"
+        elif fn.startswith("_rotacao_") and p is not None:
+            u, y = L.get("u"), L.get("y")
+            passo["did"] = {"u = p.esq": f"Pega o filho esquerdo de {p.chave}.", "y = p.dir": f"Pega o filho direito de {p.chave}.",
+                            "p.esq = u.dir": "O que estava à direita do filho passa a ser o filho esquerdo de " + str(p.chave) + ".",
+                            "u.dir = p": f"{p.chave} desce e vira o filho direito de {u.chave if u else '—'}.",
+                            "p.dir = y.esq": "O que estava à esquerda do filho passa a ser o filho direito de " + str(p.chave) + ".",
+                            "y.esq = p": f"{p.chave} desce e vira o filho esquerdo de {y.chave if y else '—'}.",
+                            "return u": f"{u.chave if u else '—'} sobe e vira a nova raiz desta parte.",
+                            "return y": f"{y.chave if y else '—'} sobe e vira a nova raiz desta parte."}.get(
+                texto.split("#")[0].strip(), "Recalcula as alturas depois do giro." if ".h = max(" in texto else
+                "Rotação dupla: primeiro gira o filho, depois o próprio nó." if "self._rotacao_" in texto else "")
+            if not passo["did"]:
+                return None
+            passo["tec"] = texto.split("#")[0].strip()
+            passo["foco"] = p.chave
+        else:
+            return None
+        return passo
+
+    def inserir_todos():
+        for k in sequencia:
+            T.inserir(k)
+
+    tr = Rastreador(mod.__file__, anotar)
+    tr.rodar(inserir_todos)
+    tr.passos.append({"linha": None, "fim": True, "arvore": arvore_para_dict(T.raiz), "foco": None,
+                      "cont": [T.quantidade, sum(T.rotacoes.values())],
+                      "did": f"Os {len(sequencia)} códigos estão no cofre. A árvore tem altura {T.altura()} e precisou de {sum(T.rotacoes.values())} rotações.",
+                      "tec": "rotações: " + ", ".join(f"{t} em {c}" for t, c in T.historico_rotacoes)})
+    A = mod.ArvoreAVL
+    return {"arquivo": _rel(mod.__file__), "passos": tr.passos, "rotulos": ["Códigos já guardados", "Rotações feitas"],
+            "codigo": codigo_de([A.inserir, A._insere, A._rotacao_direita, A._rotacao_esquerda,
+                                 A._rotacao_esquerda_direita, A._rotacao_direita_esquerda]),
+            "nota": f"Inserção dos códigos {', '.join(map(str, sequencia))} no Cofre dos Estados (árvore AVL), como na Sala 1."}
+
+
+def dados_motor_fase4():
+    from jogo.fase4 import SEQUENCIA_LACRES
+    return {"algoritmos": {"avl": gravar_avl(SEQUENCIA_LACRES)}}

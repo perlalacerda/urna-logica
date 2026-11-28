@@ -38,3 +38,33 @@ class TestOlhandoCodigo(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestOlhandoCodigoBuscaEAVL(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from interface.olhando_codigo import dados_motor_fase3, dados_motor_fase4
+        cls.f3 = dados_motor_fase3()["algoritmos"]
+        cls.f4 = dados_motor_fase4()["algoritmos"]
+
+    def test_linhas_acesas_existem_no_arquivo(self):
+        for G in list(self.f3.values()) + list(self.f4.values()):
+            fonte = open(G["arquivo"], encoding="utf-8").read().split("\n")
+            mostradas = dict((n, t) for n, t in G["codigo"] if n)
+            for p in G["passos"]:
+                if p["linha"] is None:
+                    continue
+                self.assertIn(p["linha"], mostradas, (G["arquivo"], p["linha"]))
+                self.assertEqual(fonte[p["linha"] - 1].rstrip(), mostradas[p["linha"]].rstrip())
+                self.assertTrue(p["did"], (G["arquivo"], p["linha"]))
+
+    def test_buscas_terminam_com_o_resultado_do_solver(self):
+        self.assertIn("7 passos, A → C → E → C → B → H → D → F", self.f3["bfs"]["passos"][-1]["did"])
+        self.assertIn("10 passos", self.f3["dfs"]["passos"][-1]["did"])
+        fim = self.f3["bfs_aula"]["passos"][-1]["mapa"]["d"]
+        self.assertEqual((fim["A"], fim["C"], fim["F"]), (0, 1, 3))     # distâncias em corredores
+
+    def test_avl_rotacoes_da_aula(self):
+        fim = self.f4["avl"]["passos"][-1]
+        self.assertEqual(fim["tec"], "rotações: RD em 70, RE em 70, RED em 40, RDE em 40")
+        self.assertEqual(fim["cont"], [9, 4])

@@ -12,8 +12,8 @@ O que a disciplina avalia (estruturas e algoritmos) está em duas pastas. O rest
 | `estruturas/` | estruturas de dados (o essencial) | 915 |
 | `algoritmos/` | algoritmos (o essencial) | 957 |
 | `jogo/` | regras das fases | 1531 |
-| `interface/` | telas (terminal, navegador, visualização) | 1455 |
-| `testes/` | testes automáticos | 1533 |
+| `interface/` | telas (terminal, navegador, visualização) | 1999 |
+| `testes/` | testes automáticos | 1603 |
 
 ## Matriz
 
